@@ -36,6 +36,23 @@ bin/test
 make clean
 ```
 
+## 部署到 GitHub Pages
+
+此專案已包含 GitHub Actions workflow：`.github/workflows/pages.yml`。
+
+1. 到 GitHub repo 的 `Settings` → `Pages`。
+2. `Build and deployment` 的 `Source` 選 `GitHub Actions`。
+3. 確認 default branch 是 `main`。
+4. Push 到 `main` 後，GitHub Actions 會執行 `bin/test`，成功後部署 `_site` 到 GitHub Pages。
+
+自訂網域使用根目錄 `CNAME`：
+
+```txt
+tripezgo.com
+```
+
+DNS 需要指到 GitHub Pages。若使用 apex domain `tripezgo.com`，在 DNS 設定 A records 到 GitHub Pages IP；若使用 `www.tripezgo.com`，用 CNAME 指到 `ZhgChgLi.github.io`。
+
 ## 新增每月快報
 
 在 `_reports` 新增 `YYYY-MM.md`，並用 YAML front matter 維護商品與文章資料。首頁會自動依 `month` 取最新月份。
