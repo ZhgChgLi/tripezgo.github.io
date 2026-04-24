@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if ! command -v ruby >/dev/null 2>&1; then
+  echo "Ruby is required. Install Ruby 3.4.x, then run bin/setup again." >&2
+  exit 1
+fi
+
+if ! command -v bundle >/dev/null 2>&1; then
+  gem install bundler
+fi
+
+bundle config set path "vendor/bundle"
+bundle install
+
+echo "Setup complete. Start the site with: bin/dev"

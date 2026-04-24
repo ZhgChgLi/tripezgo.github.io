@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+echo "Ruby: $(ruby -v)"
+echo "Bundler: $(bundle -v)"
+
+if bundle check >/dev/null 2>&1; then
+  echo "Gems: installed"
+else
+  echo "Gems: missing. Run bin/setup."
+fi
+
+if [ -f "_reports/2026-04.md" ]; then
+  echo "Sample report: present"
+else
+  echo "Sample report: missing"
+fi

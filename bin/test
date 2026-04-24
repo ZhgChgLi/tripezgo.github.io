@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if ! bundle check >/dev/null 2>&1; then
+  echo "Missing gems. Running bundle install first..."
+  bundle install
+fi
+
+JEKYLL_ENV=production bundle exec jekyll build --strict_front_matter --trace
+bundle exec ruby test/site_test.rb
+
+echo "All local checks passed."

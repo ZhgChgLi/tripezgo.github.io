@@ -1,0 +1,27 @@
+title: Tripezgo
+description: 每月精選旅遊商品優惠快報
+lang: zh-Hant-TW
+timezone: Asia/Taipei
+
+url: "https://tripezgo.com"
+baseurl: ""
+
+collections:
+  reports:
+    output: true
+    permalink: /reports/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: reports
+    values:
+      layout: report
+
+sass:
+  style: compressed
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+HOST="${HOST:-127.0.0.1}"
+PORT="${PORT:-4000}"
+LIVERELOAD_PORT="${LIVERELOAD_PORT:-35730}"
+
+if ! bundle check >/dev/null 2>&1; then
+  echo "Missing gems. Running bundle install first..."
+  bundle install
+fi
+
+echo "Starting Tripezgo at http://${HOST}:${PORT}"
+bundle exec jekyll serve \
+  --host "${HOST}" \
+  --port "${PORT}" \
+  --livereload \
+  --livereload-port "${LIVERELOAD_PORT}" \
+  --trace

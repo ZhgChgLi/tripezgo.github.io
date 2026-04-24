@@ -1,0 +1,15 @@
+---
+layout: default
+---
+
+{% assign reports = site.reports | sort: "month" | reverse %}
+{% assign report = reports | first %}
+
+{% if report %}
+  {% include report-content.html report=report is_home=true %}
+{% else %}
+  <main class="empty-state">
+    <h1>尚未建立優惠快報</h1>
+    <p>請在 <code>_reports</code> 新增每月 markdown 檔案。</p>
+  </main>
+{% endif %}

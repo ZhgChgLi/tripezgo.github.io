@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'zh-Hant-TW' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% assign latest_reports = site.reports | sort: "month" | reverse %}
+    {% assign latest_report = latest_reports | first %}
+    {% assign seo_report = nil %}
+    {% if page.collection == "reports" %}
+      {% assign seo_report = page %}
+    {% elsif page.url == "/" and latest_report %}
+      {% assign seo_report = latest_report %}
+    {% endif %}
+    {% assign seo_title = page.seo_title | default: seo_report.title | default: page.title | default: site.title %}
+    {% assign raw_description = page.description | default: seo_report.intro | default: site.description %}
+    {% assign seo_description = raw_description | strip_html | normalize_whitespace | truncate: 155 %}
+    {% assign canonical_url = page.url | absolute_url %}
+    {% assign seo_type = "website" %}
+    {% if page.collection == "reports" %}
+      {% assign seo_type = "article" %}
+    {% endif %}
+    {% assign seo_image = page.image | default: seo_report.hero_image %}
+    {% unless seo_image %}
+      {% assign first_seo_product = seo_report.products | first %}
+      {% assign seo_image = first_seo_product.image %}
+    {% endunless %}
+    {% assign seo_image_url = seo_image %}
+    {% if seo_image_url and seo_image_url contains "://" %}
+      {% assign seo_image_url = seo_image_url %}
+    {% elsif seo_image_url %}
+      {% assign seo_image_url = seo_image_url | absolute_url %}
+    {% endif %}
+    <title>{% if seo_title == site.title %}{{ site.title }}{% else %}{{ seo_title }} | {{ site.title }}{% endif %}</title>
+    <meta name="description" content="{{ seo_description }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta property="og:locale" content="{{ site.lang | default: 'zh-Hant-TW' }}">
+    <meta property="og:type" content="{{ seo_type }}">
+    <meta property="og:site_name" content="{{ site.title }}">
+    <meta property="og:title" content="{{ seo_title }}">
+    <meta property="og:description" content="{{ seo_description }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    {% if seo_image_url %}
+      <meta property="og:image" content="{{ seo_image_url }}">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:image" content="{{ seo_image_url }}">
+    {% else %}
+      <meta name="twitter:card" content="summary">
+    {% endif %}
+    <meta name="twitter:title" content="{{ seo_title }}">
+    <meta name="twitter:description" content="{{ seo_description }}">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "{% if seo_report %}CollectionPage{% else %}WebSite{% endif %}",
+        "name": {{ seo_title | jsonify }},
+        "description": {{ seo_description | jsonify }},
+        "url": {{ canonical_url | jsonify }},
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": {{ site.title | jsonify }},
+          "url": {{ site.url | jsonify }}
+        }{% if seo_report and seo_report.products %},
+        "mainEntity": {
+          "@type": "ItemList",
+          "numberOfItems": {{ seo_report.products.size }},
+          "itemListElement": [
+            {% for product in seo_report.products %}
+              {% assign product_image = product.image %}
+              {% unless product_image contains "://" %}
+                {% assign product_image = product_image | absolute_url %}
+              {% endunless %}
+              {
+                "@type": "ListItem",
+                "position": {{ forloop.index }},
+                "item": {
+                  "@type": "Product",
+                  "name": {{ product.name | jsonify }},
+                  "description": {{ product.description | jsonify }},
+                  "image": {{ product_image | jsonify }},
+                  "url": {{ product.url | jsonify }},
+                  "offers": {
+                    "@type": "Offer",
+                    "priceCurrency": "TWD",
+                    "price": {{ product.sale_price | remove: "NT$" | remove: "," | strip | jsonify }},
+                    "url": {{ product.url | jsonify }}
+                  }
+                }
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ]
+        }{% endif %}
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%2317202a'/><path d='M12 40 Q32 14 52 40' stroke='%23ea6a3a' stroke-width='4' fill='none' stroke-linecap='round'/><circle cx='12' cy='40' r='3' fill='%23f4efe6'/><circle cx='52' cy='40' r='3' fill='%23f4efe6'/></svg>">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,400&family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+TC:wght@400;600;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  </head>
+  <body data-accent="ember" data-pairing="editorial" data-density="comfortable" data-numbered="true">
+    <header class="masthead">
+      <div class="wrap masthead-inner">
+      <a class="logo" href="{{ '/' | relative_url }}" aria-label="{{ site.title }} 首頁">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 44 28">
+            <path d="M4 22 Q22 2 40 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="4" cy="22" r="2.4" fill="currentColor"/>
+            <circle cx="40" cy="22" r="2.4" fill="var(--accent)"/>
+            <line x1="22" y1="22" x2="22" y2="9" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="1.5 2"/>
+          </svg>
+        </span>
+        <span class="logo-word">{{ site.title | downcase }}</span>
+      </a>
+      <div class="mast-meta">
+        <span class="dot"></span>
+        <span>Monthly Dispatch</span>
+        <span>·</span>
+        <span>每月更新</span>
+      </div>
+      <nav class="mast-nav" aria-label="主要導覽">
+        <a href="{{ '/' | relative_url }}#deals">本月優惠</a>
+        <a href="{{ '/' | relative_url }}#articles">旅遊文章</a>
+      </nav>
+      </div>
+    </header>
+
+    {{ content }}
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="foot-grid">
+          <div class="foot-brand">
+            <a class="logo" href="{{ '/' | relative_url }}" aria-label="{{ site.title }}">
+              <span class="logo-mark" aria-hidden="true">
+                <svg viewBox="0 0 44 28">
+                  <path d="M4 22 Q22 2 40 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="4" cy="22" r="2.4" fill="currentColor"/>
+                  <circle cx="40" cy="22" r="2.4" fill="var(--accent)"/>
+                </svg>
+              </span>
+              <span class="logo-word">{{ site.title | downcase }}</span>
+            </a>
+            <p>{{ site.title }} 每月更新旅遊商品快報。商品價格與優惠以合作平台頁面為準。</p>
+          </div>
+          <div>
+            <h4>快報</h4>
+            <ul>
+              <li><a href="{{ '/' | relative_url }}#deals">本月優惠</a></li>
+              <li><a href="{{ '/' | relative_url }}#articles">延伸文章</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>主題</h4>
+            <ul>
+              <li><a href="{{ '/' | relative_url }}#articles">旅行遊記</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="foot-disclaimer">本網站所載之商品文字內容版權均屬 KKday 所有。tripezgo 僅為 KKday 聯盟行銷合作夥伴，與其無隸屬、代理或其他法律關係。</p>
+        <div class="foot-bottom">
+          <span>© {{ site.time | date: "%Y" }} {{ site.title }} | <a href="mailto:service@tripezgo.com" target="_blank">service@tripezgo.com</a></span>
+          <span>Updated at: {{ site.time | date: "%Y-%m-%d"}}</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ '/assets/js/countdown.js' | relative_url }}" defer></script>
+  </body>
+</html>
