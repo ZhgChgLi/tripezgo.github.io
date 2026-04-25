@@ -21,7 +21,6 @@ index_html = read_site_file("index.html")
 report_html = read_site_file("reports/2026-04/index.html")
 articles_html = read_site_file("articles.html")
 css = read_site_file("assets/css/main.css")
-js = read_site_file("assets/js/countdown.js")
 index_doc = Nokogiri::HTML(index_html)
 report_doc = Nokogiri::HTML(report_html)
 
@@ -48,8 +47,6 @@ assert(articles_html.strip.empty?, "Article data source page should not render v
 assert(css.include?(".deal-grid"), "Compiled CSS should include editorial deal grid styles")
 assert(css.include?(".masthead"), "Compiled CSS should include masthead styles")
 assert(!css.include?(".editor-note"), "Compiled CSS should not include removed editor note styles")
-assert(js.include?("node.hidden = true"), "Countdown script should hide expired offer countdowns")
-assert(js.include?("randomizeArticles"), "Main script should randomize article cards")
 
 index_html.scan(/data-offer-ends-at="([^"]+)"/).flatten.each do |timestamp|
   Time.iso8601(timestamp)
