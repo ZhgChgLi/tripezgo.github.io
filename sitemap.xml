@@ -1,0 +1,32 @@
+---
+layout: null
+permalink: /sitemap.xml
+sitemap: false
+---
+<?xml version="1.0" encoding="UTF-8"?>
+{%- assign reports = site.reports | sort: "month" | reverse -%}
+{%- assign latest_report = reports | first -%}
+{%- assign home_lastmod = latest_report.month | default: site.time | date: "%Y-%m-%d" -%}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{{ '/' | absolute_url }}</loc>
+    <lastmod>{{ home_lastmod }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>{{ '/reports/' | absolute_url }}</loc>
+    <lastmod>{{ home_lastmod }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  {%- for report in reports %}
+  {%- assign report_lastmod = report.month | date: "%Y-%m-%d" %}
+  <url>
+    <loc>{{ report.url | absolute_url }}</loc>
+    <lastmod>{{ report_lastmod }}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  {%- endfor %}
+</urlset>

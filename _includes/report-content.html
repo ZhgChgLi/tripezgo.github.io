@@ -96,18 +96,9 @@
             <div class="deal-prices">
               <div>
                 <span class="sale">{{ product.sale_price }}</span>
-              {% if product.price %}
-                  <span class="orig">{{ product.price }}</span>
-              {% endif %}
               </div>
               <span class="save">本月優惠</span>
             </div>
-            {% if product.offer_ends_at %}
-              <div class="deal-count" data-offer-ends-at="{{ product.offer_ends_at | date_to_xmlschema }}" hidden>
-                <span class="pulse"></span>
-                <span class="count-text">計算優惠倒數中</span>
-              </div>
-            {% endif %}
             <a class="deal-cta" href="{{ product.url }}" target="_blank" rel="noopener noreferrer">立即查看商品 <span class="arrow">→</span></a>
           </div>
         </article>
