@@ -96,8 +96,13 @@
             <div class="deal-prices">
               <div>
                 <span class="sale">{{ product.sale_price }}</span>
+                {% if product.price and product.price != product.sale_price %}
+                  <span class="orig">{{ product.price }}</span>
+                {% endif %}
               </div>
-              <span class="save">本月優惠</span>
+              {% if product.price and product.price != product.sale_price %}
+                <span class="save">本月優惠</span>
+              {% endif %}
             </div>
             <a class="deal-cta" href="{{ product.url }}" target="_blank" rel="noopener noreferrer">立即查看商品 <span class="arrow">→</span></a>
           </div>
