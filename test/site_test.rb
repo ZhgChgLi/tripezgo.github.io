@@ -33,14 +33,18 @@ report_doc = Nokogiri::HTML(report_html)
 # Homepage SEO/meta structure
 assert(index_doc.at("title")&.text&.end_with?("| Tripezgo"), "Homepage title should be suffixed with site name")
 assert(!index_doc.at('meta[name="description"]')&.[]("content").to_s.strip.empty?, "Homepage description should not be empty")
-assert(index_doc.at('link[rel="canonical"]')&.[]("href") == "https://tripezgo.com/", "Homepage should render canonical URL")
+assert(index_doc.at('link[rel="canonical"]')&.[]("href") == "https://zhgchg.li/reports/", "Homepage should render cross-site canonical URL to zhgchg.li/reports/")
+assert(index_doc.at('meta[property="og:url"]')&.[]("content") == "https://zhgchg.li/reports/", "Homepage og:url should match cross-site canonical")
 assert(!index_doc.at('meta[property="og:title"]')&.[]("content").to_s.strip.empty?, "Homepage should render Open Graph title")
 assert(index_doc.at('meta[property="og:image"]')&.[]("content")&.start_with?("https://"), "Homepage should render Open Graph image")
 assert(index_doc.at('meta[name="twitter:card"]')&.[]("content") == "summary_large_image", "Homepage should render Twitter card")
 
 index_json_ld = JSON.parse(index_doc.at('script[type="application/ld+json"]').text)
-assert(index_json_ld["@type"] == "CollectionPage", "Homepage JSON-LD should describe a collection page")
-assert(index_json_ld.dig("mainEntity", "@type") == "ItemList", "Homepage JSON-LD should include product item list")
+assert(index_json_ld.is_a?(Array), "Homepage JSON-LD should be an array of schema.org entities")
+ld_types = index_json_ld.map { |entry| entry["@type"] }
+assert(ld_types.include?("BreadcrumbList"), "Homepage JSON-LD should include BreadcrumbList")
+assert(ld_types.include?("Article"), "Homepage JSON-LD should include Article")
+assert(ld_types.include?("ItemList"), "Homepage JSON-LD should include product ItemList")
 
 # Homepage structural sections
 assert(index_html.scan("立即查看商品").size >= 6, "Homepage should render product CTAs")
@@ -51,7 +55,8 @@ assert(index_html.include?("KKday") && index_html.include?("聯盟行銷"), "Hom
 # Latest monthly report page
 assert(report_html.include?("KKday") && report_html.include?("聯盟行銷"), "Monthly report page should render KKday affiliate disclaimer")
 assert(!report_html.include?("本月編輯備註"), "Monthly report page should not render monthly editor note section")
-assert(report_doc.at('link[rel="canonical"]')&.[]("href") == "https://tripezgo.com/reports/#{latest_report_slug}/", "Monthly report page should render canonical URL")
+assert(report_doc.at('link[rel="canonical"]')&.[]("href") == "https://zhgchg.li/reports/#{latest_report_slug}/", "Monthly report page should render cross-site canonical URL to zhgchg.li")
+assert(report_doc.at('meta[property="og:url"]')&.[]("content") == "https://zhgchg.li/reports/#{latest_report_slug}/", "Monthly report og:url should match cross-site canonical")
 assert(report_doc.at('meta[property="og:type"]')&.[]("content") == "article", "Monthly report page should render article Open Graph type")
 
 # Older reports should link back to the latest report
@@ -76,7 +81,8 @@ end
 external_ctas = index_html.scan(/<a class="deal-cta"[^>]+>/)
 assert(!external_ctas.empty?, "Homepage should render at least one product CTA")
 assert(external_ctas.all? { |tag| tag.include?('target="_blank"') }, "Product CTAs should open in a new tab")
-assert(external_ctas.all? { |tag| tag.include?('rel="noopener noreferrer"') }, "Product CTAs should use safe external rel")
+assert(external_ctas.all? { |tag| tag =~ /rel="[^"]*\bnoopener\b[^"]*"/ && tag =~ /rel="[^"]*\bnoreferrer\b[^"]*"/ }, "Product CTAs should use safe external rel (noopener + noreferrer)")
+assert(external_ctas.all? { |tag| tag =~ /rel="[^"]*\bsponsored\b[^"]*"/ }, "Product CTAs should mark affiliate links with rel=sponsored")
 
 # Product/category heading structure (content-agnostic)
 assert(index_doc.css("h3.cat-title").any?, "Homepage should render product categories as h3.cat-title")
