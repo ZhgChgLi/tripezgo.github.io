@@ -73,8 +73,19 @@
         {% unless product_image contains "://" %}
           {% assign product_image = product_image | relative_url %}
         {% endunless %}
-        <article class="deal">
-          <a class="deal-photo" href="{{ product.url }}" target="_blank" rel="noopener noreferrer" aria-label="查看 {{ product.name }}">
+        {% assign sale_num = product.sale_price | remove: "NT$" | remove: "," | remove: " " | strip | plus: 0 %}
+        {% assign orig_num = product.price | remove: "NT$" | remove: "," | remove: " " | strip | plus: 0 %}
+        {% assign has_discount = false %}
+        {% assign discount_pct = 0 %}
+        {% if orig_num > 0 and sale_num > 0 and orig_num > sale_num %}
+          {% assign has_discount = true %}
+          {% assign saved = orig_num | minus: sale_num %}
+          {% assign discount_pct = saved | times: 100 | divided_by: orig_num %}
+        {% endif %}
+        <article class="deal{% if has_discount %} has-discount{% endif %}" itemscope itemtype="https://schema.org/Product">
+          <meta itemprop="name" content="{{ product.name }}">
+          <meta itemprop="image" content="{{ product_image }}">
+          <a class="deal-photo" href="{{ product.url }}" target="_blank" rel="noopener noreferrer sponsored" aria-label="查看 {{ product.name }}">
             <span class="deal-num">№ {{ deal_number | prepend: "00" | slice: -2, 2 }}</span>
             <img src="{{ product_image }}" alt="{{ product.name }}" loading="lazy">
           </a>
@@ -84,8 +95,8 @@
               <span class="sep">/</span>
               <span>{{ product.meta | default: product.category | default: "旅遊商品" }}</span>
             </div>
-            <h4>{{ product.name }}</h4>
-            <p class="deal-desc">{{ product.description }}</p>
+            <h4 itemprop="name">{{ product.name }}</h4>
+            <p class="deal-desc" itemprop="description">{{ product.description }}</p>
             {% if product.tags %}
               <div class="deal-tags" aria-label="{{ product.name }} 標籤">
                 {% for tag in product.tags %}
@@ -93,18 +104,20 @@
                 {% endfor %}
               </div>
             {% endif %}
-            <div class="deal-prices">
-              <div>
+            <div class="deal-prices" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+              <meta itemprop="priceCurrency" content="TWD">
+              <meta itemprop="price" content="{{ sale_num }}">
+              <meta itemprop="availability" content="https://schema.org/InStock">
+              <meta itemprop="url" content="{{ product.url }}">
+              <div class="deal-prices-main">
                 <span class="sale">{{ product.sale_price }}</span>
-                {% if product.price and product.price != product.sale_price %}
-                  <span class="orig">{{ product.price }}</span>
-                {% endif %}
+                {% if has_discount %}<span class="orig">{{ product.price }}</span>{% endif %}
               </div>
-              {% if product.price and product.price != product.sale_price %}
-                <span class="save">本月優惠</span>
+              {% if has_discount %}
+                <span class="save" aria-label="現省 {{ discount_pct }}%">省 {{ discount_pct }}%</span>
               {% endif %}
             </div>
-            <a class="deal-cta" href="{{ product.url }}" target="_blank" rel="noopener noreferrer">立即查看商品 <span class="arrow">→</span></a>
+            <a class="deal-cta" href="{{ product.url }}" target="_blank" rel="noopener noreferrer sponsored" itemprop="url">立即查看商品 <span class="arrow">→</span></a>
           </div>
         </article>
       {% endfor %}
