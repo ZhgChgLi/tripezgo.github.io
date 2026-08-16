@@ -1,79 +1,58 @@
-# Tripezgo
+# tripezgo.com
 
-一頁式旅遊商品導購網站，以每月優惠快報形式展示商品與延伸文章。網站使用 Jekyll，可部署到 GitHub Pages。
+TripEZGo iOS App 的官方網站。純靜態 HTML + CSS，沒有建置步驟，部署在 GitHub Pages。
 
-## 本機開發
+## 結構
+
+```
+index.html            首頁（繁體中文）
+privacy.html          隱私權政策（繁體中文）
+terms.html            使用者條款（繁體中文）
+en/index.html         首頁（English）
+en/privacy.html       Privacy Policy
+en/terms.html         Terms of Use
+404.html
+assets/css/site.css   全站唯一一份樣式，色票沿用 TripEZGo 品牌識別 token
+assets/img/           標誌、App 截圖（webp）、功能插圖（明暗各一份）、OG 圖
+CNAME                 tripezgo.com
+.nojekyll             關掉 GitHub Pages 的 Jekyll 處理
+robots.txt / sitemap.xml
+```
+
+送 App Store 審查時填的兩個網址：
+
+- 隱私權政策：`https://tripezgo.com/privacy.html`（英文版 `https://tripezgo.com/en/privacy.html`）
+- 使用者條款：`https://tripezgo.com/terms.html`（英文版 `https://tripezgo.com/en/terms.html`）
+
+## 本機預覽
+
+沒有相依套件，起一個靜態伺服器即可：
 
 ```bash
-bin/setup
-bin/dev
+python3 -m http.server 4000
 ```
 
-開啟 `http://127.0.0.1:4000`。`bin/dev` 會啟動 Jekyll live reload，修改 markdown、layout、CSS 或 JS 後會自動重新產生。
+開 <http://127.0.0.1:4000>。注意頁面內連結都是**絕對路徑**（`/assets/...`），
+直接用 `file://` 開會找不到資源，一定要透過 http server 看。
 
-可用環境變數調整 host 與 port：
+## 部署
 
-```bash
-PORT=4100 bin/dev
-HOST=0.0.0.0 PORT=4100 bin/dev
-LIVERELOAD_PORT=35731 bin/dev
-```
+`main` 有 push 就由 `.github/workflows/pages.yml` 部署整個根目錄到 GitHub Pages。
+Workflow 在上傳前會把所有 HTML 的站內連結對一次，斷掉就讓 build 失敗。
 
-## 本地測試與 Debug
+GitHub repo 的 `Settings → Pages → Source` 要選 **GitHub Actions**。
 
-```bash
-bin/doctor
-bin/test
-```
+## 素材來源
 
-- `bin/doctor`：確認 Ruby、Bundler、gems 與範例快報狀態。
-- `bin/test`：用 production 環境執行 `jekyll build --strict_front_matter --trace`，再檢查首頁、月報頁、商品 CTA、倒數 ISO 時間與文章欄目。
-- `make dev`、`make test`、`make build` 也可以使用。
+首頁的手機截圖與功能插圖來自設計稿專案
+（Open Design `e0f396c1-0fb8-48ff-9a11-996200cddadc`），已轉成 webp 並縮到網頁尺寸。
+標誌是設計稿切出的三份 SVG（圖標／字標／組合標），用 CSS `mask` 上色，
+所以同一個檔案在深淺色模式下各自跟著 `currentColor` 走。
 
-清除 Jekyll 輸出：
+## 待辦
 
-```bash
-make clean
-```
-
-## 部署到 GitHub Pages
-
-此專案已包含 GitHub Actions workflow：`.github/workflows/pages.yml`。
-
-1. 到 GitHub repo 的 `Settings` → `Pages`。
-2. `Build and deployment` 的 `Source` 選 `GitHub Actions`。
-3. 確認 default branch 是 `main`。
-4. Push 到 `main` 後，GitHub Actions 會執行 `bin/test`，成功後部署 `_site` 到 GitHub Pages。
-
-自訂網域使用根目錄 `CNAME`：
-
-```txt
-tripezgo.com
-```
-
-DNS 需要指到 GitHub Pages。若使用 apex domain `tripezgo.com`，在 DNS 設定 A records 到 GitHub Pages IP；若使用 `www.tripezgo.com`，用 CNAME 指到 `ZhgChgLi.github.io`。
-
-## 新增每月快報
-
-在 `_reports` 新增 `YYYY-MM.md`，並用 YAML front matter 維護商品與文章資料。首頁會自動依 `month` 取最新月份。
-
-商品欄位：
-
-- `name`
-- `image`
-- `description`
-- `tags`
-- `price`
-- `sale_price`
-- `url`
-- `offer_ends_at`，選填，ISO 時間字串
-- `category`，選填，用來分組顯示商品
-- `category_en`，選填，分類英文短標
-- `category_hint`，選填，分類說明文字
-
-文章欄位：
-
-- `title`
-- `image`
-- `url`
-- `source`，選填
+- App Store 上架後，把首頁 hero 的「即將於 App Store 上架」`<span class="btn">`
+  換成指向 App Store 的 `<a class="btn btn-primary">`（中英各一處）。
+- App 內 `PremiumLinks.privacyURL` 目前指向 `https://zhgchg.li/tripezgo/privacy`，
+  應改為 `https://tripezgo.com/privacy.html`；`termsURL` 目前是 Apple 標準 EULA，
+  可改為 `https://tripezgo.com/terms.html`（本站條款已包含 Apple EULA 的連結與必要條文）。

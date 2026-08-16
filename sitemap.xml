@@ -1,32 +1,54 @@
----
-layout: null
-permalink: /sitemap.xml
-sitemap: false
----
 <?xml version="1.0" encoding="UTF-8"?>
-{%- assign reports = site.reports | sort: "month" | reverse -%}
-{%- assign latest_report = reports | first -%}
-{%- assign home_lastmod = latest_report.month | default: site.time | date: "%Y-%m-%d" -%}
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>{{ '/' | absolute_url }}</loc>
-    <lastmod>{{ home_lastmod }}</lastmod>
+    <loc>https://tripezgo.com/</loc>
+    <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tripezgo.com/"/>
   </url>
   <url>
-    <loc>{{ '/reports/' | absolute_url }}</loc>
-    <lastmod>{{ home_lastmod }}</lastmod>
+    <loc>https://tripezgo.com/en/</loc>
+    <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tripezgo.com/"/>
   </url>
-  {%- for report in reports %}
-  {%- assign report_lastmod = report.month | date: "%Y-%m-%d" %}
   <url>
-    <loc>{{ report.url | absolute_url }}</loc>
-    <lastmod>{{ report_lastmod }}</lastmod>
+    <loc>https://tripezgo.com/privacy.html</loc>
+    <lastmod>2026-08-16</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/privacy.html"/>
   </url>
-  {%- endfor %}
+  <url>
+    <loc>https://tripezgo.com/en/privacy.html</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/privacy.html"/>
+  </url>
+  <url>
+    <loc>https://tripezgo.com/terms.html</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/terms.html"/>
+  </url>
+  <url>
+    <loc>https://tripezgo.com/en/terms.html</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/terms.html"/>
+  </url>
 </urlset>
