@@ -260,27 +260,6 @@ h3 { font-size: var(--text-xl); margin: 0 0 10px; font-weight: 600; }
 .feature-media { display: flex; justify-content: center; }
 .feature-media .phone { --w: clamp(210px, 23vw, 260px); }
 
-/* ─── 卡片網格 ─────────────────────────────────────────────────────── */
-.grid {
-  display: grid; gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-.card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 26px;
-  box-shadow: var(--shadow-sm);
-}
-.card h3 { margin-bottom: 8px; }
-.card p { margin: 0; color: var(--muted); font-size: var(--text-sm); }
-.card figure { margin: 0 0 18px; }
-.card figure img { border-radius: var(--radius-md); border: 1px solid var(--border-soft); }
-
-/* 明暗兩份插圖由 <picture> 的 media source 挑，不在這裡切——
-   換成 display 開關的話，兩份都會下載，而且深色下 alt 會跟著整個元素從
-   無障礙樹上消失。 */
-
 /* ─── 隱私區塊 ─────────────────────────────────────────────────────── */
 .privacy-band .wrap {
   display: grid; gap: clamp(32px, 5vw, 64px); align-items: center;
@@ -297,38 +276,6 @@ h3 { font-size: var(--text-xl); margin: 0 0 10px; font-weight: 600; }
   background: var(--accent-wash);
   box-shadow: inset 0 0 0 1.5px var(--accent);
 }
-
-/* ─── 方案 ─────────────────────────────────────────────────────────── */
-.plans { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-.plan {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 30px;
-  display: flex; flex-direction: column;
-}
-.plan.is-featured { border-color: var(--accent); box-shadow: var(--shadow-md); }
-.plan .tag {
-  align-self: flex-start;
-  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: .06em;
-  text-transform: uppercase; color: var(--accent-ink);
-  background: var(--accent-wash); border-radius: var(--radius-pill);
-  padding: 3px 12px; margin-bottom: 16px;
-}
-.plan h3 { margin-bottom: 6px; }
-.plan .price { font-size: var(--text-2xl); font-weight: 700; letter-spacing: var(--tracking-display); margin: 0 0 4px; }
-.plan .price small { font-size: var(--text-sm); font-weight: 400; color: var(--muted); }
-.plan .price-note { margin: 0 0 20px; font-size: var(--text-sm); color: var(--muted); }
-.plan ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: var(--text-sm); }
-.plan ul li { display: flex; gap: 10px; align-items: flex-start; }
-.plan ul li svg { flex: none; width: 18px; height: 18px; margin-top: 4px; stroke: var(--accent); fill: none; stroke-width: 2.4; }
-.plan-prices { display: grid; gap: 8px; margin: 0 0 20px; }
-.plan-prices div {
-  display: flex; justify-content: space-between; gap: 12px;
-  font-size: var(--text-sm); padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-soft);
-}
-.plan-prices div:last-child { border-bottom: 0; padding-bottom: 0; }
-.plan-prices b { font-variant-numeric: tabular-nums; }
-.fineprint { margin: 24px 0 0; font-size: var(--text-sm); color: var(--muted); max-width: 62ch; }
 
 /* ─── 頁尾 ─────────────────────────────────────────────────────────── */
 .site-footer {
@@ -372,26 +319,6 @@ h3 { font-size: var(--text-xl); margin: 0 0 10px; font-weight: 600; }
 .legal li { margin-bottom: 8px; }
 .legal li::marker { color: var(--muted); }
 .legal strong { font-weight: 600; }
-.legal .callout {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-inline-start: 3px solid var(--accent);
-  border-radius: var(--radius-md);
-  padding: 20px 24px;
-  margin: 0 0 32px;
-}
-.legal .callout p:last-child { margin-bottom: 0; }
-.legal table {
-  width: 100%; border-collapse: collapse; margin: 0 0 24px;
-  font-size: var(--text-sm);
-}
-.legal table th, .legal table td {
-  text-align: start; padding: 12px 14px;
-  border-bottom: 1px solid var(--border-soft); vertical-align: top;
-}
-.legal table th { color: var(--muted); font-weight: 600; font-size: var(--text-xs); white-space: nowrap; }
-.table-scroll { overflow-x: auto; margin: 0 0 24px; -webkit-overflow-scrolling: touch; }
-.table-scroll table { margin-bottom: 0; }
 .toc {
   background: var(--surface); border: 1px solid var(--border-soft);
   border-radius: var(--radius-md); padding: 20px 24px; margin: 0 0 44px;
