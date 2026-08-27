@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TripEZGo — Plan the whole trip, all in one place</title>
-<meta name="description" content="TripEZGo is an iPhone travel-planning app. Calendar, map and overview modes for every day of the trip; tickets, to-dos and notes live under the event they belong to. Works offline — your data stays on your device and in your own iCloud.">
+<meta name="description" content="TripEZGo is an iPhone travel-planning app. One timeline for the whole day, the stretch between two stops worked out for you, and tickets, to-dos and notes filed under the event they belong to. Works offline — your data stays on your device and in your own iCloud.">
 <meta name="theme-color" content="#fbf8f4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://tripezgo.com/en/">
@@ -19,7 +19,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="zh_TW">
 <meta property="og:title" content="TripEZGo — Plan the whole trip, all in one place">
-<meta property="og:description" content="Calendar, map and overview modes for every day of the trip. Tickets, to-dos and notes live under the event they belong to. Works offline; your data stays on your device and in your own iCloud.">
+<meta property="og:description" content="One timeline for the whole day. The stretch between two stops worked out for you. Tickets, to-dos and notes filed under the event they belong to. Works offline; your data stays on your device and in your own iCloud.">
 <meta property="og:url" content="https://tripezgo.com/en/">
 <meta property="og:image" content="https://tripezgo.com/assets/img/og-en.png">
 <meta property="og:image:width" content="1200">
@@ -33,7 +33,7 @@
   "name": "TripEZGo",
   "applicationCategory": "TravelApplication",
   "operatingSystem": "iOS",
-  "description": "Travel-planning app for iPhone. Calendar, map and overview modes for every day of the trip; tickets, to-dos and notes live under the event they belong to. Works offline.",
+  "description": "Travel-planning app for iPhone. One timeline for the whole day, the stretch between two stops worked out for you, and tickets, to-dos and notes filed under the event they belong to. Works offline.",
   "url": "https://tripezgo.com/en/",
   "inLanguage": ["en", "zh-Hant-TW", "zh-Hant-HK", "ja"],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }
@@ -50,6 +50,7 @@
       <span class="m m-word" role="img" aria-hidden="true"></span>
     </a>
     <nav class="site-nav" aria-label="Main">
+      <a class="hide-sm" href="#why">Why</a>
       <a class="hide-sm" href="#features">Features</a>
       <a class="hide-sm" href="#privacy">Privacy</a>
       <a class="lang" href="/" hreflang="zh-Hant" lang="zh-Hant">中文</a>
@@ -65,7 +66,7 @@
       <div>
         <p class="eyebrow">Travel planning for iPhone</p>
         <h1>Plan the whole trip, <em>all in one place</em></h1>
-        <p class="lede">From “where should we go” to “we’re back” — easy to arrange, easy to change, and it comes with you once you’re there. TripEZGo keeps the itinerary, the tickets, the to-dos and the notes under one trip.</p>
+        <p class="lede">Plan a day that actually fits. Events, legs, tickets and to-dos all sit on one timeline — drag to reschedule. Works offline, and your data stays on your device.</p>
         <div class="hero-actions">
           <span class="btn btn-primary" aria-disabled="true">Coming soon to the App Store</span>
           <a class="btn btn-ghost" href="#features">See how it works</a>
@@ -78,13 +79,41 @@
       </div>
       <div class="phone-pair">
         <div class="phone">
-          <img src="/assets/img/shots/overview.webp" width="720" height="1565"
-               alt="TripEZGo overview screen: a five-day Tokyo trip with the day’s events in time order and the travel time between them" fetchpriority="high">
+          <img src="/assets/img/shots/en/overview.webp" width="720" height="1565"
+               alt="TripEZGo overview: day 4 of a six-day San’yō trip, events listed by time with walking times and gap warnings between them" fetchpriority="high">
         </div>
         <div class="phone">
-          <img src="/assets/img/shots/timeline.webp" width="720" height="1565"
-               alt="TripEZGo calendar screen: one day laid out along a timeline" loading="lazy">
+          <img src="/assets/img/shots/en/timeline.webp" width="720" height="1565"
+               alt="TripEZGo timeline: a day’s events laid out along a time axis, with all-day items pinned to the top" loading="lazy">
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Why ──────────────────────────────────────────────────────── -->
+  <section class="section" id="why">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Why it exists</p>
+        <h2>The hard part isn’t choosing where to go.<span class="nb"> It’s the order.</span></h2>
+        <p class="lede">Build it in a spreadsheet and you do the arithmetic yourself, look up every connection yourself, paste in every ticket yourself. Then three things happen.</p>
+      </div>
+      <div class="pains">
+        <article class="pain">
+          <span class="n">01</span>
+          <h3>It scatters</h3>
+          <p>The plan in a notes app, the flight in email, the hotel confirmation in a chat thread, the restaurant in a screenshot. On the ground, finding the ticket takes longer than getting to the place.</p>
+        </article>
+        <article class="pain">
+          <span class="n">02</span>
+          <h3>The timing is guesswork</h3>
+          <p>How long that walk takes, when the next train leaves — you look each one up by hand. Miss a single leg and the rest of the day goes with it.</p>
+        </article>
+        <article class="pain">
+          <span class="n">03</span>
+          <h3>Plans always change</h3>
+          <p>A closure, a stop that ran long, traffic. Changing it is such a chore that most people don’t — and from day two the plan in your hand isn’t true any more.</p>
+        </article>
       </div>
     </div>
   </section>
@@ -94,71 +123,90 @@
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Features</p>
-        <h2>Everything a trip needs, in one app</h2>
-        <p class="lede">No more switching between a calendar, a maps app, a notepad and a photo album.</p>
+        <h2>Everything a trip needs, <span class="nb">in one app</span></h2>
+        <p class="lede">No switching between a calendar, a map, a notes app and your camera roll.</p>
       </div>
 
       <article class="feature">
         <div>
-          <h3>Calendar, map and overview — <em>a whole day that fits</em></h3>
-          <p>Arrange each day and the route between stops however you like. The gap between two stops? It works that one out for you. Drag to reorder, and a day carries its events with it.</p>
+          <h3>One timeline, <em>a whole day that fits</em></h3>
+          <p>Calendar and timeline views. Long-press to add, drag to change the time — there is no “tap Edit first”. All-day things like a rental car or a rail pass pin to their own header. Push an event earlier or later and everything after it moves with it; cancel one and it stays in place, struck through, instead of vanishing.</p>
         </div>
         <div class="feature-media">
           <div class="phone">
-            <img src="/assets/img/shots/timeline.webp" width="720" height="1565"
-                 alt="Calendar view: the day’s events in time order, with the transport mode and duration shown between them" loading="lazy">
+            <img src="/assets/img/shots/en/timeline.webp" width="720" height="1565"
+                 alt="Timeline view: a day’s events in time order, with the mode of transport and duration shown between two of them" loading="lazy">
           </div>
         </div>
       </article>
 
       <article class="feature is-flipped">
         <div>
-          <h3>See what’s nearby, <em>add it to today</em></h3>
-          <p>How far, how long on foot — then drop it straight into the day you’re already planning. Not sure which day yet? Save it as a marker and it stays on the map until you decide.</p>
+          <h3>The stretch between two stops, <em>worked out for you</em></h3>
+          <p>Walking and driving times are estimated from the map. For public transport you can pick a mode and save several departures — the one you chose is shown first, and you can switch to a backup any time. When the estimated travel time is longer than the gap you left, it tells you before you find out the hard way.</p>
         </div>
         <div class="feature-media">
           <div class="phone">
-            <img src="/assets/img/shots/map.webp" width="720" height="1565"
-                 alt="Map view: pins and the route for the day, with nearby places you can add to the itinerary" loading="lazy">
+            <img src="/assets/img/shots/en/leg.webp" width="720" height="1565"
+                 alt="Leg panel: the train between two events with its duration and the gap around it, plus a button to open the route in Maps" loading="lazy">
           </div>
         </div>
       </article>
 
       <article class="feature">
         <div>
-          <h3>Tickets, to-dos, notes — <em>all on that one stop</em></h3>
-          <p>No hunting for the PDF: it lives under the event, ready the moment you arrive. Documents that don’t belong to any single day — passports, insurance — go in Important Files.</p>
+          <h3>Will the day work? <em>See it on the map first</em></h3>
+          <p>Every located stop that day is connected in order, and that line is the leg — tap it to view or set it. Drop your own pins on places you want to go, or share them in from another app. Major convenience-store chains are included, and you can get a walking route from wherever you are.</p>
         </div>
         <div class="feature-media">
           <div class="phone">
-            <img src="/assets/img/shots/detail.webp" width="720" height="1565"
-                 alt="Event detail: files, to-dos and notes attached to a single event" loading="lazy">
+            <img src="/assets/img/shots/en/map.webp" width="720" height="1565"
+                 alt="Map view: the day’s pins joined in order into a route, with convenience stores marked along the way" loading="lazy">
           </div>
         </div>
       </article>
 
       <article class="feature is-flipped">
+        <div>
+          <h3>Everything filed <em>under the thing it belongs to</em></h3>
+          <p>The ticket goes on the train, the reservation on the restaurant, the reminder on “before you leave”. Links, photos and PDFs attach to the event itself and open with one tap; saved links keep their cookies, so you don’t get logged out. Documents you need for the whole trip — a rail pass, insurance — live in the overview instead of six days deep.</p>
+        </div>
+        <div class="feature-media">
+          <div class="phone">
+            <img src="/assets/img/shots/en/detail.webp" width="720" height="1565"
+                 alt="Event detail: one stop with its description, to-do list, attached file and a map of the location" loading="lazy">
+          </div>
+        </div>
+      </article>
+
+      <article class="feature">
         <div>
           <h3>Can’t say it out loud? <em>Tap and it speaks</em></h3>
-          <p>Common travel phrases built in, with romanization and translation. Just play it for them. Speech is synthesised on the device, so it works with no connection.</p>
+          <p>Travel notes are shared across every trip — rental-car rules, exchange-rate maths, whatever the host told you. Japanese travel phrases are built in with translation and pronunciation: tap once and let the phone say it. Speech is synthesised on the device, so it works with no connection.</p>
         </div>
         <div class="feature-media">
           <div class="phone">
-            <img src="/assets/img/shots/speak.webp" width="720" height="1565"
-                 alt="A travel phrase note with a play button beside every foreign-language line" loading="lazy">
+            <img src="/assets/img/shots/en/speak.webp" width="720" height="1565"
+                 alt="Notes: the built-in Japanese travel phrasebook grouped by topic, filterable by folder and tag" loading="lazy">
           </div>
         </div>
       </article>
 
-      <article class="feature">
+      <article class="feature is-flipped">
         <div>
-          <h3>Your next move, <em>on the Lock Screen</em></h3>
-          <p>Widgets, Live Activities, Apple Calendar and Siri Shortcuts — fewer taps while you travel. The event you’re in shows up on the Lock Screen and in the Dynamic Island, so you know what’s next without opening the app.</p>
+          <h3>Widgets and Live Activities, <em>built into the Apple ecosystem</em></h3>
+          <p>Once a trip starts, a Live Activity shows the current event, the time left and the next stop on the Lock Screen — no unlocking. Widgets put today’s events, files and to-dos on your Home Screen. Apple Calendar and Siri Shortcuts are supported too.</p>
         </div>
         <div class="feature-media">
-          <div class="phone">
-            <img src="/assets/img/shots/live.webp" width="720" height="1565"
-                 alt="An iPhone Lock Screen showing a Live Activity with the event in progress and the time remaining" loading="lazy">
+          <div class="phone-duo">
+            <div class="phone">
+              <img src="/assets/img/shots/en/live.webp" width="720" height="1565"
+                   alt="A Live Activity on the iPhone Lock Screen showing the current event, the time left and the next stop" loading="lazy">
+            </div>
+            <div class="phone">
+              <img src="/assets/img/shots/en/widget.webp" width="720" height="1565"
+                   alt="Three TripEZGo widgets on the iPhone Home Screen: today’s events, files and to-dos" loading="lazy">
+            </div>
           </div>
         </div>
       </article>
@@ -169,23 +217,23 @@
   <section class="section privacy-band" id="privacy">
     <div class="wrap">
       <div>
-        <p class="eyebrow">Offline-first, privacy-first</p>
-        <h2>No account. No server of ours.</h2>
-        <p class="lede">View and edit trips with no connection. Your travel data lives on this device and syncs, encrypted, through your own iCloud account — never through a third-party server.</p>
+        <p class="eyebrow">Works offline, private by default</p>
+        <h2><span class="nb">No account,</span> <span class="nb">no server of ours</span></h2>
+        <p class="lede">View and edit your trips with no connection. Your data is stored on this device and synced between your own devices through your own iCloud account — never kept on a third-party server.</p>
         <ul class="bullets">
-          <li><span><strong>No sign-up.</strong> Install it and plan day one. No account, no password.</span></li>
-          <li><span><strong>No tracking, no analytics SDK.</strong> There is no third-party analytics or advertising code in the app.</span></li>
-          <li><span><strong>Sync runs on your iCloud.</strong> Data is stored in your Apple ID’s private database — only your devices can open it.</span></li>
-          <li><span><strong>Backup and export are free.</strong> Archive a whole vault into one file, and export any trip as an .ics calendar.</span></li>
+          <li><span><strong>No sign-up.</strong> Install it and plan day one — no account, no password.</span></li>
+          <li><span><strong>No tracking, no analytics SDKs.</strong> There is no third-party analytics or ad code in the app.</span></li>
+          <li><span><strong>Sync runs on your iCloud.</strong> Data goes into your Apple ID’s private database; only your devices can open it.</span></li>
+          <li><span><strong>Backup and export are free.</strong> Back up a whole library to one file, or export a trip as .ics.</span></li>
         </ul>
         <p style="margin:26px 0 0"><a href="/en/privacy.html">Read the full Privacy Policy →</a></p>
       </div>
       <div class="feature-media">
         <figure style="margin:0;max-width:520px">
           <picture>
-            <source srcset="/assets/img/feat/privacy-dark.webp" media="(prefers-color-scheme: dark)">
-            <img src="/assets/img/feat/privacy.webp" width="668" height="472"
-                 alt="Illustration: a box labelled “this iPhone — all data” holding the itinerary, tickets, bookings, notes, photos and to-dos, with an iCloud encrypted backup beneath it unlocked by your Apple ID" loading="lazy">
+            <source srcset="/assets/img/feat/privacy-en-dark.webp" media="(prefers-color-scheme: dark)">
+            <img src="/assets/img/feat/privacy-en.webp" width="668" height="472"
+                 alt="Diagram: a box labelled “this iPhone · all of it” holding the itinerary, tickets, bookings, notes, photos and to-dos, above an encrypted iCloud backup unlocked by your Apple ID" loading="lazy">
           </picture>
         </figure>
       </div>

@@ -260,6 +260,26 @@ h3 { font-size: var(--text-xl); margin: 0 0 10px; font-weight: 600; }
 .feature-media { display: flex; justify-content: center; }
 .feature-media .phone { --w: clamp(210px, 23vw, 260px); }
 
+/* ─── 痛點三段 ─────────────────────────────────────────────────────── */
+.pains { display: grid; gap: clamp(18px, 2.6vw, 26px); }
+@media (min-width: 780px) { .pains { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.pain {
+  background: var(--page); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg); padding: clamp(22px, 3vw, 30px);
+}
+.pain .n {
+  display: block; margin-bottom: 12px;
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: .1em; color: var(--accent-ink);
+}
+.pain h3 { font-size: var(--text-lg); margin-bottom: 8px; }
+.pain p { margin: 0; color: var(--muted); font-size: var(--text-sm); }
+
+/* 兩支手機並排：即時動態與桌面小工具是同一件事的兩面，分成兩列會讀成兩個功能。 */
+.phone-duo { display: flex; align-items: flex-end; justify-content: center; gap: clamp(10px, 2vw, 20px); }
+.phone-duo .phone { --w: clamp(138px, 21vw, 240px); }
+.phone-duo .phone:last-child { margin-bottom: 24px; }
+
 /* ─── 隱私區塊 ─────────────────────────────────────────────────────── */
 .privacy-band .wrap {
   display: grid; gap: clamp(32px, 5vw, 64px); align-items: center;
