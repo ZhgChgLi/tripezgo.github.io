@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>加入這趟旅程 — TripEZGo</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#fbf8f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/icon-180.png">
+<link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="TripEZGo 首頁">
+      <span class="m m-mark" role="img" aria-hidden="true"></span>
+      <span class="m m-word" role="img" aria-hidden="true"></span>
+    </a>
+    <nav class="site-nav" aria-label="主要導覽">
+      <a class="lang" href="/en/" hreflang="en" lang="en">EN</a>
+    </nav>
+  </div>
+</header>
+
+<main class="notfound">
+  <div class="wrap">
+    <p class="eyebrow">旅程邀請</p>
+    <h1 id="head">正在打開這趟旅程⋯</h1>
+    <p class="lede" style="margin-inline:auto" id="lede">
+      裝了 TripEZGo 的 iPhone 會直接打開 App。沒有跳過去的話，用底下這顆。
+    </p>
+    <a class="btn btn-primary" id="go" href="/" hidden>在 TripEZGo 中打開</a>
+    <p class="lede" style="margin-inline:auto;margin-top:24px;font-size:var(--text-sm)" id="foot">
+      還沒有 TripEZGo？<a href="/">看看它是什麼</a>
+    </p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-bottom" style="padding-top:0">
+      <span>© 2026 TripEZGo</span>
+      <nav class="footer-links" aria-label="頁尾導覽">
+        <a href="/privacy.html">隱私權政策</a>
+        <a href="/terms.html">使用者條款</a>
+        <a href="mailto:zhgchgli@gmail.com">聯絡我們</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* 這一頁只做一件事：把 # 片段裡那條 iCloud 分享網址交回給使用者。
+ *
+ * **為什麼放在 # 裡**：片段不會送到伺服器，所以那條邀請網址不會出現在 GitHub Pages 的
+ * 存取記錄裡。它是一把鑰匙——拿到的人就進得去，沒有理由留在別人的日誌上。
+ *
+ * **為什麼不自動跳轉**：裝了 App 的 iPhone 根本不會走到這一頁（Universal Link 會先把它
+ * 攔走）。走到這裡的人是「沒裝 App」或「在電腦上」，那時候把他丟去 icloud.com 只會看到
+ * 一頁要他裝 App 的畫面——不如在這裡講清楚，再讓他自己按。
+ */
+(function () {
+  var head = document.getElementById('head');
+  var lede = document.getElementById('lede');
+  var go = document.getElementById('go');
+
+  function decode(fragment) {
+    /* base64url → 原本那條網址。舊的 `#s=` 與純片段兩種都收。 */
+    var raw = fragment.replace(/^#/, '');
+    if (raw.indexOf('s=') === 0) raw = raw.slice(2);
+    if (!raw) return '';
+    var padded = raw.replace(/-/g, '+').replace(/_/g, '/');
+    while (padded.length % 4) padded += '=';
+    try {
+      var text = decodeURIComponent(escape(atob(padded)));
+      /* 只接受 iCloud 的分享網址——這一頁不是一個誰都可以用的轉址器。 */
+      return /^https:\/\/(www\.)?icloud\.com\//.test(text) ? text : '';
+    } catch (err) {
+      return '';
+    }
+  }
+
+  var url = decode(location.hash);
+  if (!url) {
+    head.textContent = '這條邀請連結不完整';
+    lede.textContent = '請對方重新複製一次連結——網址最後那一段（# 之後）也要一起帶上。';
+    return;
+  }
+  go.href = url;
+  go.hidden = false;
+})();
+</script>
+
+</body>
+</html>

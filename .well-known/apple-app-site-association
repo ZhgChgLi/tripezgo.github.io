@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["UGFKKJS5G7.com.zhgchgli.tripezgo"],
+        "components": [
+          {
+            "/": "/join/",
+            "comment": "旅程邀請連結。要加入的那一趟寫在 # 片段裡，所以路徑只有這一條。"
+          },
+          {
+            "/": "/join/*",
+            "comment": "同上，容許之後在路徑上多帶東西。"
+          }
+        ]
+      }
+    ]
+  }
+}
