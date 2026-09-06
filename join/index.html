@@ -21,6 +21,7 @@
     </a>
     <nav class="site-nav" aria-label="主要導覽">
       <a class="lang" href="/en/" hreflang="en" lang="en">EN</a>
+      <a class="lang" href="/ja/" hreflang="ja" lang="ja">日本語</a>
     </nav>
   </div>
 </header>
@@ -34,7 +35,7 @@
     </p>
     <a class="btn btn-primary" id="go" href="/" hidden>在 TripEZGo 中打開</a>
     <p class="lede" style="margin-inline:auto;margin-top:24px;font-size:var(--text-sm)" id="foot">
-      還沒有 TripEZGo？<a href="/">看看它是什麼</a>
+      還沒有 TripEZGo？<a href="/" id="learn">看看它是什麼</a>
     </p>
   </div>
 </main>
@@ -66,6 +67,64 @@
   var head = document.getElementById('head');
   var lede = document.getElementById('lede');
   var go = document.getElementById('go');
+  var learn = document.getElementById('learn');
+
+  /* 邀請連結會傳給誰事先不知道——同行的人可能讀日文或英文。這一頁沒有語系網址
+   * （連結本身是 /join/#...），所以照瀏覽器的語言換一套字串就好。 */
+  var STRINGS = {
+    'zh': {
+      lang: 'zh-Hant-TW',
+      title: '加入這趟旅程 — TripEZGo',
+      eyebrow: '旅程邀請',
+      head: '正在打開這趟旅程⋯',
+      lede: '裝了 TripEZGo 的 iPhone 會直接打開 App。沒有跳過去的話，用底下這顆。',
+      go: '在 TripEZGo 中打開',
+      learn: '看看它是什麼',
+      learnPrefix: '還沒有 TripEZGo？',
+      home: '/',
+      badHead: '這條邀請連結不完整',
+      badLede: '請對方重新複製一次連結——網址最後那一段（# 之後）也要一起帶上。'
+    },
+    'ja': {
+      lang: 'ja',
+      title: 'この旅程に参加 — TripEZGo',
+      eyebrow: '旅程への招待',
+      head: 'この旅程を開いています⋯',
+      lede: 'TripEZGo が入っている iPhone なら、そのままアプリが開きます。開かないときは下のボタンから。',
+      go: 'TripEZGo で開く',
+      learn: 'どんなアプリか見る',
+      learnPrefix: 'TripEZGo をまだお持ちでない方は',
+      home: '/ja/',
+      badHead: 'この招待リンクは不完全です',
+      badLede: 'リンクをもう一度コピーしてもらってください。URL の最後の部分（# のあと）も必要です。'
+    },
+    'en': {
+      lang: 'en',
+      title: 'Join this trip — TripEZGo',
+      eyebrow: 'Trip invitation',
+      head: 'Opening this trip…',
+      lede: 'An iPhone with TripEZGo installed opens the app straight away. If it didn’t, use the button below.',
+      go: 'Open in TripEZGo',
+      learn: 'see what it is',
+      learnPrefix: 'Don’t have TripEZGo yet? ',
+      home: '/en/',
+      badHead: 'This invite link is incomplete',
+      badLede: 'Ask them to copy the link again — the last part of the address (after the #) has to come with it.'
+    }
+  };
+
+  var tag = (navigator.language || 'zh').toLowerCase();
+  var t = STRINGS[tag.indexOf('ja') === 0 ? 'ja' : (tag.indexOf('zh') === 0 ? 'zh' : 'en')];
+
+  document.documentElement.lang = t.lang;
+  document.title = t.title;
+  document.querySelector('.eyebrow').textContent = t.eyebrow;
+  head.textContent = t.head;
+  lede.textContent = t.lede;
+  go.textContent = t.go;
+  learn.textContent = t.learn;
+  learn.href = t.home;
+  learn.parentNode.firstChild.nodeValue = t.learnPrefix;
 
   function decode(fragment) {
     /* base64url → 原本那條網址。舊的 `#s=` 與純片段兩種都收。 */
@@ -85,8 +144,8 @@
 
   var url = decode(location.hash);
   if (!url) {
-    head.textContent = '這條邀請連結不完整';
-    lede.textContent = '請對方重新複製一次連結——網址最後那一段（# 之後）也要一起帶上。';
+    head.textContent = t.badHead;
+    lede.textContent = t.badLede;
     return;
   }
   go.href = url;

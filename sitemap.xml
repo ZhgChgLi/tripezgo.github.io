@@ -3,20 +3,32 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://tripezgo.com/</loc>
-    <lastmod>2026-08-16</lastmod>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tripezgo.com/"/>
   </url>
   <url>
     <loc>https://tripezgo.com/en/</loc>
-    <lastmod>2026-08-16</lastmod>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tripezgo.com/"/>
+  </url>
+  <url>
+    <loc>https://tripezgo.com/ja/</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tripezgo.com/"/>
   </url>
   <url>
@@ -26,6 +38,7 @@
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/privacy.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/privacy.html"/>
   </url>
   <url>
     <loc>https://tripezgo.com/en/privacy.html</loc>
@@ -34,6 +47,16 @@
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/privacy.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/privacy.html"/>
+  </url>
+  <url>
+    <loc>https://tripezgo.com/ja/privacy.html</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/privacy.html"/>
   </url>
   <url>
     <loc>https://tripezgo.com/terms.html</loc>
@@ -42,6 +65,7 @@
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/terms.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/terms.html"/>
   </url>
   <url>
     <loc>https://tripezgo.com/en/terms.html</loc>
@@ -50,5 +74,15 @@
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/terms.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/terms.html"/>
+  </url>
+  <url>
+    <loc>https://tripezgo.com/ja/terms.html</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://tripezgo.com/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tripezgo.com/en/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://tripezgo.com/ja/terms.html"/>
   </url>
 </urlset>

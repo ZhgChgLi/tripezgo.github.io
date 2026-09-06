@@ -73,6 +73,15 @@
   }
 }
 
+/* 日文頁：PingFang TC 會拿繁體字形去畫日文（直、海、每⋯⋯），字形不對。
+   選到的是 :root 同一個 html 元素，詳細度比 :root 高，所以蓋得過去。 */
+html[lang^="ja"] {
+  --font-body: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+               "Noto Sans JP", "Yu Gothic", Meiryo, "Helvetica Neue", Arial, sans-serif;
+  /* 嚴格禁則：不讓小假名與長音符號（ィ、ー、っ⋯⋯）被丟到行首 */
+  line-break: strict;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
@@ -91,6 +100,10 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
+/* .btn 的 display 會蓋掉 UA 樣式表給 [hidden] 的 display:none——
+   /join/ 那顆按鈕就是這樣在連結壞掉時還露出來的。 */
+[hidden] { display: none !important; }
 
 img, svg { max-width: 100%; }
 img { height: auto; display: block; }
