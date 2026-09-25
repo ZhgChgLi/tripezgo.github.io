@@ -368,7 +368,155 @@ function writeClipboard(text) {
 function footHtml() {
   return '<footer class="foot"><p>' + esc(s().note) + '</p><div class="author">' + authorHtml() + '</div></footer>';
 }
-function authorHtml() { return ''; }
+/* ═══ 作者區：登入後停止分享（票 13） ═══════════════════════════
+ * 九成九的讀者不是作者，所以頁尾只有一行字；按了才長出卡片（設計稿 4a–4d）。
+ * 「停止分享」是次要鈕（白底紅字），紅色實心只在確認視窗裡出現一次（D4）。
+ *
+ * author: 'entry' | 'signin' | 'checking' | 'owner' | 'confirm' | 'notowner' */
+let author = 'entry';
+let busy = false;
+
+function authorHtml() {
+  const card = (testid, k, t, w, row) => '<div class="acard" data-testid="' + testid + '"><p class="k">' + esc(k) + '</p>'
+    + '<p class="t">' + esc(t) + '</p><p class="w">' + esc(w) + '</p><div class="row">' + row + '</div></div>';
+  if (author === 'signin' || author === 'checking') {
+    return card('author-signin', s().signinK, s().signinT, s().signinWhy,
+      '<button class="btn2" type="button" data-author="go" data-testid="sign-in"' + (author === 'checking' || busy ? ' disabled aria-busy="true"' : '') + '>'
+      + svg(IC.link) + esc(s().signinGo) + '</button>'
+      + '<button class="linkbtn" type="button" data-author="entry">' + esc(s().cancel) + '</button>');
+  }
+  if (author === 'owner' || author === 'confirm') {
+    return card('author-owner', s().ownerK, s().ownerT, s().ownerWhy,
+      '<button class="btn2 is-danger" type="button" data-author="confirm" data-testid="author-stop">' + esc(s().stop) + '</button>'
+      + '<button class="linkbtn" type="button" data-author="signout">' + esc(s().signout) + '</button>');
+  }
+  if (author === 'notowner') {
+    return card('author-not-owner', s().ownerK, s().notOwnerT, s().notOwnerWhy,
+      '<button class="linkbtn" type="button" data-author="switch">' + esc(s().signout) + '</button>');
+  }
+  return '<button class="linkbtn" type="button" data-author="signin" data-testid="author-entry">' + esc(s().authorLink) + '</button>';
+}
+
+function confirmHtml() {
+  return '<div class="scrim" data-author="owner"></div><div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlg-t" data-testid="stop-confirm">'
+    + '<h3 id="dlg-t">' + esc(s().stopAsk) + '</h3><p>' + esc(s().stopWhy) + '</p>'
+    + '<div class="row"><button class="btn2" type="button" data-author="owner">' + esc(s().back) + '</button>'
+    + '<button class="btn2 btn-danger" type="button" data-author="stop" data-testid="stop-go"' + (busy ? ' disabled' : '') + '>' + esc(s().stop) + '</button></div></div>';
+}
+
+/* web-auth token 放 sessionStorage：這一個分頁、這一趟登入。**每用一次就換一把**——下一把在
+ * response header `x-apple-cloudkit-web-auth-token`（spike 量到的；body 裡沒有），舊的立刻作廢。 */
+const session = {
+  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { /* 存不了就等於沒登入 */ } },
+  remove(k) { try { sessionStorage.removeItem(k); } catch (e) { /* 同上 */ } },
+};
+const TOKEN = (env) => 'tez.auth.token.' + env.name;
+
+async function authed(path, body) {
+  const env = D.env;
+  const r = await client.call(env, path, body, session.get(TOKEN(env)));
+  if (r.nextWebAuthToken) session.set(TOKEN(env), r.nextWebAuthToken);
+  return r;
+}
+
+/** 回到這一頁、手上有 token：問 users/current 是誰，跟 record 的建立者比。 */
+async function checkAuthor() {
+  author = 'checking';
+  draw();
+  let r;
+  try {
+    r = await authed('users/current');
+  } catch (err) {
+    author = 'signin';
+    draw();
+    return;
+  }
+  const me = r.json && r.json.userRecordName;
+  if (!me) {
+    /* token 過期或被用掉了：當成沒登入，再登一次。 */
+    session.remove(TOKEN(D.env));
+    author = 'signin';
+  } else {
+    author = me === D.record.created.userRecordName ? 'owner' : 'notowner';
+  }
+  draw();
+  const cardEl = document.querySelector('.acard');
+  if (cardEl && cardEl.scrollIntoView) cardEl.scrollIntoView({ block: 'center' });
+}
+
+/** 去 Apple 登入。**跳轉會把 # 片段丟掉**（spike 量到），而金鑰就在 # 裡——先存進 sessionStorage，
+ *  回來的時候放回去（見底下 restoreAfterSignIn）。 */
+async function signIn() {
+  busy = true;
+  draw();
+  session.set('tez.auth.hash', location.hash);
+  session.set('tez.auth.env', D.env.name);
+  session.remove(TOKEN(D.env));
+  let r = null;
+  try {
+    r = await client.call(D.env, 'users/current');
+  } catch (err) {
+    r = null;
+  }
+  busy = false;
+  if (r && r.json && r.json.redirectURL) {
+    location.assign(r.json.redirectURL);
+    return;
+  }
+  draw();
+}
+
+async function stopSharing() {
+  busy = true;
+  draw();
+  let result = null;
+  try {
+    const r = await authed('records/modify', {
+      operations: [{ operationType: 'delete', record: { recordName: D.record.recordName, recordChangeTag: D.record.recordChangeTag } }],
+    });
+    result = r.json && r.json.records && r.json.records[0];
+  } catch (err) {
+    result = null;
+  }
+  busy = false;
+  if (result && result.deleted) {
+    session.remove(TOKEN(D.env));
+    state = 'stopped';
+    author = 'entry';
+    draw();
+    return;
+  }
+  author = result && result.serverErrorCode === 'AUTHENTICATION_REQUIRED' ? 'signin' : 'owner';
+  draw();
+  toast(s().stopFailed);
+}
+
+function onAuthorClick(action) {
+  if (action === 'go') { signIn(); return; }
+  if (action === 'stop') { stopSharing(); return; }
+  if (action === 'signout' || action === 'switch') {
+    session.remove(TOKEN(D.env));
+    author = action === 'switch' ? 'signin' : 'entry';
+    draw();
+    return;
+  }
+  author = action; /* entry / signin / owner / confirm */
+  draw();
+}
+
+/** Apple 登入頁導回來：`?ckWebAuthToken=…`，# 片段已經沒了。把 token 收好、把片段放回網址，
+ *  再照常載入；載入完發現有 token 就問 users/current。 */
+function restoreAfterSignIn() {
+  const params = new URLSearchParams(location.search);
+  const token = params.get('ckWebAuthToken');
+  if (!token) return;
+  const env = session.get('tez.auth.env');
+  if (env) session.set('tez.auth.token.' + env, token);
+  const hash = location.hash || session.get('tez.auth.hash') || '';
+  session.remove('tez.auth.hash');
+  history.replaceState(null, '', location.pathname + hash);
+}
 
 function msgHtml(t, why, icon, testid) {
   return '<main class="wrap"><section class="msg" role="alert" data-testid="' + testid + '">' + svg(icon, 'ico')
@@ -398,7 +546,7 @@ function draw() {
     + timelineHtml() + mapHtml() + footHtml() + '</main>' + overlayHtml();
   afterDraw();
 }
-function overlayHtml() { return ''; }
+function overlayHtml() { return author === 'confirm' ? confirmHtml() : ''; }
 function afterDraw() { mountMap(); }
 function paintLang() {
   document.getElementById('lang').innerHTML = LANGS.map((l) =>
@@ -419,9 +567,14 @@ document.addEventListener('click', (ev) => {
   }
   onClick(ev);
 });
-function onClick() {}
+function onClick(ev) {
+  const b = ev.target.closest('[data-author]');
+  if (b && !b.disabled) onAuthorClick(b.dataset.author);
+}
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closePlace(); onEscape(); } });
-function onEscape() {}
+function onEscape() {
+  if (author === 'confirm' && !busy) { author = 'owner'; draw(); }
+}
 
 /* ═══ 讀取 ═════════════════════════════════════════════════════ */
 const client = createClient({ container: CONFIG.container, environments: CONFIG.environments });
@@ -450,9 +603,12 @@ async function load() {
     if (!(err instanceof OpenFailure)) throw err;
     state = 'bad';
   }
+  author = 'entry';
   draw();
+  if (state === 'normal' && session.get(TOKEN(D.env))) checkAuthor();
 }
 
 lang = pickLanguage();
+restoreAfterSignIn();
 window.addEventListener('hashchange', load);
 load();
