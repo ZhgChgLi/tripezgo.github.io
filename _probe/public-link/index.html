@@ -40,6 +40,15 @@
 <button id="del">刪掉這筆</button>
 <p id="delOut"></p>
 
+<h2>5. 一般帳號（沒掛 Moderator）</h2>
+<p>用 iCloud1～4 的測試帳號登入後再按。</p>
+<button id="create">網頁建一筆（_icloud Create）</button>
+<p id="createOut"></p>
+<button id="delMine">刪我剛建的那筆（_creator Write）</button>
+<p id="delMineOut"></p>
+<button id="delOthers">刪開發者建的那筆（應該被擋）</button>
+<p id="delOthersOut"></p>
+
 <h2>原始回應</h2>
 <pre id="log"></pre>
 
@@ -119,6 +128,31 @@ $('del').onclick = async () => {
     ? '<span class="ok">刪掉了。</span>'
     : `<span class="bad">${(d && (d.serverErrorCode + '：' + d.reason)) || json.serverErrorCode || '失敗'}</span>`;
 };
+
+async function deleteByName(name, out) {
+  const { json: look } = await call('records/lookup', { records: [{ recordName: name }] });
+  const r = look.records && look.records[0];
+  if (!r || !r.recordChangeTag) { $(out).innerHTML = `<span class="bad">讀不到 ${name}：${(r && r.serverErrorCode) || ''}</span>`; return; }
+  const { json } = await call('records/modify', { operations: [{ operationType: 'delete', record: { recordName: name, recordChangeTag: r.recordChangeTag } }] });
+  const d = json.records && json.records[0];
+  $(out).innerHTML = d && d.deleted
+    ? `<span class="ok">刪掉了</span> <code>${name}</code>（建立者 <code>${r.created.userRecordName}</code>）`
+    : `<span class="bad">${(d && (d.serverErrorCode + '：' + d.reason)) || json.serverErrorCode || '失敗'}</span>`;
+}
+
+$('create').onclick = async () => {
+  const name = 'probe-web-' + Date.now();
+  const { json } = await call('records/modify', { operations: [{ operationType: 'create', record: { recordName: name, recordType: 'TripEZGoPublicItinerary', fields: { v: { value: 1 } } } }] });
+  const r = json.records && json.records[0];
+  if (r && r.created) { sessionStorage.setItem('mine', name); $('createOut').innerHTML = `<span class="ok">建好了</span> <code>${name}</code>，建立者 <code>${r.created.userRecordName}</code>`; }
+  else $('createOut').innerHTML = `<span class="bad">${(r && (r.serverErrorCode + '：' + r.reason)) || json.serverErrorCode || '失敗'}</span>`;
+};
+$('delMine').onclick = () => {
+  const name = sessionStorage.getItem('mine');
+  if (!name) { $('delMineOut').textContent = '先按上面那顆建一筆。'; return; }
+  deleteByName(name, 'delMineOut');
+};
+$('delOthers').onclick = () => deleteByName('probe-owned-by-developer', 'delOthersOut');
 </script>
 </body>
 </html>
