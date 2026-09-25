@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>公開連結探針</title>
+<style>
+  :root { --bg:#fbf8f4; --ink:#1d1a17; --dim:#7a716a; --line:#e6ded5; --ok:#1f7a5c; --bad:#b3261e; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#17120f; --ink:#f3ede7; --dim:#a39990; --line:#3a332d; } }
+  body { margin:0; padding:16px; background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, system-ui, sans-serif; }
+  h1 { font-size:20px; margin:0 0 4px; } h2 { font-size:16px; margin:24px 0 8px; }
+  p, li { color:var(--dim); } code { font-size:13px; }
+  button { font:inherit; padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--ink); margin:4px 0; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  pre { white-space:pre-wrap; word-break:break-all; font-size:12px; background:rgba(127,127,127,.08); padding:8px; border-radius:8px; max-height:40vh; overflow:auto; }
+</style>
+</head>
+<body>
+<h1>公開連結探針（Development）</h1>
+<p>量完就刪。量的是：網頁上用 Apple ID 登入之後，建立者能不能刪掉自己建的公開 record。</p>
+
+<h2>0. 網址片段</h2>
+<p id="frag"></p>
+
+<h2>1. 匿名讀</h2>
+<button id="read">讀 record</button>
+<p id="readOut"></p>
+
+<h2>2. Apple ID 登入</h2>
+<button id="signin">用 Apple ID 登入</button>
+<p id="authOut"></p>
+
+<h2>3. 我是誰</h2>
+<button id="whoami">問 users/current</button>
+<p id="whoOut"></p>
+
+<h2>4. 刪除</h2>
+<button id="del">刪掉這筆</button>
+<p id="delOut"></p>
+
+<h2>原始回應</h2>
+<pre id="log"></pre>
+
+<script>
+// API token 本來就公開在網頁上；它只能做 security roles 允許的事。
+const API_TOKEN = '95c27dadedb8f40f5c0ad9bbdfe58d5f2d2241fffb04dad08dcfef77d19c76af';
+const BASE = 'https://api.apple-cloudkit.com/database/1/iCloud.com.zhgchgli.tripezgo/development/public';
+const RECORD = 'ogEk1wkuHsvnQU7kaZEdz6';
+
+const $ = id => document.getElementById(id);
+const log = (label, obj) => { $('log').textContent = `── ${label}\n${typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2)}\n\n` + $('log').textContent; };
+const enc = t => t.replace(/\+/g, '%2B').replace(/\//g, '%2F').replace(/=/g, '%3D');
+
+// The web-auth token is single-use: every response hands back the next one.
+let webAuth = sessionStorage.getItem('webAuth');
+function setWebAuth(t, from) { if (!t) return; webAuth = t; sessionStorage.setItem('webAuth', t); log('新的 ckWebAuthToken 來自 ' + from, t.slice(0, 16) + '…'); }
+
+async function call(path, body) {
+  let url = `${BASE}/${path}?ckAPIToken=${API_TOKEN}`;
+  if (webAuth) url += `&ckWebAuthToken=${enc(webAuth)}`;
+  const res = await fetch(url, body ? { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body) } : {});
+  const headers = {}; res.headers.forEach((v, k) => headers[k] = v);
+  const text = await res.text(); let json; try { json = JSON.parse(text); } catch { json = text; }
+  log(`${body ? 'POST' : 'GET'} ${path} → ${res.status}`, { headers, body: json });
+  // Where does the next token come from? Try every place it could be.
+  setWebAuth(res.headers.get('x-apple-cloudkit-web-auth-token'), 'response header');
+  if (json && json.ckWebAuthToken) setWebAuth(json.ckWebAuthToken, 'response body');
+  return { status: res.status, json };
+}
+
+// Coming back from Apple's sign-in page.
+const params = new URLSearchParams(location.search);
+if (params.get('ckWebAuthToken')) {
+  setWebAuth(params.get('ckWebAuthToken'), 'callback query');
+  $('authOut').innerHTML = '<span class="ok">登入回來了，拿到 ckWebAuthToken。</span>';
+  const saved = sessionStorage.getItem('savedHash') || '';
+  const survived = location.hash;
+  history.replaceState(null, '', location.pathname + (survived || saved));
+  log('callback', { hashOnArrival: survived || '(空)', hashSavedBeforeRedirect: saved || '(空)' });
+}
+$('frag').textContent = location.hash ? `目前的 # 片段：${location.hash}` : '沒有 # 片段（測「登入跳轉會不會丟掉金鑰」：網址後面加 #k=test 再按登入）';
+
+$('read').onclick = async () => {
+  const { json } = await call('records/lookup', { records: [{ recordName: RECORD }] });
+  const r = json.records && json.records[0];
+  $('readOut').innerHTML = r && r.created
+    ? `<span class="ok">讀到了。</span>建立者 <code>${r.created.userRecordName}</code>`
+    : `<span class="bad">${(r && r.serverErrorCode) || '讀不到'}</span>`;
+};
+
+$('signin').onclick = async () => {
+  sessionStorage.setItem('savedHash', location.hash);
+  webAuth = null; sessionStorage.removeItem('webAuth');
+  const { json } = await call('users/current');
+  if (json.redirectURL) {
+    $('authOut').textContent = '拿到 redirectURL，三秒後跳去 Apple 登入。';
+    setTimeout(() => location.href = json.redirectURL, 3000);
+  } else {
+    $('authOut').innerHTML = `<span class="bad">沒拿到 redirectURL：${json.serverErrorCode || json}</span>`;
+  }
+};
+
+$('whoami').onclick = async () => {
+  const { json } = await call('users/current');
+  $('whoOut').innerHTML = json.userRecordName
+    ? `<span class="ok">你是</span> <code>${json.userRecordName}</code>`
+    : `<span class="bad">${json.serverErrorCode || '失敗'}</span>`;
+};
+
+$('del').onclick = async () => {
+  const { json: look } = await call('records/lookup', { records: [{ recordName: RECORD }] });
+  const r = look.records && look.records[0];
+  if (!r || !r.recordChangeTag) { $('delOut').innerHTML = '<span class="bad">先讀不到這筆</span>'; return; }
+  const { json } = await call('records/modify', { operations: [{ operationType: 'delete', record: { recordName: RECORD, recordChangeTag: r.recordChangeTag } }] });
+  const d = json.records && json.records[0];
+  $('delOut').innerHTML = d && d.deleted
+    ? '<span class="ok">刪掉了。</span>'
+    : `<span class="bad">${(d && (d.serverErrorCode + '：' + d.reason)) || json.serverErrorCode || '失敗'}</span>`;
+};
+</script>
+</body>
+</html>
