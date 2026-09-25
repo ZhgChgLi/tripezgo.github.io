@@ -11,8 +11,20 @@
  */
 import { CONFIG } from './config.js';
 import { createClient } from './cloudkit.js';
-import { clock, daysOf, openSealed, OpenFailure, parseFragment, sealedFromRecord } from './core.js';
+import { clock, daysOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
+import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
+import { iconOf, iconPath, swatchOf } from './looks.js';
 import { LANGS, S } from './strings.js';
+
+/* 類型色：App 的 EventTypeSwatch 十一族（淺／深），寫成 CSS 變數 --sw-<族>。 */
+(function paintSwatches() {
+  const vars = (t) => Object.keys(t).map((k) => '--sw-' + k + ':' + t[k] + ';').join('');
+  const style = document.createElement('style');
+  style.textContent = ':root{' + vars(SWATCH_LIGHT) + '}@media (prefers-color-scheme: dark){:root{' + vars(SWATCH_DARK) + '}}';
+  document.head.appendChild(style);
+})();
+const tyVar = (item) => '--ev: var(--sw-' + swatchOf(item) + ')';
+const tyIcon = (item) => '<svg class="ty" viewBox="0 0 15 15" fill-rule="evenodd" aria-hidden="true" data-icon="' + iconOf(item) + '"><path d="' + iconPath(iconOf(item)) + '"/></svg>';
 
 /* ═══ 圖示（設計稿的線條圖示組） ═════════════════════════════════
  * 交通方式：設計稿有 car／walk／train；騎車與「其他」取 App 的 DesignIcon（.cycling／.ellipsis）。 */
@@ -122,8 +134,19 @@ function heroHtml() {
     + actsHtml()
     + '</section>';
 }
-function coverHtml() { return ''; }
-function actsHtml() { return ''; }
+/* 封面在字的上面、不墊在字底下（設計稿 D1）：16:9、最高 240px。公開版本裡是 base64 JPEG。 */
+function coverHtml() {
+  const c = D.copy.cover;
+  if (!c || !/^[A-Za-z0-9+/=]+$/.test(c)) return '';
+  return '<div class="cover" role="img" aria-label="" data-testid="cover" style="background-image:url(data:image/jpeg;base64,' + c + ')"></div>';
+}
+function actsHtml() {
+  return '<div class="acts">' + copyAppHtml()
+    + '<button class="btn2" type="button" id="act-text" data-testid="copy-text">' + svg(IC.share) + esc(s().copyText) + '</button>'
+    + '</div>' + actsNoteHtml();
+}
+function copyAppHtml() { return ''; }
+function actsNoteHtml() { return ''; }
 
 /* ═══ 時間軸（設計稿原樣；欄頭支援日期未定） ═════════════════════ */
 const PPM = 1, HOUR = 60 * PPM;
@@ -195,7 +218,151 @@ function timelineHtml() {
     + cols + (band ? '<div class="tl-ads">' + band + '</div>' : '') + '</div></div></section>';
 }
 
-function mapHtml() { return ''; }
+/* ═══ 地圖（MapKit JS） ═══════════════════════════════════════
+ * 放在時間表**下面**、一次一天（設計稿 D2）：類型色＋當天順序號，底下附清單；沒座標的只列不上圖。
+ * **沒有 MapKit JS token 就沒有地圖框**：清單照列、點得開地點卡，其他照常（config.js）。 */
+let mapDay = 1;
+let mapInstance = null;
+let mapkitLoading = null;
+
+function mapPoints(day) {
+  let no = 0;
+  return day.timed.map((x) => ({ x, no: x.item.geo ? ++no : null }));
+}
+function mapHtml() {
+  if (mapDay > D.days.length) mapDay = 1;
+  const d = D.days[mapDay - 1];
+  const seg = D.days.map((x) => '<button type="button" data-mday="' + x.n + '" aria-pressed="' + (x.n === mapDay) + '">' + esc(fmt(s().day, x.n)) + '</button>').join('');
+  const rows = mapPoints(d).map(({ x, no }) => {
+    const it = x.item, has = no !== null;
+    return '<li><button type="button" class="prow" data-ev="' + x.id + '" data-testid="map-row" style="' + tyVar(it) + '">'
+      + '<span class="no' + (has ? '' : ' is-none') + '">' + (has ? no : '–') + '</span>'
+      + '<span class="tm">' + esc(clock(x.s)) + '</span>'
+      + tyIcon(it)
+      + '<span class="bd"><span class="t">' + esc(it.title) + '</span><span class="s">'
+      + esc(has ? it.place || '' : s().mapNone) + '</span></span>' + svg(IC.chev, 'chev') + '</button></li>';
+  }).join('');
+  const box = CONFIG.mapkitToken ? '<div class="map" id="map" data-testid="map"></div>' : '';
+  return '<section class="sec" data-testid="map-section"><div class="sec-h"><h2>' + esc(s().map) + '</h2>'
+    + '<div class="seg" role="group">' + seg + '</div></div>'
+    + box
+    + (rows ? '<ul class="plist" data-testid="map-list">' + rows + '</ul>' : '<p class="empty">' + esc(s().mapAll) + '</p>')
+    + '</section>';
+}
+
+function loadMapKit() {
+  if (!mapkitLoading) {
+    mapkitLoading = new Promise((resolve, reject) => {
+      const el = document.createElement('script');
+      el.src = 'https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js';
+      el.crossOrigin = 'anonymous';
+      el.onload = () => {
+        window.mapkit.init({ authorizationCallback: (done) => done(CONFIG.mapkitToken) });
+        resolve(window.mapkit);
+      };
+      el.onerror = reject;
+      document.head.appendChild(el);
+    });
+  }
+  return mapkitLoading;
+}
+
+async function mountMap() {
+  if (mapInstance) { mapInstance.destroy(); mapInstance = null; }
+  const el = document.getElementById('map');
+  if (!el) return;
+  let mk;
+  try {
+    mk = await loadMapKit();
+  } catch (err) {
+    el.remove(); /* CDN 讀不到：退回只有清單 */
+    return;
+  }
+  if (!document.body.contains(el)) return; /* 等 MapKit 的時候已經換過一次畫面 */
+  mk.language = LANGS.find((l) => l.k === lang).html;
+  const map = new mk.Map(el);
+  const probe = document.createElement('span');
+  el.appendChild(probe);
+  const annotations = mapPoints(D.days[mapDay - 1])
+    .filter((p) => p.no !== null)
+    .map(({ x, no }) => {
+      probe.setAttribute('style', tyVar(x.item) + ';color:var(--ev)');
+      const a = new mk.MarkerAnnotation(new mk.Coordinate(x.item.geo[0], x.item.geo[1]), {
+        color: getComputedStyle(probe).color,
+        glyphText: String(no),
+        title: x.item.title,
+        data: { id: x.id },
+      });
+      a.addEventListener('select', () => openPlace(x.id));
+      return a;
+    });
+  probe.remove();
+  if (annotations.length) map.showItems(annotations);
+  mapInstance = map;
+}
+
+/* ═══ 地點卡：點時間表的方塊、地圖清單、地圖上的點 ════════════════
+ * 手機貼底、桌機置中；Apple／Google 地圖各一顆，不替他挑。 */
+function placeLinks(it) {
+  const q = it.geo ? it.geo.join(',') : it.place || it.title;
+  const apple = 'https://maps.apple.com/?' + (it.geo ? 'll=' + q + '&q=' + encodeURIComponent(it.title) : 'q=' + encodeURIComponent(q));
+  const google = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+  return { apple, google };
+}
+function whenText(id) {
+  for (const d of D.days) {
+    const x = d.timed.find((t) => t.id === id);
+    if (x) return fmt(s().day, d.n) + ' · ' + clock(x.s) + '–' + clock(x.e);
+  }
+  return '';
+}
+function openPlace(id) {
+  const it = D.copy.items[id];
+  if (!it) return;
+  const { apple, google } = placeLinks(it);
+  closePlace();
+  const w = document.createElement('div');
+  w.id = 'place';
+  w.innerHTML = '<div class="scrim" data-close></div><div class="pcard" role="dialog" aria-modal="true" aria-labelledby="pc-t" data-testid="place-card" style="' + tyVar(it) + '">'
+    + '<p class="k">' + tyIcon(it) + '<span>' + esc(whenText(id)) + '</span></p>'
+    + '<h3 id="pc-t">' + esc(it.title) + '</h3>' + (it.place ? '<p class="loc">' + esc(it.place) + '</p>' : '')
+    + '<div class="go"><a class="btn2" target="_blank" rel="noopener" data-testid="open-apple" href="' + esc(apple) + '">' + svg(IC.pin) + esc(s().openApple) + '</a>'
+    + '<a class="btn2" target="_blank" rel="noopener" data-testid="open-google" href="' + esc(google) + '">' + svg(IC.pin) + esc(s().openGoogle) + '</a></div>'
+    + '<button class="linkbtn x" type="button" data-close>' + esc(s().close) + '</button></div>';
+  document.body.appendChild(w);
+  w.querySelector('.btn2').focus();
+}
+function closePlace() {
+  const o = document.getElementById('place');
+  if (o) o.remove();
+}
+
+/* ═══ toast ═══════════════════════════════════════════════════ */
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-t').textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 2200);
+}
+
+/** 寫剪貼簿。`navigator.clipboard` 不在（舊瀏覽器、非安全來源）就退回 execCommand。 */
+function writeClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+  return new Promise((resolve, reject) => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand && document.execCommand('copy');
+    ta.remove();
+    (ok ? resolve : reject)();
+  });
+}
 
 /* ═══ 頁尾 ═════════════════════════════════════════════════════ */
 function footHtml() {
@@ -232,7 +399,7 @@ function draw() {
   afterDraw();
 }
 function overlayHtml() { return ''; }
-function afterDraw() {}
+function afterDraw() { mountMap(); }
 function paintLang() {
   document.getElementById('lang').innerHTML = LANGS.map((l) =>
     '<button type="button" data-lang="' + l.k + '" lang="' + l.html + '" aria-pressed="' + (l.k === lang) + '">' + esc(l.lb) + '</button>').join('');
@@ -240,9 +407,21 @@ function paintLang() {
 
 /* ═══ 互動 ═════════════════════════════════════════════════════ */
 document.addEventListener('click', (ev) => {
-  const b = ev.target.closest('[data-lang]');
-  if (b) { lang = b.dataset.lang; store('tez.lang', lang); draw(); }
+  let b;
+  if ((b = ev.target.closest('[data-lang]'))) { lang = b.dataset.lang; store('tez.lang', lang); closePlace(); draw(); return; }
+  if ((b = ev.target.closest('[data-mday]'))) { mapDay = +b.dataset.mday; draw(); return; }
+  if (ev.target.closest('[data-close]')) { closePlace(); return; }
+  if ((b = ev.target.closest('[data-ev]'))) { openPlace(+b.dataset.ev); return; }
+  if (ev.target.closest('#act-text')) {
+    /* 純文字依觀看者目前選的語言產生，格式逐字照 App 的 TripItineraryTextUseCase（決策 D6）。 */
+    writeClipboard(plainText(D.copy, lang)).then(() => toast(s().copiedText), () => {});
+    return;
+  }
+  onClick(ev);
 });
+function onClick() {}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closePlace(); onEscape(); } });
+function onEscape() {}
 
 /* ═══ 讀取 ═════════════════════════════════════════════════════ */
 const client = createClient({ container: CONFIG.container, environments: CONFIG.environments });
