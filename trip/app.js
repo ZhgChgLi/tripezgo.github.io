@@ -11,10 +11,10 @@
  */
 import { CONFIG } from './config.js';
 import { createClient } from './cloudkit.js';
-import { clock, daysOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
+import { clock, daysOf, linkURL, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
 import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
 import { iconOf, iconPath, swatchOf } from './looks.js';
-import { LANGS, S } from './strings.js';
+import { LANGS, S, STORE } from './strings.js';
 
 /* 類型色：App 的 EventTypeSwatch 十一族（淺／深），寫成 CSS 變數 --sw-<族>。 */
 (function paintSwatches() {
@@ -145,8 +145,60 @@ function actsHtml() {
     + '<button class="btn2" type="button" id="act-text" data-testid="copy-text">' + svg(IC.share) + esc(s().copyText) + '</button>'
     + '</div>' + actsNoteHtml();
 }
-function copyAppHtml() { return ''; }
-function actsNoteHtml() { return ''; }
+/* ═══ 複製成我的旅程（票 11） ═══════════════════════════════════
+ *
+ * **按鈕指向另一個網域**：這一頁在 tripezgo.com 就指 www.tripezgo.com，反過來也一樣。同網域的點擊
+ * 不會觸發 Universal Link，換個網域才會（spike：LINE 裡 www 會叫起 App、裸網域不會）。所以
+ * 已裝 App 的人按下去就進 App 的預覽，這一頁什麼都不必做——**不 preventDefault**，讓那一下是
+ * 一次真的、由使用者點出來的連結（程式跳轉的 Universal Link 不保證觸發）。
+ *
+ * 沒裝 App 的人：那一下會從 www 被 301 帶回這一頁（# 片段跟著走）。所以按下去的當下就
+ *   1. 把整條連結寫進剪貼簿——App 第一次打開時讀剪貼簿接回來（同 join/ 的延後機制）
+ *   2. 在 sessionStorage 記一筆「這一趟存過了」
+ * 回到這一頁看到那一筆，按鈕就換成「前往下載」、旁邊的話換成「連結已經存起來了」——跟 join/
+ * 一樣是兩下：跳到下載頁之後就沒有地方告訴他連結存好了。第二下去下載之前再寫一次剪貼簿，
+ * 以防第一下的寫入被跳頁打斷。
+ *
+ * 剪貼簿裡放 www 那一條：那是 App 發出去的正式寫法（App 兩種主機都認）。 */
+const WWW = 'www.tripezgo.com';
+const APEX = 'tripezgo.com';
+const SAVED = () => 'tez.saved.' + D.link.id;
+
+function otherHost() { return location.hostname === WWW ? APEX : WWW; }
+function shareLink() { return linkURL(WWW, D.link.id, D.link.key); }
+function isSaved() { return session.get(SAVED()) === '1'; }
+
+function copyAppHtml() {
+  if (isSaved()) {
+    return '<a class="cta" id="act-app" data-testid="copy-app" data-saved="1" href="' + esc(STORE[lang]) + '">' + esc(s().savedGo) + '</a>';
+  }
+  return '<a class="cta" id="act-app" data-testid="copy-app" href="' + esc(linkURL(otherHost(), D.link.id, D.link.key)) + '">'
+    + svg(IC.copy) + esc(s().copyApp) + '</a>';
+}
+function actsNoteHtml() {
+  const note = isSaved() ? '<b>' + esc(s().savedHead) + '</b>　' + esc(s().savedLede) : s().copyAppNote;
+  return '<p class="acts-note" data-testid="copy-app-note">' + note + '</p>';
+}
+function onCopyApp(ev) {
+  const saved = ev.target.closest('#act-app').dataset.saved === '1';
+  if (saved) {
+    /* 第二下去下載：不需要 Universal Link，所以等剪貼簿寫完再走——跳頁會打斷還沒寫完的剪貼簿
+     *（測試量到的：同步寫完立刻跳，剪貼簿裡是舊的）。 */
+    ev.preventDefault();
+    const go = () => location.assign(STORE[lang]);
+    writeClipboard(shareLink()).then(go, go);
+    return;
+  }
+  /* 第一下：照 href 走（Universal Link），不能等。寫入在 pointerdown 就先起跑（見底下），
+   * 這裡在 click 再寫一次，兩次都在使用者的手勢裡。 */
+  writeClipboard(shareLink()).catch(() => {});
+  session.set(SAVED(), '1');
+}
+/* pointerdown 也是一個手勢：在 click 之前幾十毫秒就開始寫剪貼簿，讓它在跳頁之前寫完。 */
+document.addEventListener('pointerdown', (ev) => {
+  const b = ev.target.closest && ev.target.closest('#act-app');
+  if (b && b.dataset.saved !== '1') writeClipboard(shareLink()).catch(() => {});
+});
 
 /* ═══ 時間軸（設計稿原樣；欄頭支援日期未定） ═════════════════════ */
 const PPM = 1, HOUR = 60 * PPM;
@@ -568,6 +620,7 @@ document.addEventListener('click', (ev) => {
   onClick(ev);
 });
 function onClick(ev) {
+  if (ev.target.closest('#act-app')) { onCopyApp(ev); return; }
   const b = ev.target.closest('[data-author]');
   if (b && !b.disabled) onAuthorClick(b.dataset.author);
 }

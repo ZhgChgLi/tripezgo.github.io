@@ -67,7 +67,8 @@ test('跳轉前把 # 片段存進 sessionStorage', async ({ page }) => {
     route.fulfill({ status: 200, contentType: 'text/html', body: '<p>apple sign-in</p>' }));
   await page.goto(pathOf(dated));
   await signIn(page);
-  await expect(page.locator('p')).toHaveText('apple sign-in');
+  await page.waitForURL(/idmsa\.apple\.com/);
+  await expect(page.getByText('apple sign-in')).toBeVisible();
   /* 回到同一個 origin（還沒帶 token 回來）看它存了什麼 */
   await page.goto('/404.html');
   expect(await page.evaluate(() => sessionStorage.getItem('tez.auth.hash'))).toBe(new URL(dated.url).hash);
