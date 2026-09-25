@@ -1,0 +1,15 @@
+{
+  "name": "tripezgo-site",
+  "private": true,
+  "description": "tripezgo.com 是純靜態網站，沒有建置步驟。這份只給測試用：公開連結頁 trip/ 與每日清理工具。",
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:browser",
+    "test:unit": "node --test 'tests/unit/*.test.mjs'",
+    "test:browser": "playwright test",
+    "golden:check": "node tools/check-golden.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

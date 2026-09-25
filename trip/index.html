@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<!-- 公開頁一律不進搜尋引擎：連結本身就是鑰匙，被收錄等於把鑰匙貼在公告欄上。 -->
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<!-- 預覽卡片是**通用的**：GitHub Pages 讀不到旅程——內容是密文、鑰匙在 # 後面，# 不會送到伺服器。
+     所以 og:* 只能是固定字串。分頁標題是解開之後在瀏覽器裡改的，那不會進到預覽卡片。 -->
+<meta property="og:title" content="TripEZGo 行程" />
+<meta property="og:description" content="用 TripEZGo 排好的行程，點開就看得到，不需要安裝 App。" />
+<meta property="og:image" content="https://tripezgo.com/assets/img/og-zh.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="TripEZGo" />
+<meta name="twitter:card" content="summary_large_image" />
+<title>TripEZGo 行程</title>
+<meta name="description" content="用 TripEZGo 排好的行程，分享給同行的人看。" />
+<meta name="theme-color" content="#fbf8f4" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1f1914" media="(prefers-color-scheme: dark)" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png" />
+<link rel="apple-touch-icon" href="/assets/img/icon-180.png" />
+<!-- 版面、token、三語字典都照設計稿 trip-share-public.html（Open Design e0f396c1…）。 -->
+<style>
+  /* ═══ 設計系統 token ═══════════════════════════════════════════
+     整段照抄 trip-share.html：紙白鋪頁、白卡疊上去、1px 暖線分界。
+     深青綠只給當前檢視與主要動作，一個畫面最多兩處。 */
+  :root {
+    --paper:  #fbf8f4;
+    --card:   #ffffff;
+    --ink:    #241d17;
+    --machi:  #2f918e;
+    --taupe:  #7c6f63;
+    --line:   #dbd5cd;
+
+    --ink-2:    color-mix(in srgb, var(--ink) 72%, var(--paper));
+    --line-2:   color-mix(in srgb, var(--line) 55%, var(--paper));
+    --line-3:   color-mix(in srgb, var(--line) 36%, var(--paper));
+    --sunken:   color-mix(in srgb, var(--line) 26%, var(--card));
+    --machi-ink: #1d7370;
+    --machi-on:  #ffffff;
+
+    /* ── 以下是這一版新增的，全部取自 App 稿（tripezgo-ios-trips.html :root），不新造色 ──
+       危險色：App 的 --danger-ink。網頁原本沒有破壞性動作，所以原稿沒有這個 token。 */
+    --danger-ink: #c14b3c;
+    /* 行程類型的色：App 的 --ev-*（淺色值）。公開版本帶「類型圖示與顏色」，網頁用在地圖的點上。 */
+    --ev-eat:   oklch(0.452 0.086 30);
+    --ev-shop:  oklch(0.566 0.079 74);
+    --ev-see:   oklch(0.498 0.058 150);
+    --ev-seen:  oklch(0.556 0.051 150);
+    --ev-stay:  oklch(0.428 0.074 264);
+    --ev-move:  oklch(0.524 0.062 322);
+    --ev-misc:  oklch(0.545 0.022 65);
+    /* toast：App 的 --toast-bg = --ink-deep */
+    --toast-bg: #1f1914;
+    --toast-on: #ffffff;
+
+    --r:  8px;
+
+    --font: Inter, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial,
+            "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans JP", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    --ax: 74px;
+    --colw: 190px;
+    --hdh: 42px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1f1914;
+      --card:  color-mix(in srgb, #fbf8f4 6%, #1f1914);
+      --ink:   color-mix(in srgb, #fbf8f4 94%, #1f1914);
+      --machi: #3ea2a0;
+      --taupe: color-mix(in srgb, #7c6f63 58%, #fbf8f4);
+      --line:  color-mix(in srgb, #dbd5cd 18%, #1f1914);
+      --machi-ink: #5cc6c3;
+      --machi-on:  color-mix(in srgb, #1f1914 86%, #2f918e);
+      --sunken: color-mix(in srgb, var(--line) 40%, var(--card));
+      --danger-ink: #f4907f;
+      --ev-eat:  oklch(0.716 0.057 30);
+      --ev-shop: oklch(0.815 0.052 74);
+      --ev-see:  oklch(0.756 0.038 150);
+      --ev-seen: oklch(0.804 0.034 150);
+      --ev-stay: oklch(0.695 0.049 264);
+      --ev-move: oklch(0.779 0.041 322);
+      --ev-misc: oklch(0.640 0.018 65);
+      --toast-bg: color-mix(in srgb, var(--ink) 22%, var(--paper));
+    }
+  }
+
+  @media (max-width: 560px) { :root { --ax: 56px; --colw: 168px; } }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mn { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+  .wrap { width: 100%; max-width: 920px; margin: 0 auto; padding: 0 16px; }
+
+  /* ─── 頁首（原稿） ───────────────────────────────────────── */
+  .top {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: saturate(1.6) blur(12px);
+    -webkit-backdrop-filter: saturate(1.6) blur(12px);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .top-in { display: flex; align-items: center; gap: 12px; min-height: 52px; }
+  .brand { display: flex; align-items: center; gap: 7px; margin-right: auto; min-width: 0;
+           color: inherit; text-decoration: none; }
+  .brand svg { width: 19px; height: 19px; flex: none; fill: none; stroke: var(--machi-ink);
+               stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .brand b { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
+
+  .lang, .seg { display: flex; gap: 2px; padding: 3px; background: var(--sunken);
+                border: 1px solid var(--line); border-radius: var(--r); }
+  .lang button, .seg button {
+    min-height: 30px; padding: 0 9px;
+    font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.02em;
+    color: var(--taupe); background: none; border: 0; border-radius: 5px; cursor: pointer;
+    white-space: nowrap;
+  }
+  .lang button[aria-pressed="true"], .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .lang button:focus-visible, .seg button:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; }
+
+  /* ─── 抬頭：封面照＋旅程本身 ───────────────────────────────
+     封面放在字的上面、不墊在字底下：墊在底下就得加一層暗化才讀得到字，
+     而這一頁的底是紙白——整張照片被壓暗會變成頁面上最重的一塊，比行程還搶眼。
+     高寬比 16:9、桌機最高 240px：夠看得出是哪裡，又不會把行程推到第二屏以下。 */
+  .hero { padding: 20px 0 18px; }
+  .cover {
+    margin: 0 0 18px;
+    aspect-ratio: 16 / 9; max-height: 240px; width: 100%;
+    border-radius: var(--r);
+    border: 1px solid var(--line-2);
+    background: var(--sunken) center 58% / cover no-repeat;
+  }
+  .hero .eyebrow {
+    margin: 0 0 6px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--taupe);
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 6vw, 38px); font-weight: 700; line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; color: var(--taupe); font-size: 14px; }
+  .facts span { display: inline-flex; align-items: center; gap: 6px; }
+  .facts svg { width: 15px; height: 15px; flex: none; fill: none; stroke: currentColor;
+               stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  /* 「最後更新」是公開版本的時間戳，不是行程的事實——所以另起一行、比 facts 小一號。 */
+  .stamp { margin: 8px 0 0; font-size: 12px; color: var(--taupe); }
+
+  /* ─── 動作列：複製到 App ／ 複製純文字 ───────────────────────── */
+  .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .cta, .btn2 {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 46px; padding: 0 20px;
+    border-radius: var(--r);
+    font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer;
+  }
+  .cta {
+    background: var(--machi); color: var(--machi-on); border: 0;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 18%, transparent);
+  }
+  .cta:hover { background: var(--machi-ink); }
+  .cta:focus-visible, .btn2:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* 次要動作：不吃青綠額度，白卡＋暖線 */
+  .btn2 { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+  .btn2:hover { background: var(--sunken); }
+  .btn2 svg, .cta svg { width: 17px; height: 17px; flex: none; fill: none; stroke: currentColor;
+                        stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .btn2.is-danger { color: var(--danger-ink); }
+  @media (max-width: 560px) { .acts .cta, .acts .btn2 { flex: 1 1 100%; } }
+  .acts-note { margin: 10px 0 0; font-size: 13px; line-height: 1.6; color: var(--taupe); max-width: 62ch; }
+  .acts-note b { color: var(--ink); font-weight: 700; }
+
+  main { padding-bottom: 40px; }
+
+  /* ─── 時間軸（原稿整段照抄，只加了「點得開」） ─────────────────── */
+  .tl-sc {
+    overflow-x: auto; overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity; scroll-padding-left: var(--ax);
+  }
+  .tl-sc:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 3px; }
+  .tl-in { position: relative; display: flex; align-items: stretch;
+           width: max-content; padding-bottom: 9px; }
+  .tl-ax {
+    position: sticky; left: 0; z-index: 3;
+    flex: none; width: var(--ax);
+    background: var(--paper);
+    border-right: 1px solid var(--line);
+  }
+  .tl-axb { position: relative; height: var(--gh); }
+  .tl-hr {
+    position: absolute; right: 8px; transform: translateY(-50%);
+    font-family: var(--mono); font-size: 11px; line-height: 1; letter-spacing: 0;
+    font-variant-numeric: tabular-nums; color: var(--taupe); white-space: nowrap;
+  }
+  .tl-hr.is-half { font-size: 10px; color: color-mix(in srgb, var(--taupe) 58%, var(--paper)); }
+  .tl-hd { flex: none; height: var(--hdh); padding: 0 10px;
+           display: flex; flex-direction: column; justify-content: center; }
+  .tl-hd .t { font-size: 13px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
+  .tl-hd .t span { margin-left: 6px; font-family: var(--mono); font-size: 11px;
+                   font-weight: 400; letter-spacing: 0; color: var(--taupe); }
+  .tl-ad { flex: none; height: var(--adh); }
+  .tl-ads { position: absolute; left: 0; top: var(--hdh); height: var(--adh); }
+  .tl-adb {
+    position: absolute; height: 20px; padding: 0 8px;
+    background: var(--sunken); border: 1px solid var(--line); border-radius: 6px;
+    font-size: 11px; line-height: 18px; color: var(--ink-2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .tl-day { flex: none; width: var(--colw); min-width: 0; scroll-snap-align: start; }
+  .tl-day + .tl-day .tl-hd, .tl-day + .tl-day .tl-ad,
+  .tl-day + .tl-day .tl-cv { border-left: 1px solid var(--line-2); }
+  .tl-cv {
+    position: relative; height: var(--gh);
+    background-image:
+      repeating-linear-gradient(to bottom, var(--line-2) 0 1px, transparent 1px var(--hh)),
+      repeating-linear-gradient(to bottom, var(--line-3) 0 1px,
+                                transparent 1px calc(var(--hh) / 2));
+    box-shadow: inset 0 -1px 0 var(--line-2);
+  }
+  .tl-ev {
+    position: absolute; left: 6px; right: 6px; overflow: hidden;
+    padding: 4px 8px;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r);
+    font: inherit; color: inherit; text-align: left; cursor: pointer;
+  }
+  /* 新增：行程有地點，所以整塊可以點開（→ 地點卡）。只換框線，不上色。 */
+  .tl-ev:not(.is-line):hover { border-color: var(--taupe); }
+  .tl-ev:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; }
+  .tl-ev .h { margin: 0; font-family: var(--mono); font-size: 11px; line-height: 1.25;
+              letter-spacing: 0; font-variant-numeric: tabular-nums; color: var(--taupe); }
+  .tl-ev .n { margin: 1px 0 0; font-size: 13px; font-weight: 700; line-height: 1.3; }
+  .tl-ev .m { margin: 1px 0 0; font-size: 11px; line-height: 1.3; color: var(--taupe); }
+  .tl-ev .one { margin: 0; display: flex; align-items: baseline; gap: 6px; line-height: 1.25; }
+  .tl-ev .one .mn { flex: none; font-size: 11px; color: var(--taupe); }
+  .tl-ev .nm { min-width: 0; font-size: 12px; font-weight: 700; line-height: 1.25;
+               white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tl-ev.is-line {
+    padding: 0; background: none; border: 0; border-radius: 0; overflow: visible;
+    display: flex; align-items: flex-start; gap: 7px;
+  }
+  .tl-ev.is-line::before {
+    content: ''; flex: 1 1 auto; min-width: 12px;
+    height: 100%; min-height: 1px; border-radius: 1px;
+    background: var(--taupe);
+  }
+  .tl-ev.is-line .nm { flex: 0 1 auto; padding: 0 2px; background: var(--paper); }
+  .tl-lg {
+    position: absolute; left: 6px; right: 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .tl-lg::before, .tl-lg::after {
+    content: ''; flex: 1 1 0; min-height: 0; width: 0;
+    border-left: 1.5px solid var(--taupe);
+  }
+  .tl-lg .b {
+    flex: none; display: flex; align-items: center; gap: 5px; padding: 2px 0;
+    font-size: 11px; line-height: 1.2; color: var(--taupe); white-space: nowrap;
+  }
+  .tl-lg svg { width: 13px; height: 13px; flex: none; fill: none; stroke: currentColor;
+               stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .empty { margin: 10px; font-size: 12px; line-height: 1.4; color: var(--taupe); }
+
+  /* ─── 地圖（MapKit JS） ─────────────────────────────────────
+     放在時間表**下面**：這一頁的主角是時間表，地圖回答的是「這一天的點離得多遠」，
+     是看完時間表之後才會問的問題。放在上面的話手機上要先滑過 300px 的地圖才看得到行程。
+     一次只畫一天——整趟的點疊在一張圖上，每天的順序就看不出來了。 */
+  .sec { margin-top: 30px; }
+  .sec-h { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+           flex-wrap: wrap; margin: 0 0 12px; }
+  .sec-h h2 { margin: 0; font-family: var(--mono); font-size: 12px; font-weight: 400;
+              letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe); }
+  .seg { overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+  .seg::-webkit-scrollbar { display: none; }
+
+  .map {
+    position: relative; height: 340px; overflow: hidden;
+    border: 1px solid var(--line); border-radius: var(--r);
+    background: var(--sunken);
+  }
+  @media (max-width: 560px) { .map { height: 260px; } }
+  /* 示意底圖：MapKit JS 真的畫出來之前的替身。色取紙色系，不用青綠。 */
+  .map .streets { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .map .sea  { fill: color-mix(in srgb, var(--line) 42%, var(--paper)); }
+  .map .land { fill: var(--paper); }
+  .map .blk  { fill: color-mix(in srgb, var(--ink) 5%, var(--paper)); }
+  .map .road { stroke: var(--card); fill: none; stroke-linecap: round; }
+  .map-tag {
+    position: absolute; left: 8px; bottom: 8px; margin: 0;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; color: var(--taupe);
+    background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 2px 6px; border-radius: 4px;
+  }
+  /* 點：類型的色、裡面寫當天的順序。順序跟下面的清單、跟時間表由上而下的順序是同一個。 */
+  .pin {
+    position: absolute; transform: translate(-50%, -50%);
+    width: 26px; height: 26px; padding: 0; display: grid; place-items: center;
+    border-radius: 50%; border: 2px solid var(--card);
+    background: var(--ev, var(--ev-misc)); color: #fff;
+    font: 700 12px/1 var(--mono); cursor: pointer;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--ink) 30%, transparent);
+  }
+  .pin[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 2; }
+  .pin:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 2px; }
+
+  .plist { list-style: none; margin: 10px 0 0; padding: 0; }
+  .plist li + li { border-top: 1px solid var(--line-2); }
+  .prow {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    min-height: 44px; padding: 8px 4px;
+    font: inherit; color: var(--ink); text-align: left;
+    background: none; border: 0; cursor: pointer;
+  }
+  .prow:hover { background: var(--sunken); }
+  .prow:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: -2px; }
+  .prow .no {
+    flex: none; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%;
+    background: var(--ev, var(--ev-misc)); color: #fff; font: 700 11px/1 var(--mono);
+  }
+  .prow .no.is-none { background: none; border: 1.5px dashed var(--line); color: var(--taupe); }
+  .prow .tm { flex: none; width: 46px; font-family: var(--mono); font-size: 12px; color: var(--taupe); }
+  .prow .bd { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+  .prow .t { font-size: 14px; font-weight: 700; line-height: 1.35;
+             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .prow .s { font-size: 12px; color: var(--taupe); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ty { width: 15px; height: 15px; flex: none; fill: currentColor; color: var(--ev, var(--ev-misc)); }
+  .prow .chev { width: 14px; height: 14px; flex: none; fill: none; stroke: var(--taupe);
+                stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ─── 地點卡：點行程或點地圖上的點 ───────────────────────────
+     手機貼底、桌機置中。兩顆鈕各開各的地圖 App——不替他挑。 */
+  .scrim { position: fixed; inset: 0; z-index: 40; background: color-mix(in srgb, var(--ink) 34%, transparent); }
+  .pcard, .dlg {
+    position: fixed; z-index: 41; left: 50%; bottom: 16px; transform: translateX(-50%);
+    width: min(420px, calc(100% - 32px));
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 12px 32px -12px color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+  @media (min-width: 700px) { .pcard, .dlg { bottom: auto; top: 50%; transform: translate(-50%, -50%); } }
+  .pcard .k { margin: 0 0 4px; display: flex; align-items: center; gap: 6px;
+              font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--taupe); }
+  .pcard h3, .dlg h3 { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.35; }
+  .pcard .loc { margin: 4px 0 0; font-size: 13px; color: var(--taupe); }
+  .pcard .go { display: flex; gap: 8px; margin-top: 14px; }
+  .pcard .go .btn2 { flex: 1 1 0; min-height: 44px; padding: 0 10px; font-size: 14px; }
+  .pcard .x, .dlg .x { margin-top: 8px; width: 100%; }
+  .linkbtn {
+    min-height: 44px; padding: 0 4px; background: none; border: 0; cursor: pointer;
+    font: inherit; font-size: 13px; color: var(--taupe); text-decoration: underline;
+    text-underline-offset: 3px; text-decoration-color: var(--line);
+  }
+  .linkbtn:hover { color: var(--ink); }
+  .linkbtn:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; border-radius: 4px; }
+
+  /* ─── 確認視窗（停止分享） ───────────────────────────────── */
+  .dlg p { margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: var(--ink-2); }
+  .dlg .row { display: flex; gap: 8px; margin-top: 16px; }
+  .dlg .row > * { flex: 1 1 0; min-height: 44px; padding: 0 12px; font-size: 14px; }
+  .btn-danger { background: var(--danger-ink); color: #fff; border: 0; }
+  .btn-danger:hover { background: color-mix(in srgb, var(--danger-ink) 88%, var(--ink)); }
+
+  /* ─── 頁尾：公開版本說明＋作者區 ──────────────────────────────── */
+  .foot { margin-top: 30px; padding: 18px 0 34px; border-top: 1px solid var(--line); }
+  .foot > p { margin: 0; font-size: 13px; color: var(--taupe); }
+  .author { margin-top: 6px; }
+  /* 作者區只在作者按了之後才長出來，而且是一張低調的卡——
+     九成九的讀者不是作者，不該在頁尾看到一顆紅色按鈕。 */
+  .acard {
+    margin-top: 10px; padding: 14px 16px;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r);
+    max-width: 560px;
+  }
+  .acard .k { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+              text-transform: uppercase; color: var(--taupe); }
+  .acard .t { margin: 4px 0 0; font-size: 15px; font-weight: 700; }
+  .acard .w { margin: 4px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+  .acard .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; }
+  .acard .btn2 { min-height: 42px; font-size: 14px; }
+  /* ─── 整頁訊息：失效／解不開／已停止 ──────────────────────── */
+  .msg { padding: 44px 0 20px; max-width: 560px; }
+  .msg .ico { width: 28px; height: 28px; fill: none; stroke: var(--taupe); stroke-width: 1.6;
+              stroke-linecap: round; stroke-linejoin: round; }
+  .msg h1 { margin: 12px 0 6px; font-size: 22px; font-weight: 700; line-height: 1.3; }
+  .msg p { margin: 0; font-size: 14px; line-height: 1.65; color: var(--ink-2); }
+  .msg a { display: inline-block; margin-top: 18px; font-size: 14px; color: var(--machi-ink);
+           text-underline-offset: 3px; }
+
+  /* ─── 載入中 ─────────────────────────────────────────────── */
+  .sk { background: var(--sunken); border-radius: 6px; }
+  .sk-cover { aspect-ratio: 16 / 9; max-height: 240px; width: 100%; border-radius: var(--r); margin-bottom: 18px; }
+  .sk-l { height: 12px; margin-top: 10px; }
+  .sk-h { height: 34px; width: 62%; margin-top: 10px; }
+  .sk-grid { height: 360px; margin-top: 26px; border: 1px solid var(--line-2); background: none;
+             background-image: repeating-linear-gradient(to bottom, var(--line-2) 0 1px, transparent 1px 60px); }
+  .loading-t { margin: 16px 0 0; font-size: 14px; color: var(--taupe); }
+  @media (prefers-reduced-motion: no-preference) {
+    .sk { animation: sk 1.4s ease-in-out infinite alternate; }
+    @keyframes sk { from { opacity: 1; } to { opacity: 0.55; } }
+  }
+
+  /* ─── toast（App 的 .toast 搬過來，色換成網頁 token） ─────────── */
+  .toast {
+    position: fixed; left: 0; right: 0; bottom: 24px; margin: 0 auto; width: fit-content;
+    z-index: 50; display: flex; align-items: center; gap: 9px;
+    max-width: calc(100% - 48px);
+    padding: 11px 16px 11px 13px; border-radius: 9999px;
+    background: var(--toast-bg); color: var(--toast-on);
+    font-size: 13px; line-height: 1.4;
+    box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--ink) 55%, transparent);
+    pointer-events: none;
+  }
+  .toast svg { width: 18px; height: 18px; flex: none; fill: none; stroke: #40965d;
+               stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  @media print {
+    .top, .foot, .acts, .sec { display: none !important; }
+    body { background: #ffffff; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/>
+        <path d="M6 8.6v4a3.4 3.4 0 0 0 3.4 3.4h5.2"/>
+      </svg>
+      <b>TripEZGo</b>
+    </a>
+    <div class="lang" role="group" id="lang"></div>
+  </div>
+</header>
+
+<div id="page"></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.4 2.6 2.6L16 9.6"/></svg>
+  <span id="toast-t"></span>
+</div>
+
+<script type="module" src="/trip/app.js"></script>
+</body>
+</html>

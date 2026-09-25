@@ -1,0 +1,28 @@
+name: Test
+
+# 公開連結頁（trip/）與每日清理（tools/cleanup/）的測試。
+# **獨立於部署**：pages.yml 照舊只做連結檢查＋發布，不等這一支——瀏覽器測試要下載 Chromium，
+# 網路一抖就紅，不值得拿它擋住整站上線。紅了看這裡、回頭修。
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # App repo 不在 CI 上：黃金檔一致性那一條會略過並印出原因，其他照跑。
+      - run: npm run test:unit
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser

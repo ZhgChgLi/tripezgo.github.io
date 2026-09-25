@@ -1,1 +1,5 @@
 .DS_Store
+# 測試工具（package.json）的產物——不進 repo，也就不會被 GitHub Pages 發布或被連結檢查掃到。
+node_modules/
+test-results/
+playwright-report/

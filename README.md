@@ -24,6 +24,38 @@ robots.txt / sitemap.xml
 - 隱私權政策：`https://tripezgo.com/privacy.html`（英文版 `https://tripezgo.com/en/privacy.html`）
 - 使用者條款：`https://tripezgo.com/terms.html`（英文版 `https://tripezgo.com/en/terms.html`）
 
+## 公開連結頁 `trip/`
+
+`https://tripezgo.com/trip/#<id>.<key>`——App 的「公開連結」（App repo 的 ADR-0023、
+`.scratch/public-trip-share/spec.md`）。頁面用 CloudKit Web Services 匿名讀 public database、
+WebCrypto 在瀏覽器裡解密，金鑰只在 `#` 片段裡、不會送到伺服器。版面照 Open Design 稿
+`trip-share-public.html`。
+
+```
+trip/index.html     版面與樣式（設計稿的 token）
+trip/app.js         讀取、狀態、繪製
+trip/core.js        純函式：網址、解密、驗章、逐日分桶、純文字——瀏覽器、測試、清理工具共用
+trip/cloudkit.js    Web Services（只用 fetch，不載 CloudKit JS）
+trip/config.js      API token（Production → Development 依序查）、MapKit JS token
+trip/strings.js     三語字典
+```
+
+### 測試
+
+網站本身沒有建置步驟；`package.json` 只為了測試（`node_modules/` 已 gitignore，不會被發布）。
+
+```bash
+npm ci
+npx playwright install chromium
+npm test                  # node 單元測試＋Playwright 瀏覽器測試
+npm run golden:check      # 黃金檔副本 vs App repo 那一份（預設找 ../tripezgo，可給路徑）
+```
+
+- `tests/fixtures/golden-v1.json` 是 App repo `docs/public-link/golden-v1.json` 的副本——App 的程式碼
+  加密、簽章、產純文字的那一份。解密與三語純文字都跟它逐字對。App 那一份變了就複製過來。
+- 瀏覽器測試把 CloudKit 在 HTTP 邊界上假掉（`page.route` 攔 `api.apple-cloudkit.com`）。
+- `.github/workflows/test.yml` 在 push 時跑同一套，**不擋部署**。
+
 ## 本機預覽
 
 沒有相依套件，起一個靜態伺服器即可：
