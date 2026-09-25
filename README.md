@@ -56,6 +56,30 @@ npm run golden:check      # 黃金檔副本 vs App repo 那一份（預設找 ..
 - 瀏覽器測試把 CloudKit 在 HTTP 邊界上假掉（`page.route` 攔 `api.apple-cloudkit.com`）。
 - `.github/workflows/test.yml` 在 push 時跑同一套，**不擋部署**。
 
+### 每日清理 `tools/cleanup/`
+
+`.github/workflows/cleanup.yml` 每天 03:23（台北）跑一次、也能手動觸發（手動預設**試跑**：只列不刪）。
+它用 server-to-server key 列出 **Production** public database 的 `TripEZGoPublicItinerary`，
+刪掉格式版本不認得、payload 壞格式、沒簽、或 HMAC 在目前接受的任一把金鑰下都驗不過的——
+那些不是 App 寫的（任何登入 iCloud 的人都能直接用 Web Services 建這個 type 的 record，吃的是
+container 共用的 public 額度）。每一筆刪了什麼、為什麼，寫在 log 與 job summary。
+
+- **為什麼放這個 repo**：App repo 沒有 CI（本機出貨）；驗章跟公開頁共用 `trip/core.js`，同一份黃金檔測試。
+- **為什麼只碰 Production（寫死）**：Development 是模擬器與 debug build 的測試資料。
+- **換鑰**：`TEZ_SIGNING_KEYS` 放逗號分隔的多把，新舊並列一段時間，等舊版 App 寫的都更新過再拿掉舊的。
+- **App 升格式版本之前**，先讓清理認得新版本並上線，否則新版 App 寫的每一筆都會被刪。
+
+要設的 Actions secrets（沒設之前每天跳過，不算失敗）：
+
+| secret | 內容 |
+|---|---|
+| `CK_S2S_KEY_ID` | CloudKit Console › Production 的 server-to-server key 的 Key ID |
+| `CK_S2S_PRIVATE_KEY` | 那一把的 EC P-256 私鑰（PEM 全文） |
+| `TEZ_SIGNING_KEYS` | App 內嵌的簽章金鑰（base64），換鑰期間逗號分隔多把 |
+
+server-to-server key 以建立它的開發者身分存取、連同身上的 security role：開發者的 user record
+要掛上自訂角色 `Moderator`（Write），才刪得動別人建的 record（2026-09-25 spike 量過）。
+
 ## 本機預覽
 
 沒有相依套件，起一個靜態伺服器即可：

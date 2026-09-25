@@ -1,0 +1,43 @@
+name: Clean up public itineraries
+
+# 每天一次：把不是 App 寫的 TripEZGoPublicItinerary 從 **Production** public database 刪掉
+# （格式版本不認得、payload 壞格式、沒簽或 HMAC 驗不過）。規則與理由在 tools/cleanup/cleanup.mjs。
+#
+# 放在網站 repo 而不是 App repo：App repo 沒有 CI（本機出貨），而驗章那一段跟公開頁共用
+# trip/core.js——同一份程式碼、同一份黃金檔測試。
+#
+# secrets 沒設好之前每天照跑、每天跳過（印 warning，不算失敗）。
+on:
+  schedule:
+    - cron: '23 19 * * *'   # 每天 03:23（台北）
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 只列出會刪哪些，不刪
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-itinerary-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # 沒有相依套件：只用 node 內建的 crypto 與 fetch。
+      - name: Clean up Production
+        run: node tools/cleanup/cleanup.mjs
+        env:
+          CK_S2S_KEY_ID: ${{ secrets.CK_S2S_KEY_ID }}
+          CK_S2S_PRIVATE_KEY: ${{ secrets.CK_S2S_PRIVATE_KEY }}
+          TEZ_SIGNING_KEYS: ${{ secrets.TEZ_SIGNING_KEYS }}
+          # 排程觸發時沒有 inputs → 空字串 → 真的刪；手動觸發預設試跑。
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
