@@ -117,11 +117,24 @@ test('地圖跟著深色模式：一打開照系統的設定，系統切換時�
   await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.scheme())).toBe('light');
 });
 
-test('地圖有定位按鈕（MapKit 內建的那一顆；按了才問位置權限，不是一打開就問）', async ({ page }) => {
+test('定位按鈕：地圖右下一顆圓的（同 Google 地圖）；按了才問位置、畫藍點並跟著（使用者要求 2026-09-26）', async ({ page }) => {
   await fakeMapKit(page);
   await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });
   await showMap(page);
-  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.userLocation())).toEqual({ control: true, shows: false });
+  const btn = page.getByTestId('map-locate');
+  await expect(btn).toHaveAttribute('aria-label', '顯示我的位置');
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.userLocation())).toEqual({ control: false, shows: false, tracks: false });
+  const map = await page.getByTestId('map').boundingBox();
+  const b = await btn.boundingBox();
+  expect(Math.abs(b.width - b.height)).toBeLessThan(1);
+  expect(await btn.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('50%');
+  expect(map.x + map.width - (b.x + b.width)).toBeLessThan(24);
+  expect(map.y + map.height - (b.y + b.height)).toBeLessThan(90);
+  expect(b.x + b.width / 2).toBeGreaterThan(map.x + map.width / 2);
+
+  await btn.click();
+  await expect.poll(() => page.evaluate(() => window.__mk.userLocation())).toEqual({ control: false, shows: true, tracks: true });
+  await expect(btn).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一族；認不得的名字 → 通用圖釘＋雜項', async ({ page }) => {

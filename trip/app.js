@@ -45,6 +45,7 @@ const IC = {
   chev: '<path d="m9 5 7 7-7 7"/>',
   expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
   shrink: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
+  locate: '<circle cx="12" cy="12" r="6.4"/><circle cx="12" cy="12" r="2.4"/><path d="M12 2.6v3M12 18.4v3M2.6 12h3M18.4 12h3"/>',
 };
 const svg = (d, cls) => '<svg viewBox="0 0 24 24" aria-hidden="true"' + (cls ? ' class="' + cls + '"' : '') + '>' + d + '</svg>';
 
@@ -398,9 +399,25 @@ async function mountMap() {
   const map = new mk.Map(el);
   /* 地圖的底圖跟著深色模式（使用者回報 2026-09-26）：MapKit JS 預設是淺色，要自己說。 */
   map.colorScheme = DARK.matches ? mk.Map.ColorSchemes.Dark : mk.Map.ColorSchemes.Light;
-  /* 定位按鈕（使用者要求 2026-09-26）：MapKit 自己的那一顆——按了才跟瀏覽器要位置、畫出藍點並移過去；
-   * 不按就不問。showsUserLocation 不先開，不然一打開地圖就跳權限。 */
-  map.showsUserLocationControl = true;
+  /* 定位按鈕（使用者要求 2026-09-26）：地圖右下一顆圓的，同 Google 地圖——MapKit 內建那一顆在右上、
+   * 而且是方的，所以自己放一顆，做的事一樣：按了才跟瀏覽器要位置、畫藍點、鏡頭跟著。
+   * 不按就不問（showsUserLocation 不先開，不然一打開地圖就跳權限）。拖動地圖時 MapKit 自己會停止跟隨。 */
+  map.showsUserLocationControl = false;
+  const locate = document.createElement('button');
+  locate.type = 'button';
+  locate.className = 'map-locate';
+  locate.dataset.testid = 'map-locate';
+  locate.setAttribute('aria-label', s().locate);
+  locate.setAttribute('aria-pressed', 'false');
+  locate.innerHTML = svg(IC.locate);
+  locate.addEventListener('click', () => {
+    map.showsUserLocation = true;
+    map.tracksUserLocation = true;
+    locate.setAttribute('aria-pressed', 'true');
+  });
+  map.addEventListener('user-location-error', () => locate.setAttribute('aria-pressed', 'false'));
+  map.addEventListener('scroll-start', () => locate.setAttribute('aria-pressed', 'false'));
+  el.appendChild(locate);
   const m = mapDayOf(D.days[mapDay - 1]);
   const css = getComputedStyle(document.documentElement);
   const probe = document.createElement('span');

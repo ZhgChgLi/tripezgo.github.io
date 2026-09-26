@@ -309,6 +309,15 @@
     background: var(--sunken);
   }
   @media (max-width: 560px) { .map { height: 420px; } }
+  /* 定位按鈕：地圖右下的圓鈕（同 Google 地圖），疊在 MapKit 的指南針與縮放鈕上方。 */
+  .map-locate { position: absolute; right: 12px; bottom: 64px; z-index: 5; display: grid; place-items: center;
+                width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+                background: var(--card); color: var(--taupe);
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28); }
+  .map-locate svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .map-locate[aria-pressed="true"] { color: #1a73e8; }
+  .map-locate[aria-pressed="true"] svg circle:last-of-type { fill: currentColor; }
+  .map-locate:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 2px; }
   .map-full { flex: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 0;
               border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); cursor: pointer; }
   .map-full svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8;
@@ -482,17 +491,17 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=466ce96757",
+  "/trip/app.js": "/trip/app.js?v=00e8641a79",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=58681e1082",
   "/trip/core.js": "/trip/core.js?v=3421db6fb7",
   "/trip/icons.js": "/trip/icons.js?v=8170c18b88",
   "/trip/looks.js": "/trip/looks.js?v=632af634a5",
-  "/trip/strings.js": "/trip/strings.js?v=37667a3855",
+  "/trip/strings.js": "/trip/strings.js?v=9cdcdb8223",
   "/assets/js/chrome.js": "/assets/js/chrome.js?v=8056417f86"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=466ce96757"></script>
+<script type="module" src="/trip/app.js?v=00e8641a79"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>

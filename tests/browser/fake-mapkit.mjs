@@ -51,7 +51,7 @@ __mk.chevrons = function () {
     return { x: p.x, y: p.y, turn: a.el.firstChild.style.transform };
   });
 };
-__mk.userLocation = function () { var m = live(); return m ? { control: !!m.showsUserLocationControl, shows: !!m.showsUserLocation } : null; };
+__mk.userLocation = function () { var m = live(); return m ? { control: !!m.showsUserLocationControl, shows: !!m.showsUserLocation, tracks: !!m.tracksUserLocation } : null; };
 __mk.scheme = function () { var m = live(); return m ? m.colorScheme || null : null; };
 __mk.region = function () {
   var m = live(), r = m && m.region;   /* 地圖還沒掛上去：null，讓 expect.poll 繼續等（拋錯的話它不會重試） */
