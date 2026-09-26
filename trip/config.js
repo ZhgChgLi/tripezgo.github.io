@@ -19,7 +19,8 @@ export const CONFIG = {
     { name: 'production', apiToken: '' },
     { name: 'development', apiToken: '95c27dadedb8f40f5c0ad9bbdfe58d5f2d2241fffb04dad08dcfef77d19c76af' },
   ],
-  /* MapKit JS 的 JWT（開發者帳號上的 MapKit JS key 簽的、origin 限 tripezgo.com 與 www）。
-   * 空字串＝沒有地圖：時間表下面只列清單，其他照常。 */
-  mapkitToken: '',
+  /* MapKit JS 的 JWT：key TX7KT74NAS（team UGFKKJS5G7）簽的，origin 限 https://tripezgo.com
+   * （www 會 301 到裸網域，頁面只在這裡跑）。**2027-09-26 到期**——到期前用同一把 key 重簽一次換掉。
+   * 空字串＝沒有地圖：地圖 tab 只列清單，其他照常。 */
+  mapkitToken: 'eyJhbGciOiJFUzI1NiIsImtpZCI6IlRYN0tUNzROQVMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJVR0ZLS0pTNUc3IiwiaWF0IjoxNzkwMzkyMTY0LCJleHAiOjE4MjE5MjgxNjQsIm9yaWdpbiI6Imh0dHBzOi8vdHJpcGV6Z28uY29tIn0.0wYLY4RlteghM1nSma0UwZBp_gBNWJH8LkCj4SnVjDlDgZ96w28sRemz4ojRSaGgeV5MlAhWH-evadfLAi2dYQ',
 };
