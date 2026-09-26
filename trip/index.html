@@ -278,11 +278,12 @@
                stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .empty { margin: 10px; font-size: 12px; line-height: 1.4; color: var(--taupe); }
 
-  /* ─── 地圖（MapKit JS） ─────────────────────────────────────
-     放在時間表**下面**：這一頁的主角是時間表，地圖回答的是「這一天的點離得多遠」，
-     是看完時間表之後才會問的問題。放在上面的話手機上要先滑過 300px 的地圖才看得到行程。
-     一次只畫一天——整趟的點疊在一張圖上，每天的順序就看不出來了。 */
-  .sec { margin-top: 30px; }
+  /* ─── 行事曆／地圖兩個 tab（使用者決定 2026-09-26） ────────────
+     先前地圖疊在時間表底下，整頁很長；改成兩個 tab，一次只看一種，預設行事曆。
+     地圖一次只畫一天——整趟的點疊在一張圖上，每天的順序就看不出來了。 */
+  .vtabs { width: max-content; margin: 26px 0 16px; }
+  .vtabs button { padding: 7px 18px; font-size: 14px; }
+  .sec { margin-top: 0; }
   .sec-h { display: flex; align-items: center; justify-content: space-between; gap: 12px;
            flex-wrap: wrap; margin: 0 0 12px; }
   .sec-h h2 { margin: 0; font-family: var(--mono); font-size: 12px; font-weight: 400;
@@ -430,7 +431,7 @@
                stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
   @media print {
-    .top, .foot, .acts, .sec { display: none !important; }
+    .top, .foot, .acts, .sec, .vtabs { display: none !important; }
     body { background: #ffffff; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

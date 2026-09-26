@@ -270,8 +270,18 @@ function timelineHtml() {
     + cols + (band ? '<div class="tl-ads">' + band + '</div>' : '') + '</div></div></section>';
 }
 
+/* ═══ 行事曆／地圖兩個 tab（使用者決定 2026-09-26） ══════════════
+ * 先前地圖疊在時間表底下；改成兩個 tab，一次只看一種。預設行事曆——這一頁的主角是時間表。
+ * 換語言、開地點卡都不跳回；重新整理回到行事曆（網址片段是金鑰，不拿來記 tab）。 */
+let view = 'cal';
+function tabsHtml() {
+  const tab = (k, label) => '<button type="button" role="tab" data-view="' + k + '" aria-selected="' + (view === k)
+    + '" aria-pressed="' + (view === k) + '">' + esc(label) + '</button>';
+  return '<div class="seg vtabs" role="tablist" data-testid="view-tabs">' + tab('cal', s().cal) + tab('map', s().map) + '</div>';
+}
+
 /* ═══ 地圖（MapKit JS） ═══════════════════════════════════════
- * 放在時間表**下面**、一次一天（設計稿 D2）：類型色＋當天順序號，底下附清單；沒座標的只列不上圖。
+ * 第二個 tab、一次一天（設計稿 D2）：類型色＋當天順序號，底下附清單；沒座標的只列不上圖。
  * **沒有 MapKit JS token 就沒有地圖框**：清單照列、點得開地點卡，其他照常（config.js）。 */
 let mapDay = 1;
 let mapInstance = null;
@@ -295,7 +305,7 @@ function mapHtml() {
       + esc(has ? it.place || '' : s().mapNone) + '</span></span>' + svg(IC.chev, 'chev') + '</button></li>';
   }).join('');
   const box = CONFIG.mapkitToken ? '<div class="map" id="map" data-testid="map"></div>' : '';
-  return '<section class="sec" data-testid="map-section"><div class="sec-h"><h2>' + esc(s().map) + '</h2>'
+  return '<section class="sec" data-testid="map-section"><div class="sec-h">'
     + '<div class="seg" role="group">' + seg + '</div></div>'
     + box
     + (rows ? '<ul class="plist" data-testid="map-list">' + rows + '</ul>' : '<p class="empty">' + esc(s().mapAll) + '</p>')
@@ -595,7 +605,7 @@ function draw() {
   if (state === 'stopped') { pageEl.innerHTML = msgHtml(s().stoppedT, s().stoppedWhy, IC.link, 'stopped'); document.title = 'TripEZGo'; return; }
   document.title = D.copy.name + ' · TripEZGo';
   pageEl.innerHTML = '<div class="wrap" data-testid="trip">' + heroHtml() + '</div><main class="wrap">'
-    + timelineHtml() + mapHtml() + footHtml() + '</main>' + overlayHtml();
+    + tabsHtml() + (view === 'map' ? mapHtml() : timelineHtml()) + footHtml() + '</main>' + overlayHtml();
   afterDraw();
 }
 function overlayHtml() { return author === 'confirm' ? confirmHtml() : ''; }
@@ -609,6 +619,7 @@ function paintLang() {
 document.addEventListener('click', (ev) => {
   let b;
   if ((b = ev.target.closest('[data-lang]'))) { lang = b.dataset.lang; store('tez.lang', lang); closePlace(); draw(); return; }
+  if ((b = ev.target.closest('[data-view]'))) { view = b.dataset.view; closePlace(); draw(); return; }
   if ((b = ev.target.closest('[data-mday]'))) { mapDay = +b.dataset.mday; draw(); return; }
   if (ev.target.closest('[data-close]')) { closePlace(); return; }
   if ((b = ev.target.closest('[data-ev]'))) { openPlace(+b.dataset.ev); return; }

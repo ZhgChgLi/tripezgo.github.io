@@ -10,6 +10,34 @@ async function open(page, c, config = {}) {
   await expect(page.locator('h1')).toHaveText(c.plaintext.trip.name);
 }
 
+/* 地圖在第二個 tab（使用者決定 2026-09-26：行事曆／地圖兩個 tab）。 */
+async function showMap(page) {
+  await page.locator('[data-view="map"]').click();
+  await expect(page.getByTestId('map-section')).toBeVisible();
+}
+
+test('兩個 tab：預設行事曆，地圖藏著；切到地圖換成地圖、行事曆藏起來；切語言不跳回', async ({ page }) => {
+  await open(page, dated);
+  const tabs = page.getByTestId('view-tabs');
+  await expect(tabs.getByRole('tab')).toHaveText(['行事曆', '地圖']);
+  await expect(page.locator('[data-view="cal"]')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#timeline')).toBeVisible();
+  await expect(page.getByTestId('map-section')).toHaveCount(0);
+
+  await page.locator('[data-view="map"]').click();
+  await expect(page.locator('[data-view="map"]')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByTestId('map-section')).toBeVisible();
+  await expect(page.locator('#timeline')).toHaveCount(0);
+
+  await page.locator('[data-lang="en"]').click();
+  await expect(tabs.getByRole('tab')).toHaveText(['Schedule', 'Map']);
+  await expect(page.getByTestId('map-section')).toBeVisible();
+
+  await page.locator('[data-view="cal"]').click();
+  await expect(page.locator('#timeline')).toBeVisible();
+  await expect(page.getByTestId('map-section')).toHaveCount(0);
+});
+
 test('封面：在標題上面，是公開版本裡那張 JPEG', async ({ page }) => {
   await open(page, dated);
   const cover = page.getByTestId('cover');
@@ -29,7 +57,7 @@ test('沒有封面就不佔位', async ({ page }) => {
 test('沒有 MapKit token：沒有地圖框、不載 MapKit，清單照列、切天照切', async ({ page }) => {
   const mk = await fakeMapKit(page);
   await open(page, dated);
-  await expect(page.getByTestId('map-section')).toBeVisible();
+  await showMap(page);
   await expect(page.getByTestId('map')).toHaveCount(0);
   const rows = page.getByTestId('map-row');
   await expect(rows).toHaveCount(2);
@@ -54,6 +82,7 @@ test('沒有 MapKit token：沒有地圖框、不載 MapKit，清單照列、切
 
 test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一族；認不得的名字 → 通用圖釘＋雜項', async ({ page }) => {
   await open(page, dated);
+  await showMap(page);
   await page.locator('[data-mday="2"]').click();
   const rows = page.getByTestId('map-row');
   /* 青之洞窟：icon swimming、swatch "sea"（不是一個色族）→ 退回 swimming 那一族 seeNature */
@@ -67,6 +96,7 @@ test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一�
 test('有 MapKit token：一次畫一天的點，類型色＋當天順序號，切天換點', async ({ page }) => {
   const mk = await fakeMapKit(page);
   await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });
+  await showMap(page);
   await expect(page.getByTestId('map')).toHaveAttribute('data-fake-map', '1');
   expect(await page.evaluate(() => window.__mk.token)).toBe('test-mapkit-jwt');
   await expect.poll(() => page.evaluate(() => window.__mk.current())).toEqual([
@@ -105,6 +135,7 @@ test('地點卡：有座標的兩顆鈕帶座標；點時間表的方塊也開�
 
 test('地點卡：沒有座標就用地點名稱查；Esc 關掉', async ({ page }) => {
   await open(page, dated);
+  await showMap(page);
   await page.getByTestId('map-row').first().click();
   await expect(page.getByTestId('open-apple')).toHaveAttribute('href', 'https://maps.apple.com/?q=' + encodeURIComponent('桃園 T1 · CI120'));
   await expect(page.getByTestId('open-google')).toHaveAttribute('href',
