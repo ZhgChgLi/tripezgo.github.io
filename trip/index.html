@@ -39,6 +39,7 @@
     --line-3:   color-mix(in srgb, var(--line) 36%, var(--paper));
     --sunken:   color-mix(in srgb, var(--line) 26%, var(--card));
     --machi-ink: #1d7370;
+    --walk-route: #5cc6c3;   /* App 的 tzWalkingRoute（步行導航那條魚骨線） */
     --machi-on:  #ffffff;
 
     /* ── 以下是這一版新增的，全部取自 App 稿（tripezgo-ios-trips.html :root），不新造色 ──
@@ -75,6 +76,7 @@
       --taupe: color-mix(in srgb, #7c6f63 58%, #fbf8f4);
       --line:  color-mix(in srgb, #dbd5cd 18%, #1f1914);
       --machi-ink: #5cc6c3;
+      --walk-route: #d6f5f3;
       --machi-on:  color-mix(in srgb, #1f1914 86%, #2f918e);
       --sunken: color-mix(in srgb, var(--line) 40%, var(--card));
       --danger-ink: #f4907f;
@@ -163,7 +165,8 @@
   .stamp { margin: 8px 0 0; font-size: 12px; color: var(--taupe); }
 
   /* ─── 動作列：複製到 App ／ 複製純文字 ───────────────────────── */
-  .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  /* 兩顆鈕靠右（使用者要求 2026-09-26）。 */
+  .acts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 18px; }
   .cta, .btn2 {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     min-height: 46px; padding: 0 20px;
@@ -183,8 +186,6 @@
                         stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .btn2.is-danger { color: var(--danger-ink); }
   @media (max-width: 560px) { .acts .cta, .acts .btn2 { flex: 1 1 100%; } }
-  .acts-note { margin: 10px 0 0; font-size: 13px; line-height: 1.6; color: var(--taupe); max-width: 62ch; }
-  .acts-note b { color: var(--ink); font-weight: 700; }
 
   main { padding-bottom: 40px; }
 
@@ -285,10 +286,15 @@
   .vtabs button { padding: 7px 18px; font-size: 14px; }
   .plist-h { margin: 18px 0 4px; font-family: var(--mono); font-size: 12px; font-weight: 400;
              letter-spacing: 0.1em; color: var(--taupe); }
-  /* 路程標在地圖的線上（MapKit 的 Annotation）：App 的 pill 用 tzAccentInk 底、白字。 */
-  .map-leg { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px;
+  /* 路程標在地圖的線上（MapKit 的 Annotation）：App 的 pill 用 tzAccentInk 底、白字。
+     外面那一層是 0×0（MapKit 把它的底邊中點放在座標上），裡面那一層置中在那一點。 */
+  .map-leg, .map-chev { position: relative; display: block; width: 0; height: 0; pointer-events: none; }
+  .map-leg > span { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px;
              background: var(--machi-ink); color: #ffffff; font-size: 11px; line-height: 1.2; white-space: nowrap;
              transform: translate(-50%, -50%); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+  /* 箭頭：App 的 WalkingRouteRenderer——開口的 V、10pt、線寬 3、跟線同色、朝行進方向。 */
+  .map-chev > svg { position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; overflow: visible;
+                    fill: none; stroke: var(--walk-route); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
   .map-leg svg { width: 12px; height: 12px; flex: none; fill: none; stroke: currentColor;
                  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .sec { margin-top: 0; }
@@ -300,11 +306,20 @@
   .seg::-webkit-scrollbar { display: none; }
 
   .map {
-    position: relative; height: 340px; overflow: hidden;
+    position: relative; height: 520px; overflow: hidden;
     border: 1px solid var(--line); border-radius: var(--r);
     background: var(--sunken);
   }
-  @media (max-width: 560px) { .map { height: 260px; } }
+  @media (max-width: 560px) { .map { height: 420px; } }
+  .map-full { flex: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 0;
+              border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); cursor: pointer; }
+  .map-full svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8;
+                  stroke-linecap: round; stroke-linejoin: round; }
+  .map-full:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; }
+  /* 全螢幕：日期切換列跟著一起上來，地圖吃掉剩下的高度。 */
+  .map-wrap.is-full { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column;
+                      padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--paper); }
+  .map-wrap.is-full .map { flex: 1 1 auto; height: auto; min-height: 0; }
   /* 示意底圖：MapKit JS 真的畫出來之前的替身。色取紙色系，不用青綠。 */
   .map .streets { position: absolute; inset: 0; width: 100%; height: 100%; }
   .map .sea  { fill: color-mix(in srgb, var(--line) 42%, var(--paper)); }
@@ -471,16 +486,16 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=c4055c0720",
+  "/trip/app.js": "/trip/app.js?v=8acc66738f",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=58681e1082",
-  "/trip/core.js": "/trip/core.js?v=7f0264ff4a",
+  "/trip/core.js": "/trip/core.js?v=3421db6fb7",
   "/trip/icons.js": "/trip/icons.js?v=8170c18b88",
   "/trip/looks.js": "/trip/looks.js?v=632af634a5",
-  "/trip/strings.js": "/trip/strings.js?v=dd5a5e9474"
+  "/trip/strings.js": "/trip/strings.js?v=89e23a964f"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=c4055c0720"></script>
+<script type="module" src="/trip/app.js?v=8acc66738f"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>

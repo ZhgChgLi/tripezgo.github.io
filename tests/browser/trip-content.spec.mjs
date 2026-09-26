@@ -80,6 +80,33 @@ test('沒有 MapKit token：沒有地圖框、不載 MapKit，清單照列、切
   expect(mk.requests).toHaveLength(0);
 });
 
+test('地圖夠高；全螢幕鈕：按了佔滿視窗、切天還在全螢幕、Esc 或再按一次回來', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await fakeMapKit(page);
+  await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });
+  await showMap(page);
+  const map = page.getByTestId('map');
+  expect((await map.boundingBox()).height).toBeGreaterThanOrEqual(480);
+
+  const full = page.getByTestId('map-full');
+  await expect(full).toHaveAttribute('aria-label', '全螢幕');
+  await full.click();
+  await expect(page.getByTestId('map-wrap')).toHaveCSS('position', 'fixed');
+  const box = await map.boundingBox();
+  expect(box.width).toBeGreaterThan(1200);
+  expect(box.height).toBeGreaterThan(700);
+  await expect(page.getByTestId('map-full')).toHaveAttribute('aria-label', '結束全螢幕');
+
+  await page.locator('[data-mday="2"]').click();
+  await expect(page.getByTestId('map-wrap')).toHaveCSS('position', 'fixed');
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('map-wrap')).not.toHaveCSS('position', 'fixed');
+
+  await page.getByTestId('map-full').click();
+  await page.getByTestId('map-full').click();
+  await expect(page.getByTestId('map-wrap')).not.toHaveCSS('position', 'fixed');
+});
+
 test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一族；認不得的名字 → 通用圖釘＋雜項', async ({ page }) => {
   await open(page, dated);
   await showMap(page);
@@ -98,7 +125,7 @@ test('有 MapKit token：鏡頭對準當天第一個點、底部只列沒地點�
   await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });
   await showMap(page);
   /* 第 1 天：只有國際通有座標 → 鏡頭對準它、50 公里見方；航班與租車沒地點 → 列在底下 */
-  await expect.poll(() => page.evaluate(() => window.__mk.region())).toEqual(
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.region())).toEqual(
     expect.objectContaining({ lat: 26.2153, lng: 127.6856 }));
   const dLat = await page.evaluate(() => window.__mk.region().dLat);
   expect(dLat).toBeCloseTo(50000 / 111320, 3);
@@ -111,9 +138,24 @@ test('有 MapKit token：鏡頭對準當天第一個點、底部只列沒地點�
 
   /* 第 2 天：兩個點連一條實線，線上標「步行 · 12 分」；沒有沒地點的 → 不列 */
   await page.locator('[data-mday="2"]').click();
-  await expect.poll(() => page.evaluate(() => window.__mk.lines())).toEqual([
-    { points: [[26.4447, 127.7716], [26.215, 127.689]], dashed: false, width: 3 },
+  /* 線的樣式跟 App 的步行導航一樣（WalkingRouteRenderer 的魚骨線）：6pt、tzWalkingRoute、0.85 */
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.lines())).toEqual([
+    { points: [[26.4447, 127.7716], [26.215, 127.689]], dashed: false, width: 6, color: '#5cc6c3', opacity: 0.85 },
   ]);
+  /* 箭頭：沿線每 40 個螢幕點一個、第一個在 20 點，都朝行進方向（往下偏左） */
+  const chev = await page.evaluate(() => window.__mk.chevrons());
+  expect(chev.length).toBeGreaterThan(3);
+  const box = await page.getByTestId('map').boundingBox();
+  const start = { x: box.x + (127.7716 - 127.6) * 2000, y: box.y + (26.5 - 26.4447) * 2000 };
+  const d = chev.map((c) => Math.hypot(c.x - start.x, c.y - start.y)).sort((a, b) => a - b);
+  expect(d[0]).toBeCloseTo(20, 0);
+  expect(d[1] - d[0]).toBeCloseTo(40, 0);
+  const angle = Math.atan2((26.4447 - 26.215) * 2000, (127.689 - 127.7716) * 2000) * 180 / Math.PI;
+  for (const c of chev) {
+    expect(c.x).toBeGreaterThanOrEqual(box.x - 10);
+    expect(c.y).toBeLessThanOrEqual(box.y + box.height + 10);
+    expect(c.turn).toBe('rotate(' + angle.toFixed(2) + 'deg)');
+  }
   const labels = await page.evaluate(() => window.__mk.labels());
   expect(labels).toHaveLength(1);
   expect(labels[0].text).toContain('步行');
@@ -121,7 +163,7 @@ test('有 MapKit token：鏡頭對準當天第一個點、底部只列沒地點�
   expect(labels[0].lat).toBeCloseTo((26.4447 + 26.215) / 2, 4);
   await expect(page.getByTestId('map-row')).toHaveCount(0);
   await expect(page.getByTestId('map-list-head')).toHaveCount(0);
-  await expect.poll(() => page.evaluate(() => window.__mk.region())).toEqual(
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.region())).toEqual(
     expect.objectContaining({ lat: 26.4447, lng: 127.7716 }));
 });
 
@@ -131,11 +173,11 @@ test('有 MapKit token：一次畫一天的點，類型色＋當天順序號，�
   await showMap(page);
   await expect(page.getByTestId('map')).toHaveAttribute('data-fake-map', '1');
   expect(await page.evaluate(() => window.__mk.token)).toBe('test-mapkit-jwt');
-  await expect.poll(() => page.evaluate(() => window.__mk.current())).toEqual([
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.current())).toEqual([
     expect.objectContaining({ glyph: '1', title: '國際通・散策', lat: 26.2153, lng: 127.6856 }),
   ]);
   await page.locator('[data-mday="2"]').click();
-  await expect.poll(() => page.evaluate(() => window.__mk.current().map((a) => a.glyph + ' ' + a.title))).toEqual([
+  await expect.poll(() => page.evaluate(() => ((window.__mk && window.__mk.current()) || []).map((a) => a.glyph + ' ' + a.title))).toEqual([
     '1 青之洞窟浮潛',
     '2 屋台村・宵夜',
   ]);

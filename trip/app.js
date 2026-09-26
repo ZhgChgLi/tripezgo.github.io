@@ -11,10 +11,10 @@
  */
 import { CONFIG } from './config.js';
 import { createClient } from './cloudkit.js';
-import { clock, daysOf, ITINERARY, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
+import { base64UrlEncode, clock, daysOf, ITINERARY, laneLayout, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
 import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
 import { iconOf, iconPath, swatchOf } from './looks.js';
-import { LANGS, S, STORE } from './strings.js';
+import { LANGS, S } from './strings.js';
 
 /* 類型色：App 的 EventTypeSwatch 十一族（淺／深），寫成 CSS 變數 --sw-<族>。 */
 (function paintSwatches() {
@@ -42,6 +42,8 @@ const IC = {
   warn: '<path d="M12 3.6 1.8 20.4h20.4L12 3.6z"/><path d="M12 10v4.4M12 17.4v.1"/>',
   link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
   chev: '<path d="m9 5 7 7-7 7"/>',
+  expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  shrink: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
 };
 const svg = (d, cls) => '<svg viewBox="0 0 24 24" aria-hidden="true"' + (cls ? ' class="' + cls + '"' : '') + '>' + d + '</svg>';
 
@@ -143,62 +145,29 @@ function coverHtml() {
 function actsHtml() {
   return '<div class="acts">' + copyAppHtml()
     + '<button class="btn2" type="button" id="act-text" data-testid="copy-text">' + svg(IC.share) + esc(s().copyText) + '</button>'
-    + '</div>' + actsNoteHtml();
+    + '</div>';
 }
-/* ═══ 複製成我的旅程（票 11） ═══════════════════════════════════
+/* ═══ 在 TripEZGo 建立這個旅程（票 11；2026-09-26 改走共用跳轉頁） ═════════
  *
  * **按鈕指向另一個網域**：這一頁在 tripezgo.com 就指 www.tripezgo.com，反過來也一樣。同網域的點擊
  * 不會觸發 Universal Link，換個網域才會（spike：LINE 裡 www 會叫起 App、裸網域不會）。所以
- * 已裝 App 的人按下去就進 App 的預覽，這一頁什麼都不必做——**不 preventDefault**，讓那一下是
- * 一次真的、由使用者點出來的連結（程式跳轉的 Universal Link 不保證觸發）。
+ * 已裝 App 的人按下去就進 App 的預覽——**不 preventDefault**，讓那一下是一次真的、由使用者點出來
+ * 的連結（程式跳轉的 Universal Link 不保證觸發）。
  *
- * 沒裝 App 的人：那一下會從 www 被 301 帶回這一頁（# 片段跟著走）。所以按下去的當下就
- *   1. 把整條連結寫進剪貼簿——App 第一次打開時讀剪貼簿接回來（同 join/ 的延後機制）
- *   2. 在 sessionStorage 記一筆「這一趟存過了」
- * 回到這一頁看到那一筆，按鈕就換成「前往下載」、旁邊的話換成「連結已經存起來了」——跟 join/
- * 一樣是兩下：跳到下載頁之後就沒有地方告訴他連結存好了。第二下去下載之前再寫一次剪貼簿，
- * 以防第一下的寫入被跳頁打斷。
- *
- * 剪貼簿裡放 www 那一條：那是 App 發出去的正式寫法（App 兩種主機都認）。 */
+ * 沒裝 App 的人：www 把他 301 回這一頁，路徑、查詢字串、# 片段都帶著（2026-09-26 用 curl 量過）。
+ * 這一頁看到 ?open=1 就轉去 /open/——跟加入共享（/join/）同一頁：存正式連結、再去下載。 */
 const WWW = 'www.tripezgo.com';
 const APEX = 'tripezgo.com';
-const SAVED = () => 'tez.saved.' + D.link.id;
 
 function otherHost() { return location.hostname === WWW ? APEX : WWW; }
-function shareLink() { return linkURL(WWW, D.link.id, D.link.key); }
-function isSaved() { return session.get(SAVED()) === '1'; }
 
+/* 按鈕是一條純連結（使用者要求 2026-09-26：跟加入共享共用一個跳轉頁）。
+ * 已裝 App：www 的 Universal Link 直接進 App（App 認 /trip/，查詢字串不管）。
+ * 沒裝：www 301 回裸網域、帶著 ?open=1，這一頁一讀到就轉去 /open/（見 load）。 */
 function copyAppHtml() {
-  if (isSaved()) {
-    return '<a class="cta" id="act-app" data-testid="copy-app" data-saved="1" href="' + esc(STORE[lang]) + '">' + esc(s().savedGo) + '</a>';
-  }
-  return '<a class="cta" id="act-app" data-testid="copy-app" href="' + esc(linkURL(otherHost(), D.link.id, D.link.key)) + '">'
-    + svg(IC.copy) + esc(s().copyApp) + '</a>';
+  return '<a class="cta" id="act-app" data-testid="copy-app" href="https://' + otherHost() + '/trip/?open=1#'
+    + esc(D.link.id + '.' + base64UrlEncode(D.link.key)) + '">' + svg(IC.copy) + esc(s().copyApp) + '</a>';
 }
-function actsNoteHtml() {
-  const note = isSaved() ? '<b>' + esc(s().savedHead) + '</b>　' + esc(s().savedLede) : s().copyAppNote;
-  return '<p class="acts-note" data-testid="copy-app-note">' + note + '</p>';
-}
-function onCopyApp(ev) {
-  const saved = ev.target.closest('#act-app').dataset.saved === '1';
-  if (saved) {
-    /* 第二下去下載：不需要 Universal Link，所以等剪貼簿寫完再走——跳頁會打斷還沒寫完的剪貼簿
-     *（測試量到的：同步寫完立刻跳，剪貼簿裡是舊的）。 */
-    ev.preventDefault();
-    const go = () => location.assign(STORE[lang]);
-    writeClipboard(shareLink()).then(go, go);
-    return;
-  }
-  /* 第一下：照 href 走（Universal Link），不能等。寫入在 pointerdown 就先起跑（見底下），
-   * 這裡在 click 再寫一次，兩次都在使用者的手勢裡。 */
-  writeClipboard(shareLink()).catch(() => {});
-  session.set(SAVED(), '1');
-}
-/* pointerdown 也是一個手勢：在 click 之前幾十毫秒就開始寫剪貼簿，讓它在跳頁之前寫完。 */
-document.addEventListener('pointerdown', (ev) => {
-  const b = ev.target.closest && ev.target.closest('#act-app');
-  if (b && b.dataset.saved !== '1') writeClipboard(shareLink()).catch(() => {});
-});
 
 /* ═══ 時間軸（設計稿原樣；欄頭支援日期未定） ═════════════════════ */
 const PPM = 1, HOUR = 60 * PPM;
@@ -220,17 +189,7 @@ function timelineHtml() {
       const h = (x.e - x.s) * PPM, line = h < FIT1;
       return { x, st: x.s, en: x.e, line, top: (x.s - r.lo) * PPM, h: line ? Math.max(1, Math.round(h)) : h, ext: line ? Math.max(h, LINE_EXT) : h, lane: 0, lanes: 1 };
     });
-    for (let gi = 0; gi < boxes.length;) {
-      let gEnd = boxes[gi].top + boxes[gi].ext, gj = gi + 1;
-      while (gj < boxes.length && boxes[gj].top < gEnd) { gEnd = Math.max(gEnd, boxes[gj].top + boxes[gj].ext); gj++; }
-      const ends = [];
-      for (let gk = gi; gk < gj; gk++) {
-        const bx = boxes[gk];
-        for (let ln = 0; ; ln++) { if (ends[ln] === undefined || ends[ln] <= bx.top) { ends[ln] = bx.top + bx.ext; bx.lane = ln; break; } }
-      }
-      for (let gm = gi; gm < gj; gm++) boxes[gm].lanes = ends.length;
-      gi = gj;
-    }
+    laneLayout(boxes);
     let legHtml = '', evHtml = '';
     boxes.forEach((b, i) => {
       const it = b.x.item, prev = i ? boxes[i - 1] : null;
@@ -274,6 +233,9 @@ function timelineHtml() {
  * 先前地圖疊在時間表底下；改成兩個 tab，一次只看一種。預設行事曆——這一頁的主角是時間表。
  * 換語言、開地點卡都不跳回；重新整理回到行事曆（網址片段是金鑰，不拿來記 tab）。 */
 let view = 'cal';
+/* 地圖全螢幕（使用者要求 2026-09-26）：CSS 把地圖那一塊蓋滿視窗——iPhone 的 Safari 不給一般元素
+ * 用 Fullscreen API。切天、換語言都留在全螢幕；Esc 或再按一次回來。 */
+let mapFull = false;
 function tabsHtml() {
   const tab = (k, label) => '<button type="button" role="tab" data-view="' + k + '" aria-selected="' + (view === k)
     + '" aria-pressed="' + (view === k) + '">' + esc(label) + '</button>';
@@ -306,11 +268,13 @@ function mapHtml() {
   if (mapDay > D.days.length) mapDay = 1;
   const d = D.days[mapDay - 1];
   const seg = D.days.map((x) => '<button type="button" data-mday="' + x.n + '" aria-pressed="' + (x.n === mapDay) + '">' + esc(fmt(s().day, x.n)) + '</button>').join('');
-  let box = '', list = '';
+  let box = '', list = '', full = '';
   if (CONFIG.mapkitToken) {
     /* 有地圖：底下只列沒地點的（照 App 的 placeless），有地點的都在圖上、點了開地點卡。 */
     const m = mapDayOf(d);
     box = '<div class="map" id="map" data-testid="map"></div>';
+    full = '<button type="button" class="map-full" data-testid="map-full" aria-label="' + esc(mapFull ? s().mapExit : s().mapFull)
+      + '" aria-pressed="' + mapFull + '">' + svg(mapFull ? IC.shrink : IC.expand) + '</button>';
     const rows = m.placeless.map(({ x, item }) =>
       mapRow(item, null, x ? clock(x.s) : ITINERARY[lang].allDay, item.place || s().mapNone)).join('');
     list = rows ? '<h3 class="plist-h" data-testid="map-list-head">' + esc(s().mapPlaceless) + '</h3><ul class="plist" data-testid="map-list">' + rows + '</ul>'
@@ -320,9 +284,10 @@ function mapHtml() {
     const rows = mapPoints(d).map(({ x, no }) => mapRow(x.item, no, clock(x.s), no !== null ? x.item.place || '' : s().mapNone)).join('');
     list = rows ? '<ul class="plist" data-testid="map-list">' + rows + '</ul>' : '<p class="empty">' + esc(s().mapAll) + '</p>';
   }
-  return '<section class="sec" data-testid="map-section"><div class="sec-h">'
-    + '<div class="seg" role="group">' + seg + '</div></div>'
-    + box + list + '</section>';
+  return '<section class="sec" data-testid="map-section">'
+    + '<div class="map-wrap' + (mapFull && box ? ' is-full' : '') + '" data-testid="map-wrap"><div class="sec-h">'
+    + '<div class="seg" role="group">' + seg + '</div>' + full + '</div>'
+    + box + '</div>' + list + '</section>';
 }
 
 function loadMapKit() {
@@ -340,6 +305,47 @@ function loadMapKit() {
     });
   }
   return mapkitLoading;
+}
+
+/* App 的 WalkingRouteRenderer 在網頁上的做法：MapKit JS 不能自訂線怎麼畫，所以箭頭是一個個小標記。
+ * 只擺在地圖框看得到的那一段（線先裁到框裡再擺），拉很近的時候不會生出幾萬個。 */
+const CHEVRON_SPACING = 40, CHEVRON_SIZE = 10;
+function chevronsOf(map, mk, el, lines) {
+  const r = el.getBoundingClientRect();
+  const box = { x0: r.left - CHEVRON_SIZE, y0: r.top - CHEVRON_SIZE, x1: r.right + CHEVRON_SIZE, y1: r.bottom + CHEVRON_SIZE };
+  const out = [];
+  lines.forEach((l) => {
+    const a = map.convertCoordinateToPointOnPage(new mk.Coordinate(l.from.item.geo[0], l.from.item.geo[1]));
+    const b = map.convertCoordinateToPointOnPage(new mk.Coordinate(l.to.item.geo[0], l.to.item.geo[1]));
+    const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy);
+    if (len < CHEVRON_SPACING / 2) return;
+    const [t0, t1] = clip(a, dx, dy, box);
+    if (t0 > t1) return;
+    const turn = 'rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI).toFixed(2) + 'deg)';
+    let d = CHEVRON_SPACING / 2 + Math.max(0, Math.ceil((t0 * len - CHEVRON_SPACING / 2) / CHEVRON_SPACING)) * CHEVRON_SPACING;
+    for (; d < Math.min(len, t1 * len); d += CHEVRON_SPACING) {
+      const at = map.convertPointOnPageToCoordinate(new DOMPoint(a.x + dx * d / len, a.y + dy * d / len));
+      out.push(new mk.Annotation(at, () => {
+        const c = document.createElement('span');
+        c.className = 'map-chev';
+        c.innerHTML = '<svg viewBox="0 0 10 10" aria-hidden="true" style="transform:' + turn + '"><path d="M0 0 10 5 0 10"/></svg>';
+        return c;
+      }, { enabled: false, displayPriority: 999 }));
+    }
+  });
+  return out;
+}
+/* 線段 a + t·(dx, dy)（t ∈ [0, 1]）落在框裡的那一段（Liang–Barsky）。 */
+function clip(a, dx, dy, box) {
+  let t0 = 0, t1 = 1;
+  const edge = (p, q) => {
+    if (p === 0) return q >= 0;
+    const t = q / p;
+    if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; }
+    return true;
+  };
+  const ok = edge(-dx, a.x - box.x0) && edge(dx, box.x1 - a.x) && edge(-dy, a.y - box.y0) && edge(dy, box.y1 - a.y);
+  return ok ? [t0, t1] : [1, 0];
 }
 
 async function mountMap() {
@@ -373,10 +379,11 @@ async function mountMap() {
     return a;
   });
   probe.remove();
-  /* 線：App 的 tzAccentInk、3pt；沒有交通方式是 [2, 6] 的虛線（TripMapMetrics）。 */
-  const ink = css.getPropertyValue('--machi-ink').trim();
+  /* 線：跟 App 的步行導航同一種魚骨線（使用者要求 2026-09-26；WalkingRouteRenderer）——
+   * tzWalkingRoute、6pt、0.85 的底線，沿線是同色的開口 V 箭頭（見 placeChevrons）。 */
+  const walk = css.getPropertyValue('--walk-route').trim();
   map.addOverlays(m.lines.map((l) => new mk.PolylineOverlay([coord(l.from.item.geo), coord(l.to.item.geo)], {
-    style: new mk.Style({ strokeColor: ink, lineWidth: 3, lineCap: 'round', lineJoin: 'round', lineDash: l.solid ? [] : [2, 6] }),
+    style: new mk.Style({ strokeColor: walk, strokeOpacity: 0.85, lineWidth: 6, lineCap: 'round', lineJoin: 'round' }),
   })));
   /* 路程標在線的中點：交通方式＋時間（使用者要求 2026-09-26；App 的 pill 只寫距離）。 */
   const labels = m.lines.filter((l) => l.leg).map((l) => {
@@ -385,17 +392,28 @@ async function mountMap() {
     return new mk.Annotation(coord(mid), () => {
       const pill = document.createElement('span');
       pill.className = 'map-leg';
-      pill.innerHTML = svg(IC[mode] || IC.chev) + '<span>' + esc(s().modes[mode]) + (l.leg.min ? ' · ' + esc(dur(l.leg.min, s())) : '') + '</span>';
+      pill.innerHTML = '<span>' + svg(IC[mode] || IC.chev) + '<span>' + esc(s().modes[mode])
+        + (l.leg.min ? ' · ' + esc(dur(l.leg.min, s())) : '') + '</span></span>';
       return pill;
-    }, { anchorOffset: new DOMPoint(0, 0), enabled: false, displayPriority: 1000 });
+    }, { enabled: false, displayPriority: 1000 });
   });
   map.addAnnotations(pins.concat(labels));
+  /* 箭頭照螢幕距離擺（每 40 點一個、第一個在 20 點），所以每次縮放、移動完都重擺一次。 */
+  let chevrons = [];
+  const placeChevrons = () => {
+    if (!document.body.contains(el)) return;
+    map.removeAnnotations(chevrons);
+    chevrons = chevronsOf(map, mk, el, m.lines);
+    map.addAnnotations(chevrons);
+  };
+  map.addEventListener('region-change-end', placeChevrons);
   /* 鏡頭：當天第一個點、50 公里見方（App 的 TripMapMetrics.defaultSpanMetres）。 */
   if (m.focus) {
     const dLat = 50000 / 111320;
     const dLng = dLat / Math.max(0.1, Math.cos(m.focus[0] * Math.PI / 180));
     map.setRegionAnimated(new mk.CoordinateRegion(coord(m.focus), new mk.CoordinateSpan(dLat, dLng)), false);
   }
+  placeChevrons();
   mapInstance = map;
 }
 
@@ -464,7 +482,7 @@ function writeClipboard(text) {
 
 /* ═══ 頁尾 ═════════════════════════════════════════════════════ */
 function footHtml() {
-  return '<footer class="foot"><p>' + esc(s().note) + '</p><div class="author">' + authorHtml() + '</div></footer>';
+  return '<footer class="foot"><div class="author">' + authorHtml() + '</div></footer>';
 }
 /* ═══ 作者區：登入後停止分享（票 13） ═══════════════════════════
  * 九成九的讀者不是作者，所以頁尾只有一行字；按了才長出卡片（設計稿 4a–4d）。
@@ -655,7 +673,8 @@ function paintLang() {
 document.addEventListener('click', (ev) => {
   let b;
   if ((b = ev.target.closest('[data-lang]'))) { lang = b.dataset.lang; store('tez.lang', lang); closePlace(); draw(); return; }
-  if ((b = ev.target.closest('[data-view]'))) { view = b.dataset.view; closePlace(); draw(); return; }
+  if ((b = ev.target.closest('[data-view]'))) { view = b.dataset.view; mapFull = false; closePlace(); draw(); return; }
+  if (ev.target.closest('[data-testid="map-full"]')) { mapFull = !mapFull; draw(); return; }
   if ((b = ev.target.closest('[data-mday]'))) { mapDay = +b.dataset.mday; draw(); return; }
   if (ev.target.closest('[data-close]')) { closePlace(); return; }
   if ((b = ev.target.closest('[data-ev]'))) { openPlace(+b.dataset.ev); return; }
@@ -667,11 +686,15 @@ document.addEventListener('click', (ev) => {
   onClick(ev);
 });
 function onClick(ev) {
-  if (ev.target.closest('#act-app')) { onCopyApp(ev); return; }
   const b = ev.target.closest('[data-author]');
   if (b && !b.disabled) onAuthorClick(b.dataset.author);
 }
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closePlace(); onEscape(); } });
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (mapFull && !document.querySelector('[data-testid="place-card"]')) { mapFull = false; draw(); return; }
+  closePlace();
+  onEscape();
+});
 function onEscape() {
   if (author === 'confirm' && !busy) { author = 'owner'; draw(); }
 }
@@ -682,6 +705,11 @@ const client = createClient({ container: CONFIG.container, environments: CONFIG.
 async function load() {
   const link = parseFragment(location.hash);
   if (!link) { state = 'bad'; draw(); return; }
+  /* 沒裝 App 的人按了「在 TripEZGo 建立這個旅程」，被 www 301 帶回來：交給共用的跳轉頁。 */
+  if (new URLSearchParams(location.search).has('open')) {
+    location.replace('/open/#' + encodeURIComponent(linkURL(WWW, link.id, link.key)));
+    return;
+  }
   state = 'loading';
   draw();
   let result;

@@ -31,7 +31,7 @@ async function signIn(page) {
 
 test('未登入：頁尾只有一行字，按了才長出登入卡；取消收回去', async ({ page }) => {
   const { ck } = await openAs(page, { token: 'tok-author' });
-  await expect(page.getByTestId('author-entry')).toHaveText('我是作者，管理這個連結');
+  await expect(page.getByTestId('author-entry')).toHaveText('管理分享連結');
   await expect(page.getByTestId('author-stop')).toHaveCount(0);
   await page.getByTestId('author-entry').click();
   await expect(page.getByTestId('author-signin')).toBeVisible();

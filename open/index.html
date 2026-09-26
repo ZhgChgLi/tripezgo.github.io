@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>在 TripEZGo 中打開 — TripEZGo</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#fbf8f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/icon-180.png">
+<link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="TripEZGo">
+      <span class="m m-mark" role="img" aria-hidden="true"></span>
+      <span class="m m-word" role="img" aria-hidden="true"></span>
+    </a>
+  </div>
+</header>
+<main class="notfound">
+  <div class="wrap">
+    <p class="eyebrow" data-testid="open-kind"></p>
+    <h1 id="head"></h1>
+    <p class="lede" style="margin-inline:auto" id="lede"></p>
+    <a class="btn btn-primary" id="get" data-testid="open-get" href="/" hidden></a>
+    <p class="lede" style="margin-inline:auto;margin-top:16px;font-size:var(--text-sm)" id="getnote" hidden></p>
+    <a class="btn btn-ghost" id="go" data-testid="open-app" href="/" hidden></a>
+    <p class="lede" style="margin-inline:auto;margin-top:24px;font-size:var(--text-sm)" id="foot">
+      <span id="learnprefix"></span><a href="/" id="learn"></a>
+    </p>
+  </div>
+</main>
+<script>
+/* 共用的跳轉頁（使用者要求 2026-09-26）：「在 TripEZGo 建立這個旅程」與加入共享都走這一頁。
+ *
+ * 網址是 /open/#<正式連結，encodeURIComponent 過>——正式連結就是 App 發出去的那一條
+ * （https://www.tripezgo.com/trip/#<id>.<金鑰>，或 https://www.tripezgo.com/join/#<…>）。
+ * 放在 # 裡：片段不會送到伺服器，那把金鑰不會出現在任何存取記錄上。
+ *
+ * 走到這一頁的是**沒裝 App 的那一支**（裝了的話 Universal Link 早就把他帶進 App 了）：
+ *   - 「在 TripEZGo 中打開」：那條正式連結。它在 www、這一頁在裸網域，換網域才觸發 Universal Link。
+ *   - 「取得 TripEZGo」：第一下把正式連結存進剪貼簿、就地換成「前往下載」；第二下才離開。
+ *     App 第一次打開時讀剪貼簿接回來（App 那一側的 PastedLink：邀請連結與公開連結都認）。
+ *     兩下而不是一下：跳到下載頁之後就沒有地方告訴他連結已經存好了。
+ *
+ * **只收我們自己的兩種連結**——這一頁不是一個誰都可以用的轉址器。 */
+(function () {
+  var STRINGS = {
+    zh: {
+      lang: 'zh-Hant-TW', title: '在 TripEZGo 中打開 — TripEZGo',
+      trip: '公開旅程', join: '旅程邀請',
+      head: '正在打開 TripEZGo⋯',
+      lede: '裝了 TripEZGo 的 iPhone 會直接打開 App。沒有跳過去的話，用底下的按鈕。',
+      go: '在 TripEZGo 中打開',
+      get: '取得 TripEZGo',
+      getNote: '按下去會先把這條連結存進剪貼簿。裝好 TripEZGo、第一次打開時，它會接上這條連結。',
+      copiedHead: '連結已經存起來了',
+      copiedLede: '接著去取得 TripEZGo。第一次打開 App 時，它會接上這條連結。',
+      copiedGo: '前往下載',
+      badHead: '這條連結不完整',
+      badLede: '請對方重新複製一次連結——網址最後那一段（# 之後）也要一起帶上。',
+      learnPrefix: '還沒有 TripEZGo？', learn: '看看它是什麼', home: '/'
+    },
+    en: {
+      lang: 'en', title: 'Open in TripEZGo — TripEZGo',
+      trip: 'Shared trip', join: 'Trip invitation',
+      head: 'Opening TripEZGo…',
+      lede: 'An iPhone with TripEZGo installed opens the app straight away. If it didn’t, use the buttons below.',
+      go: 'Open in TripEZGo',
+      get: 'Get TripEZGo',
+      getNote: 'This saves the link to your clipboard first. Install TripEZGo, and the first time you open it, it picks this link up.',
+      copiedHead: 'Link saved',
+      copiedLede: 'Now go and get TripEZGo. The first time you open it, it picks this link up.',
+      copiedGo: 'Go to the download',
+      badHead: 'This link is incomplete',
+      badLede: 'Ask them to copy the link again — the last part of the address (after the #) has to come with it.',
+      learnPrefix: 'Don’t have TripEZGo yet? ', learn: 'see what it is', home: '/en/'
+    },
+    ja: {
+      lang: 'ja', title: 'TripEZGo で開く — TripEZGo',
+      trip: '公開旅程', join: '旅程への招待',
+      head: 'TripEZGo を開いています⋯',
+      lede: 'TripEZGo が入っている iPhone なら、そのままアプリが開きます。開かないときは下のボタンから。',
+      go: 'TripEZGo で開く',
+      get: 'TripEZGo を入手',
+      getNote: '押すと、このリンクをクリップボードに保存します。TripEZGo をインストールして最初に開いたときに、このリンクにつながります。',
+      copiedHead: 'リンクを保存しました',
+      copiedLede: '続けて TripEZGo を入手してください。最初に開いたときに、このリンクにつながります。',
+      copiedGo: 'ダウンロードへ',
+      badHead: 'このリンクは不完全です',
+      badLede: 'リンクをもう一度コピーしてもらってください。URL の最後の部分（# のあと）も必要です。',
+      learnPrefix: 'TripEZGo をまだお持ちでない方は', learn: 'どんなアプリか見る', home: '/ja/'
+    }
+  };
+  /* 公開頁上選過的語言（同一個網域的 localStorage）優先，再看瀏覽器。 */
+  var saved = null;
+  try { saved = localStorage.getItem('tez.lang'); } catch (err) { /* 私密瀏覽 */ }
+  var tag = (navigator.language || 'zh').toLowerCase();
+  var t = STRINGS[saved] || STRINGS[tag.indexOf('ja') === 0 ? 'ja' : (tag.indexOf('zh') === 0 ? 'zh' : 'en')];
+  /* 去哪裡拿 App：**還沒上架**，先送回首頁（各語言那一份）；上架那天換成 https://apps.apple.com/… */
+  var STORE = t.home;
+
+  var $ = function (id) { return document.getElementById(id); };
+  document.documentElement.lang = t.lang;
+  document.title = t.title;
+  $('head').textContent = t.head;
+  $('lede').textContent = t.lede;
+  $('go').textContent = t.go;
+  $('get').textContent = t.get;
+  $('getnote').textContent = t.getNote;
+  $('learnprefix').textContent = t.learnPrefix;
+  $('learn').textContent = t.learn;
+  $('learn').href = t.home;
+
+  var TRIP = /^https:\/\/(www\.)?tripezgo\.com\/trip\/#[0-9a-f]{32}\.[A-Za-z0-9_-]{43}$/;
+  var JOIN = /^https:\/\/(www\.)?tripezgo\.com\/join\/#(s=)?[A-Za-z0-9_-]+={0,2}$/;
+  var link = '';
+  try { link = decodeURIComponent(location.hash.slice(1)); } catch (err) { link = ''; }
+  var kind = TRIP.test(link) ? 'trip' : JOIN.test(link) ? 'join' : '';
+  if (!kind) {
+    $('head').textContent = t.badHead;
+    $('lede').textContent = t.badLede;
+    return;
+  }
+  document.querySelector('[data-testid="open-kind"]').textContent = t[kind];
+  var go = $('go'), get = $('get');
+  go.href = link;
+  go.hidden = false;
+
+  /* 剪貼簿那一半只給 iPhone／iPad：App 只在那裡。iPadOS 的 Safari 預設把自己報成 Mac，所以多問一句觸控點數。 */
+  var ua = navigator.userAgent;
+  if (!(/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1))) return;
+  get.hidden = false;
+  $('getnote').hidden = false;
+  get.addEventListener('click', function (event) {
+    if (get.dataset.saved === '1') return;   /* 第二下：照 href 走 */
+    event.preventDefault();
+    var leave = function () { location.href = STORE; };
+    var done = function () {
+      get.dataset.saved = '1';
+      get.href = STORE;
+      get.textContent = t.copiedGo;
+      $('head').textContent = t.copiedHead;
+      $('lede').textContent = t.copiedLede;
+      $('getnote').hidden = true;
+      /* 他已經說了自己還沒有 App：「在 TripEZGo 中打開」收掉。 */
+      go.hidden = true;
+    };
+    /* Safari 只在使用者的手勢裡才准寫剪貼簿；寫不進去就直接去下載——那等於這條路沒發生過，而不是卡住。 */
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(done, leave);
+    } else {
+      leave();
+    }
+  });
+})();
+</script>
+</body>
+</html>

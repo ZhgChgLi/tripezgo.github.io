@@ -242,6 +242,33 @@ export function daysOf(copy) {
   return out;
 }
 
+/* ═══ 時間表的分欄 ═══════════════════════════════════════════
+ * boxes：依開始排好、各有 top 與 ext（畫出來佔的高度）。寫回 lane（第幾欄）與 lanes（這一則分幾欄）。
+ *
+ * **只有真的同時段的那幾則分欄**（使用者要求 2026-09-26）。先前一整串連在一起的行程共用一個欄數：
+ * 一則跨一整天的（迪士尼 08:30–21:00）把當天每一則都串在一起，上午某一刻三則同時，下午只跟它
+ * 重疊的午餐也被切成三欄。現在每一則的欄數只看跟它時間重疊的那幾則（1 + 它們最大的欄號）。
+ * 這樣算萬一讓兩則同時的在畫面上疊到（很少見的交錯），那一串退回整串同一個欄數——寧可窄，不可疊。 */
+export function laneLayout(boxes) {
+  const sameTime = (p, q) => p.top < q.top + q.ext && q.top < p.top + p.ext;
+  for (let gi = 0; gi < boxes.length;) {
+    let gEnd = boxes[gi].top + boxes[gi].ext, gj = gi + 1;
+    while (gj < boxes.length && boxes[gj].top < gEnd) { gEnd = Math.max(gEnd, boxes[gj].top + boxes[gj].ext); gj++; }
+    const group = boxes.slice(gi, gj), ends = [];
+    group.forEach((bx) => {
+      for (let ln = 0; ; ln++) { if (ends[ln] === undefined || ends[ln] <= bx.top) { ends[ln] = bx.top + bx.ext; bx.lane = ln; break; } }
+    });
+    group.forEach((bx) => {
+      bx.lanes = 1 + Math.max(...group.filter((o) => o === bx || sameTime(o, bx)).map((o) => o.lane));
+    });
+    const clash = group.some((p, i) => group.slice(i + 1).some((q) => sameTime(p, q)
+      && (p.lane + 1) / p.lanes > q.lane / q.lanes + 1e-9 && (q.lane + 1) / q.lanes > p.lane / p.lanes + 1e-9));
+    if (clash) group.forEach((bx) => { bx.lanes = ends.length; });
+    gi = gj;
+  }
+  return boxes;
+}
+
 /* ═══ 地圖 tab 的一天（照 App 的 MapViewModel；使用者要求 2026-09-26） ═══════
  * - 點：當天有座標的定時行程依開始時間編號（App 的站號）；全日的只在它第一天上圖、不編號。
  * - 線：相鄰兩個有地點的定時行程連起來；中間一則沒地點就斷開（App 的 `split`）。

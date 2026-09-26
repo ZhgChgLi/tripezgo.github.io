@@ -14,6 +14,17 @@ window.mapkit = {
   PolylineOverlay: function (points, o) { this.points = points; Object.assign(this, o); }
 };
 mapkit.Map.prototype.showItems = function (a) { this.items = a; };
+mapkit.Map.prototype.removeAnnotations = function (a) { this.items = (this.items || []).filter(function (x) { return a.indexOf(x) < 0; }); };
+mapkit.Map.prototype.addEventListener = function (t, f) { (this.handlers = this.handlers || {})[t] = f; };
+/* 假的投影：把 (26.5, 127.6) 放在地圖框的左上角，每度 2000px。 */
+mapkit.Map.prototype.convertCoordinateToPointOnPage = function (c) {
+  var r = this.el.getBoundingClientRect();
+  return { x: r.left + (c.longitude - 127.6) * 2000, y: r.top + (26.5 - c.latitude) * 2000 };
+};
+mapkit.Map.prototype.convertPointOnPageToCoordinate = function (p) {
+  var r = this.el.getBoundingClientRect();
+  return new mapkit.Coordinate(26.5 - (p.y - r.top) / 2000, 127.6 + (p.x - r.left) / 2000);
+};
 mapkit.Map.prototype.addAnnotations = function (a) { this.items = (this.items || []).concat(a); };
 mapkit.Map.prototype.addOverlays = function (o) { this.overlays = (this.overlays || []).concat(o); };
 mapkit.Map.prototype.setRegionAnimated = function (r) { this.region = r; };
@@ -26,14 +37,21 @@ __mk.current = function () {
 };
 __mk.lines = function () {
   var m = live();
-  return (m && m.overlays || []).map(function (o) { return { points: o.points.map(function (c) { return [c.latitude, c.longitude]; }), dashed: !!(o.style.lineDash && o.style.lineDash.length), width: o.style.lineWidth }; });
+  return (m && m.overlays || []).map(function (o) { return { points: o.points.map(function (c) { return [c.latitude, c.longitude]; }), dashed: !!(o.style.lineDash && o.style.lineDash.length), width: o.style.lineWidth, color: o.style.strokeColor, opacity: o.style.strokeOpacity }; });
 };
 __mk.labels = function () {
   var m = live();
-  return (m && m.items || []).filter(function (a) { return a.el; }).map(function (a) { return { text: a.el.textContent, lat: a.coordinate.latitude, lng: a.coordinate.longitude }; });
+  return (m && m.items || []).filter(function (a) { return a.el && a.el.className === 'map-leg'; }).map(function (a) { return { text: a.el.textContent, lat: a.coordinate.latitude, lng: a.coordinate.longitude }; });
+};
+__mk.chevrons = function () {
+  var m = live();
+  return (m && m.items || []).filter(function (a) { return a.el && a.el.className === 'map-chev'; }).map(function (a) {
+    var p = m.convertCoordinateToPointOnPage(a.coordinate);
+    return { x: p.x, y: p.y, turn: a.el.firstChild.style.transform };
+  });
 };
 __mk.region = function () {
-  var r = live().region;
+  var m = live(), r = m && m.region;   /* 地圖還沒掛上去：null，讓 expect.poll 繼續等（拋錯的話它不會重試） */
   return r ? { lat: r.center.latitude, lng: r.center.longitude, dLat: r.span.latitudeDelta } : null;
 };
 __mk.select = function (i) { live().items.filter(function (a) { return !a.el; })[i].listeners.select(); };
