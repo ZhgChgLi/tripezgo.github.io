@@ -117,6 +117,13 @@ test('地圖跟著深色模式：一打開照系統的設定，系統切換時�
   await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.scheme())).toBe('light');
 });
 
+test('地圖有定位按鈕（MapKit 內建的那一顆；按了才問位置權限，不是一打開就問）', async ({ page }) => {
+  await fakeMapKit(page);
+  await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });
+  await showMap(page);
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.userLocation())).toEqual({ control: true, shows: false });
+});
+
 test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一族；認不得的名字 → 通用圖釘＋雜項', async ({ page }) => {
   await open(page, dated);
   await showMap(page);

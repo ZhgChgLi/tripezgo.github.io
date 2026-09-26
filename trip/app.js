@@ -398,6 +398,9 @@ async function mountMap() {
   const map = new mk.Map(el);
   /* 地圖的底圖跟著深色模式（使用者回報 2026-09-26）：MapKit JS 預設是淺色，要自己說。 */
   map.colorScheme = DARK.matches ? mk.Map.ColorSchemes.Dark : mk.Map.ColorSchemes.Light;
+  /* 定位按鈕（使用者要求 2026-09-26）：MapKit 自己的那一顆——按了才跟瀏覽器要位置、畫出藍點並移過去；
+   * 不按就不問。showsUserLocation 不先開，不然一打開地圖就跳權限。 */
+  map.showsUserLocationControl = true;
   const m = mapDayOf(D.days[mapDay - 1]);
   const css = getComputedStyle(document.documentElement);
   const probe = document.createElement('span');
