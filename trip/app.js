@@ -11,7 +11,7 @@
  */
 import { CONFIG } from './config.js';
 import { createClient } from './cloudkit.js';
-import { clock, daysOf, linkURL, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
+import { clock, daysOf, ITINERARY, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
 import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
 import { iconOf, iconPath, swatchOf } from './looks.js';
 import { LANGS, S, STORE } from './strings.js';
@@ -291,25 +291,38 @@ function mapPoints(day) {
   let no = 0;
   return day.timed.map((x) => ({ x, no: x.item.geo ? ++no : null }));
 }
+const itemId = (it) => D.copy.items.indexOf(it);
+/* 清單的一列：編號、時刻（全日的寫「全日」）、類型圖示、名稱與地點。 */
+function mapRow(it, no, when, sub) {
+  const has = no !== null;
+  return '<li><button type="button" class="prow" data-ev="' + itemId(it) + '" data-testid="map-row" style="' + tyVar(it) + '">'
+    + '<span class="no' + (has ? '' : ' is-none') + '">' + (has ? no : '–') + '</span>'
+    + '<span class="tm">' + esc(when) + '</span>'
+    + tyIcon(it)
+    + '<span class="bd"><span class="t">' + esc(it.title) + '</span><span class="s">' + esc(sub) + '</span></span>'
+    + svg(IC.chev, 'chev') + '</button></li>';
+}
 function mapHtml() {
   if (mapDay > D.days.length) mapDay = 1;
   const d = D.days[mapDay - 1];
   const seg = D.days.map((x) => '<button type="button" data-mday="' + x.n + '" aria-pressed="' + (x.n === mapDay) + '">' + esc(fmt(s().day, x.n)) + '</button>').join('');
-  const rows = mapPoints(d).map(({ x, no }) => {
-    const it = x.item, has = no !== null;
-    return '<li><button type="button" class="prow" data-ev="' + x.id + '" data-testid="map-row" style="' + tyVar(it) + '">'
-      + '<span class="no' + (has ? '' : ' is-none') + '">' + (has ? no : '–') + '</span>'
-      + '<span class="tm">' + esc(clock(x.s)) + '</span>'
-      + tyIcon(it)
-      + '<span class="bd"><span class="t">' + esc(it.title) + '</span><span class="s">'
-      + esc(has ? it.place || '' : s().mapNone) + '</span></span>' + svg(IC.chev, 'chev') + '</button></li>';
-  }).join('');
-  const box = CONFIG.mapkitToken ? '<div class="map" id="map" data-testid="map"></div>' : '';
+  let box = '', list = '';
+  if (CONFIG.mapkitToken) {
+    /* 有地圖：底下只列沒地點的（照 App 的 placeless），有地點的都在圖上、點了開地點卡。 */
+    const m = mapDayOf(d);
+    box = '<div class="map" id="map" data-testid="map"></div>';
+    const rows = m.placeless.map(({ x, item }) =>
+      mapRow(item, null, x ? clock(x.s) : ITINERARY[lang].allDay, item.place || s().mapNone)).join('');
+    list = rows ? '<h3 class="plist-h" data-testid="map-list-head">' + esc(s().mapPlaceless) + '</h3><ul class="plist" data-testid="map-list">' + rows + '</ul>'
+      : m.pins.length ? '' : '<p class="empty">' + esc(s().mapAll) + '</p>';
+  } else {
+    /* 沒有地圖（沒有 token、或 CDN 讀不到）：整天都列，編號跟圖上會用的一樣。 */
+    const rows = mapPoints(d).map(({ x, no }) => mapRow(x.item, no, clock(x.s), no !== null ? x.item.place || '' : s().mapNone)).join('');
+    list = rows ? '<ul class="plist" data-testid="map-list">' + rows + '</ul>' : '<p class="empty">' + esc(s().mapAll) + '</p>';
+  }
   return '<section class="sec" data-testid="map-section"><div class="sec-h">'
     + '<div class="seg" role="group">' + seg + '</div></div>'
-    + box
-    + (rows ? '<ul class="plist" data-testid="map-list">' + rows + '</ul>' : '<p class="empty">' + esc(s().mapAll) + '</p>')
-    + '</section>';
+    + box + list + '</section>';
 }
 
 function loadMapKit() {
@@ -343,23 +356,46 @@ async function mountMap() {
   if (!document.body.contains(el)) return; /* 等 MapKit 的時候已經換過一次畫面 */
   mk.language = LANGS.find((l) => l.k === lang).html;
   const map = new mk.Map(el);
+  const m = mapDayOf(D.days[mapDay - 1]);
+  const css = getComputedStyle(document.documentElement);
   const probe = document.createElement('span');
   el.appendChild(probe);
-  const annotations = mapPoints(D.days[mapDay - 1])
-    .filter((p) => p.no !== null)
-    .map(({ x, no }) => {
-      probe.setAttribute('style', tyVar(x.item) + ';color:var(--ev)');
-      const a = new mk.MarkerAnnotation(new mk.Coordinate(x.item.geo[0], x.item.geo[1]), {
-        color: getComputedStyle(probe).color,
-        glyphText: String(no),
-        title: x.item.title,
-        data: { id: x.id },
-      });
-      a.addEventListener('select', () => openPlace(x.id));
-      return a;
+  const coord = (g) => new mk.Coordinate(g[0], g[1]);
+  const pins = m.pins.map(({ item, no }) => {
+    probe.setAttribute('style', tyVar(item) + ';color:var(--ev)');
+    const a = new mk.MarkerAnnotation(coord(item.geo), {
+      color: getComputedStyle(probe).color,
+      glyphText: no === null ? '' : String(no),
+      title: item.title,
+      data: { id: itemId(item) },
     });
+    a.addEventListener('select', () => openPlace(itemId(item)));
+    return a;
+  });
   probe.remove();
-  if (annotations.length) map.showItems(annotations);
+  /* 線：App 的 tzAccentInk、3pt；沒有交通方式是 [2, 6] 的虛線（TripMapMetrics）。 */
+  const ink = css.getPropertyValue('--machi-ink').trim();
+  map.addOverlays(m.lines.map((l) => new mk.PolylineOverlay([coord(l.from.item.geo), coord(l.to.item.geo)], {
+    style: new mk.Style({ strokeColor: ink, lineWidth: 3, lineCap: 'round', lineJoin: 'round', lineDash: l.solid ? [] : [2, 6] }),
+  })));
+  /* 路程標在線的中點：交通方式＋時間（使用者要求 2026-09-26；App 的 pill 只寫距離）。 */
+  const labels = m.lines.filter((l) => l.leg).map((l) => {
+    const mid = [(l.from.item.geo[0] + l.to.item.geo[0]) / 2, (l.from.item.geo[1] + l.to.item.geo[1]) / 2];
+    const mode = s().modes[l.leg.mode] ? l.leg.mode : 'other';
+    return new mk.Annotation(coord(mid), () => {
+      const pill = document.createElement('span');
+      pill.className = 'map-leg';
+      pill.innerHTML = svg(IC[mode] || IC.chev) + '<span>' + esc(s().modes[mode]) + (l.leg.min ? ' · ' + esc(dur(l.leg.min, s())) : '') + '</span>';
+      return pill;
+    }, { anchorOffset: new DOMPoint(0, 0), enabled: false, displayPriority: 1000 });
+  });
+  map.addAnnotations(pins.concat(labels));
+  /* 鏡頭：當天第一個點、50 公里見方（App 的 TripMapMetrics.defaultSpanMetres）。 */
+  if (m.focus) {
+    const dLat = 50000 / 111320;
+    const dLng = dLat / Math.max(0.1, Math.cos(m.focus[0] * Math.PI / 180));
+    map.setRegionAnimated(new mk.CoordinateRegion(coord(m.focus), new mk.CoordinateSpan(dLat, dLng)), false);
+  }
   mapInstance = map;
 }
 

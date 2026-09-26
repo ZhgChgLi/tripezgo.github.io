@@ -283,6 +283,14 @@
      地圖一次只畫一天——整趟的點疊在一張圖上，每天的順序就看不出來了。 */
   .vtabs { width: max-content; margin: 26px 0 16px; }
   .vtabs button { padding: 7px 18px; font-size: 14px; }
+  .plist-h { margin: 18px 0 4px; font-family: var(--mono); font-size: 12px; font-weight: 400;
+             letter-spacing: 0.1em; color: var(--taupe); }
+  /* 路程標在地圖的線上（MapKit 的 Annotation）：App 的 pill 用 tzAccentInk 底、白字。 */
+  .map-leg { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px;
+             background: var(--machi-ink); color: #ffffff; font-size: 11px; line-height: 1.2; white-space: nowrap;
+             transform: translate(-50%, -50%); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+  .map-leg svg { width: 12px; height: 12px; flex: none; fill: none; stroke: currentColor;
+                 stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .sec { margin-top: 0; }
   .sec-h { display: flex; align-items: center; justify-content: space-between; gap: 12px;
            flex-wrap: wrap; margin: 0 0 12px; }
@@ -463,16 +471,16 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=dc24eedac2",
+  "/trip/app.js": "/trip/app.js?v=c4055c0720",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=58681e1082",
-  "/trip/core.js": "/trip/core.js?v=88c0ac06c1",
+  "/trip/core.js": "/trip/core.js?v=7f0264ff4a",
   "/trip/icons.js": "/trip/icons.js?v=8170c18b88",
   "/trip/looks.js": "/trip/looks.js?v=632af634a5",
-  "/trip/strings.js": "/trip/strings.js?v=6ab1da17cc"
+  "/trip/strings.js": "/trip/strings.js?v=dd5a5e9474"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=dc24eedac2"></script>
+<script type="module" src="/trip/app.js?v=c4055c0720"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>

@@ -93,6 +93,38 @@ test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一�
   await expect(rows.nth(1)).toHaveAttribute('style', /--sw-misc/);
 });
 
+test('有 MapKit token：鏡頭對準當天第一個點、底部只列沒地點的、點之間連線並標路程（照 App）', async ({ page }) => {
+  await fakeMapKit(page);
+  await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });
+  await showMap(page);
+  /* 第 1 天：只有國際通有座標 → 鏡頭對準它、50 公里見方；航班與租車沒地點 → 列在底下 */
+  await expect.poll(() => page.evaluate(() => window.__mk.region())).toEqual(
+    expect.objectContaining({ lat: 26.2153, lng: 127.6856 }));
+  const dLat = await page.evaluate(() => window.__mk.region().dLat);
+  expect(dLat).toBeCloseTo(50000 / 111320, 3);
+  const rows = page.getByTestId('map-row');
+  await expect(rows).toHaveText([/租車（OTS 那霸店）/, /台北 → 那霸/]);
+  await expect(rows.nth(0)).toContainText('全日');
+  await expect(rows.nth(1)).toContainText('11:00');
+  await expect(page.getByTestId('map-list-head')).toHaveText('沒有地點的行程');
+  expect(await page.evaluate(() => window.__mk.lines())).toEqual([]);
+
+  /* 第 2 天：兩個點連一條實線，線上標「步行 · 12 分」；沒有沒地點的 → 不列 */
+  await page.locator('[data-mday="2"]').click();
+  await expect.poll(() => page.evaluate(() => window.__mk.lines())).toEqual([
+    { points: [[26.4447, 127.7716], [26.215, 127.689]], dashed: false, width: 3 },
+  ]);
+  const labels = await page.evaluate(() => window.__mk.labels());
+  expect(labels).toHaveLength(1);
+  expect(labels[0].text).toContain('步行');
+  expect(labels[0].text).toContain('12 分');
+  expect(labels[0].lat).toBeCloseTo((26.4447 + 26.215) / 2, 4);
+  await expect(page.getByTestId('map-row')).toHaveCount(0);
+  await expect(page.getByTestId('map-list-head')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.__mk.region())).toEqual(
+    expect.objectContaining({ lat: 26.4447, lng: 127.7716 }));
+});
+
 test('有 MapKit token：一次畫一天的點，類型色＋當天順序號，切天換點', async ({ page }) => {
   const mk = await fakeMapKit(page);
   await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });

@@ -242,6 +242,37 @@ export function daysOf(copy) {
   return out;
 }
 
+/* ═══ 地圖 tab 的一天（照 App 的 MapViewModel；使用者要求 2026-09-26） ═══════
+ * - 點：當天有座標的定時行程依開始時間編號（App 的站號）；全日的只在它第一天上圖、不編號。
+ * - 線：相鄰兩個有地點的定時行程連起來；中間一則沒地點就斷開（App 的 `split`）。
+ *   線上的路程是「進下一個點」那一段（`legTo`）；有交通方式是實線帶路程，
+ *   沒有或是空檔（idle）就是虛線、不標（`isJourney`、`isSolidLine`）。
+ * - 鏡頭：當天第一個點（`firstEventPlace(ofDay:)`：先看定時的，再看全日的）。
+ * - 底部清單：只列沒座標的（`placeless(onDay:)`：全日的算在它開始那一天）。 */
+export function mapDayOf(day) {
+  const startsHere = (it) => Math.max(1, it.day) === day.n;
+  const journey = (leg) => (leg && leg.mode && leg.mode !== 'idle' ? leg : null);
+  let no = 0;
+  const pins = day.timed.filter((x) => x.item.geo).map((x) => ({ x, item: x.item, no: ++no }))
+    .concat(day.allDay.filter((it) => it.geo && startsHere(it)).map((it) => ({ x: null, item: it, no: null })));
+  const lines = [];
+  let prev = null;
+  day.timed.forEach((x) => {
+    if (!x.item.geo) { prev = null; return; }
+    if (prev) {
+      const leg = journey(x.item.leg);
+      lines.push({ from: prev, to: x, leg, solid: !!leg });
+    }
+    prev = x;
+  });
+  const first = day.timed.find((x) => x.item.geo);
+  const firstAllDay = day.allDay.find((it) => it.geo && startsHere(it));
+  const focus = first ? first.item.geo : firstAllDay ? firstAllDay.geo : null;
+  const placeless = day.allDay.filter((it) => !it.geo && startsHere(it)).map((it) => ({ x: null, item: it }))
+    .concat(day.timed.filter((x) => !x.item.geo).map((x) => ({ x, item: x.item })));
+  return { pins, lines, focus, placeless };
+}
+
 /* ═══ 純文字（TripItineraryTextUseCase，逐字） ═══════════════════ */
 
 /** App 的字串目錄 `Domain/Resources/Localizable.xcstrings` 的三欄（zh-Hant-TW／en／ja）。 */
