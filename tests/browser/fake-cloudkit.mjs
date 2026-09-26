@@ -29,7 +29,7 @@ export const pathOf = (c) => '/trip/' + new URL(c.url).hash;
 
 /** 把 trip/config.js 換成測試用的設定（兩個環境都有 token、可選 MapKit token）。 */
 export async function useConfig(page, { production = 'prod-token', development = 'dev-token', mapkitToken = '' } = {}) {
-  await page.route('**/trip/config.js', (route) =>
+  await page.route('**/trip/config.js*', (route) =>
     route.fulfill({
       contentType: 'text/javascript',
       body: 'export const CONFIG = ' + JSON.stringify({
