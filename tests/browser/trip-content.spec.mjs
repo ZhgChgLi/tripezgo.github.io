@@ -200,7 +200,7 @@ test('有 MapKit token：一次畫一天的點，類型色＋當天順序號，�
   await expect(page.getByTestId('place-card')).toContainText('屋台村・宵夜');
 });
 
-test('地點卡：有座標的兩顆鈕帶座標；點時間表的方塊也開得了', async ({ page }) => {
+test('地點卡：只有 Google 地圖一顆，帶座標；點時間表的方塊也開得了（使用者要求 2026-09-26）', async ({ page }) => {
   await open(page, dated);
   await page.locator('.tl-ev', { hasText: '國際通・散策' }).click();
   const card = page.getByTestId('place-card');
@@ -208,11 +208,10 @@ test('地點卡：有座標的兩顆鈕帶座標；點時間表的方塊也開�
   await expect(card.locator('h3')).toHaveText('國際通・散策');
   await expect(card).toContainText('第 1 天 · 16:00–18:00');
   await expect(card.locator('.loc')).toHaveText('那霸市');
-  await expect(page.getByTestId('open-apple')).toHaveAttribute('href',
-    'https://maps.apple.com/?ll=26.2153,127.6856&q=' + encodeURIComponent('國際通・散策'));
+  await expect(page.getByTestId('open-apple')).toHaveCount(0);
   await expect(page.getByTestId('open-google')).toHaveAttribute('href',
     'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('26.2153,127.6856'));
-  await expect(page.getByTestId('open-apple')).toHaveAttribute('target', '_blank');
+  await expect(page.getByTestId('open-google')).toHaveAttribute('target', '_blank');
   await page.getByRole('button', { name: '關閉' }).click();
   await expect(card).toHaveCount(0);
 });
@@ -221,11 +220,41 @@ test('地點卡：沒有座標就用地點名稱查；Esc 關掉', async ({ page
   await open(page, dated);
   await showMap(page);
   await page.getByTestId('map-row').first().click();
-  await expect(page.getByTestId('open-apple')).toHaveAttribute('href', 'https://maps.apple.com/?q=' + encodeURIComponent('桃園 T1 · CI120'));
   await expect(page.getByTestId('open-google')).toHaveAttribute('href',
     'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('桃園 T1 · CI120'));
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('place-card')).toHaveCount(0);
+});
+
+test('地點卡：沒有設地點（沒名稱也沒座標）就沒有地圖鈕', async ({ page }) => {
+  await open(page, dated);
+  await page.getByTestId('allday').filter({ hasText: '租車' }).click();
+  await expect(page.getByTestId('place-card')).toContainText('租車（OTS 那霸店）');
+  await expect(page.getByTestId('open-google')).toHaveCount(0);
+  await expect(page.getByTestId('open-apple')).toHaveCount(0);
+});
+
+test('行事曆右下的 − ＋：放大時間間距，最小是原本、最大 10 倍；換天、換語言都留著', async ({ page }) => {
+  await open(page, dated);
+  const grid = page.locator('.tl-in');
+  const height = () => grid.evaluate((el) => parseFloat(getComputedStyle(el).getPropertyValue('--gh')));
+  const base = await height();
+  const minus = page.getByTestId('zoom-out'), plus = page.getByTestId('zoom-in');
+  await expect(minus).toBeDisabled();
+  await expect(plus).toBeEnabled();
+  await plus.click();
+  expect(await height()).toBeGreaterThan(base);
+  const ev = page.locator('.tl-ev', { hasText: '國際通・散策' });
+  const h1 = (await ev.boundingBox()).height;
+  for (let i = 0; i < 20; i++) { if (await plus.isEnabled()) await plus.click(); }
+  await expect(plus).toBeDisabled();
+  expect(await height()).toBeCloseTo(base * 10, 0);
+  expect((await ev.boundingBox()).height).toBeGreaterThan(h1 * 2);
+  await page.locator('[data-lang="en"]').click();
+  expect(await height()).toBeCloseTo(base * 10, 0);
+  for (let i = 0; i < 20; i++) { if (await minus.isEnabled()) await minus.click(); }
+  await expect(minus).toBeDisabled();
+  expect(await height()).toBeCloseTo(base, 0);
 });
 
 test('複製純文字行程：toast，剪貼簿裡跟 App 的純文字逐字相同，跟著語言走', async ({ page, context }) => {

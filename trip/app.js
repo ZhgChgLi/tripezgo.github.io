@@ -171,7 +171,11 @@ function copyAppHtml() {
 }
 
 /* ═══ 時間軸（設計稿原樣；欄頭支援日期未定） ═════════════════════ */
-const PPM = 1, HOUR = 60 * PPM;
+/* 時間間距：一分鐘幾 px。**1 是原本的大小，也是最小；最大 10 倍**（使用者要求 2026-09-26，行事曆右下的 − ＋）。
+ * 方塊裡的字照原本的門檻（FIT1／FIT2／FIT3，px）判斷放不放得下，所以放大之後短行程也寫得出時刻與地點。 */
+const ZOOMS = [1, 1.5, 2, 3, 4, 6, 8, 10];
+let zoom = 0;
+let PPM = 1, HOUR = 60;
 const FIT3 = 58, FIT2 = 42, FIT1 = 25, LINE_EXT = 15, LEG_LB = 18, AD_H = 24;
 function timeSpan() {
   let lo = 24 * 60, hi = 0;
@@ -180,9 +184,13 @@ function timeSpan() {
   return { lo: Math.floor(lo / 60) * 60, hi: Math.ceil(hi / 60) * 60 };
 }
 function timelineHtml() {
+  PPM = ZOOMS[zoom];
+  HOUR = 60 * PPM;
   const r = timeSpan(), gh = (r.hi - r.lo) * PPM;
+  /* 刻度：放大之後改成每 15 分一條（間距夠寬才畫，避免擠在一起）。 */
+  const step = PPM >= 3 ? 15 : 30;
   let hours = '';
-  for (let t = r.lo; t <= r.hi; t += 30) {
+  for (let t = r.lo; t <= r.hi; t += step) {
     hours += '<span class="tl-hr' + (t % 60 ? ' is-half' : '') + '" style="top:' + ((t - r.lo) * PPM) + 'px">' + esc(clock(t)) + '</span>';
   }
   const cols = D.days.map((d) => {
@@ -221,13 +229,17 @@ function timelineHtml() {
     return '<section class="tl-day" data-testid="day-' + d.n + '"><div class="tl-hd"><div class="t">' + hd + '</div></div>'
       + '<div class="tl-ad"></div><div class="tl-cv">' + (body || '<p class="empty">' + esc(s().empty) + '</p>') + '</div></section>';
   }).join('');
-  const band = D.allday.map((a) => '<span class="tl-adb" data-testid="allday" title="' + esc(a.name) + '" style="left:calc(var(--ax) + ' + (a.s - 1) + ' * var(--colw) + 6px)'
-    + ';width:calc(' + (a.e - a.s + 1) + ' * var(--colw) - 12px);top:' + (a.lane * AD_H) + 'px">' + esc(a.name) + '</span>').join('');
+  const band = D.allday.map((a) => '<button type="button" class="tl-adb" data-testid="allday" data-ev="' + a.id + '" title="' + esc(a.name) + '" style="left:calc(var(--ax) + ' + (a.s - 1) + ' * var(--colw) + 6px)'
+    + ';width:calc(' + (a.e - a.s + 1) + ' * var(--colw) - 12px);top:' + (a.lane * AD_H) + 'px">' + esc(a.name) + '</button>').join('');
   const adh = D.adLanes ? D.adLanes * AD_H + 6 : 0;
   return '<section id="timeline"><div class="tl-sc" tabindex="0" role="group" aria-label="' + esc(s().grid) + '">'
     + '<div class="tl-in" style="--gh:' + gh + 'px;--hh:' + HOUR + 'px;--adh:' + adh + 'px">'
     + '<div class="tl-ax"><div class="tl-hd"></div><div class="tl-ad"></div><div class="tl-axb">' + hours + '</div></div>'
-    + cols + (band ? '<div class="tl-ads">' + band + '</div>' : '') + '</div></div></section>';
+    + cols + (band ? '<div class="tl-ads">' + band + '</div>' : '') + '</div></div>'
+    + '<div class="tl-zoom" role="group" aria-label="' + esc(s().zoom) + '">'
+    + '<button type="button" data-zoom="-1" data-testid="zoom-out" aria-label="' + esc(s().zoomOut) + '"' + (zoom === 0 ? ' disabled' : '') + '>−</button>'
+    + '<button type="button" data-zoom="1" data-testid="zoom-in" aria-label="' + esc(s().zoomIn) + '"' + (zoom === ZOOMS.length - 1 ? ' disabled' : '') + '>+</button>'
+    + '</div></section>';
 }
 
 /* ═══ 行事曆／地圖兩個 tab（使用者決定 2026-09-26） ══════════════
@@ -241,6 +253,23 @@ function tabsHtml() {
   const tab = (k, label) => '<button type="button" role="tab" data-view="' + k + '" aria-selected="' + (view === k)
     + '" aria-pressed="' + (view === k) + '">' + esc(label) + '</button>';
   return '<div class="seg vtabs" role="tablist" data-testid="view-tabs">' + tab('cal', s().cal) + tab('map', s().map) + '</div>';
+}
+
+/* 換縮放時把同一個時刻留在畫面上：記下捲到的那一刻（分鐘）、重畫、再捲回去。 */
+function setZoom(next) {
+  next = Math.max(0, Math.min(ZOOMS.length - 1, next));
+  if (next === zoom) return;
+  const grid = document.querySelector('.tl-in');
+  const top = grid ? grid.getBoundingClientRect().top : 0;
+  const minute = Math.max(0, -top) / PPM;
+  const sc = document.querySelector('.tl-sc');
+  const left = sc ? sc.scrollLeft : 0;
+  zoom = next;
+  draw();
+  const again = document.querySelector('.tl-in');
+  if (again && top < 0) window.scrollBy(0, again.getBoundingClientRect().top + minute * PPM);
+  const sc2 = document.querySelector('.tl-sc');
+  if (sc2) sc2.scrollLeft = left;
 }
 
 /* ═══ 地圖（MapKit JS） ═══════════════════════════════════════
@@ -427,10 +456,8 @@ async function mountMap() {
 /* ═══ 地點卡：點時間表的方塊、地圖清單、地圖上的點 ════════════════
  * 手機貼底、桌機置中；Apple／Google 地圖各一顆，不替他挑。 */
 function placeLinks(it) {
-  const q = it.geo ? it.geo.join(',') : it.place || it.title;
-  const apple = 'https://maps.apple.com/?' + (it.geo ? 'll=' + q + '&q=' + encodeURIComponent(it.title) : 'q=' + encodeURIComponent(q));
-  const google = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
-  return { apple, google };
+  const q = it.geo ? it.geo.join(',') : it.place;
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
 }
 function whenText(id) {
   for (const d of D.days) {
@@ -442,18 +469,18 @@ function whenText(id) {
 function openPlace(id) {
   const it = D.copy.items[id];
   if (!it) return;
-  const { apple, google } = placeLinks(it);
+  /* 只留 Google 地圖一顆，而且只在有設地點（名稱或座標）時才出現（使用者要求 2026-09-26）。 */
+  const google = it.geo || it.place ? placeLinks(it) : null;
   closePlace();
   const w = document.createElement('div');
   w.id = 'place';
   w.innerHTML = '<div class="scrim" data-close></div><div class="pcard" role="dialog" aria-modal="true" aria-labelledby="pc-t" data-testid="place-card" style="' + tyVar(it) + '">'
     + '<p class="k">' + tyIcon(it) + '<span>' + esc(whenText(id)) + '</span></p>'
     + '<h3 id="pc-t">' + esc(it.title) + '</h3>' + (it.place ? '<p class="loc">' + esc(it.place) + '</p>' : '')
-    + '<div class="go"><a class="btn2" target="_blank" rel="noopener" data-testid="open-apple" href="' + esc(apple) + '">' + svg(IC.pin) + esc(s().openApple) + '</a>'
-    + '<a class="btn2" target="_blank" rel="noopener" data-testid="open-google" href="' + esc(google) + '">' + svg(IC.pin) + esc(s().openGoogle) + '</a></div>'
+    + (google ? '<div class="go"><a class="btn2" target="_blank" rel="noopener" data-testid="open-google" href="' + esc(google) + '">' + svg(IC.pin) + esc(s().openGoogle) + '</a></div>' : '')
     + '<button class="linkbtn x" type="button" data-close>' + esc(s().close) + '</button></div>';
   document.body.appendChild(w);
-  w.querySelector('.btn2').focus();
+  (w.querySelector('.btn2') || w.querySelector('.x')).focus();
 }
 function closePlace() {
   const o = document.getElementById('place');
@@ -685,6 +712,7 @@ document.addEventListener('click', (ev) => {
   if ((b = ev.target.closest('[data-view]'))) { view = b.dataset.view; mapFull = false; closePlace(); draw(); return; }
   if (ev.target.closest('[data-testid="map-full"]')) { mapFull = !mapFull; draw(); return; }
   if ((b = ev.target.closest('[data-mday]'))) { mapDay = +b.dataset.mday; draw(); return; }
+  if ((b = ev.target.closest('[data-zoom]')) && !b.disabled) { setZoom(zoom + Number(b.dataset.zoom)); return; }
   if (ev.target.closest('[data-close]')) { closePlace(); return; }
   if ((b = ev.target.closest('[data-ev]'))) { openPlace(+b.dataset.ev); return; }
   if (ev.target.closest('#act-text')) {

@@ -205,7 +205,7 @@
   .tl-ad { flex: none; height: var(--adh); }
   .tl-ads { position: absolute; left: 0; top: var(--hdh); height: var(--adh); }
   .tl-adb {
-    position: absolute; height: 20px; padding: 0 8px;
+    position: absolute; height: 20px; padding: 0 8px; font-family: inherit; text-align: left; cursor: pointer;
     background: var(--sunken); border: 1px solid var(--line); border-radius: 6px;
     font-size: 11px; line-height: 18px; color: var(--ink-2);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -269,6 +269,18 @@
      先前地圖疊在時間表底下，整頁很長；改成兩個 tab，一次只看一種，預設行事曆。
      地圖一次只畫一天——整趟的點疊在一張圖上，每天的順序就看不出來了。 */
   .vtabs { width: max-content; margin: 26px 0 16px; }
+  /* 行事曆右下的 − ＋（使用者要求 2026-09-26）：放大之後時間表比畫面還高，所以黏在視窗右下、
+     跟著捲，一直按得到；時間表捲完它就停在時間表的底。 */
+  #timeline { position: relative; }
+  .tl-zoom { position: sticky; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 8;
+             display: flex; width: max-content; margin: 10px 0 0 auto; padding: 3px; gap: 2px;
+             background: var(--card); border: 1px solid var(--line); border-radius: var(--r);
+             box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--ink) 40%, transparent); }
+  .tl-zoom button { width: 38px; height: 34px; border: 0; border-radius: 8px; background: none;
+                    font: 600 18px/1 var(--font); color: var(--ink); cursor: pointer; }
+  .tl-zoom button:disabled { color: var(--line); cursor: default; }
+  .tl-zoom button:not(:disabled):hover { background: var(--sunken); }
+  .tl-zoom button:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; }
   .vtabs button { padding: 7px 18px; font-size: 14px; }
   .plist-h { margin: 18px 0 4px; font-family: var(--mono); font-size: 12px; font-weight: 400;
              letter-spacing: 0.1em; color: var(--taupe); }
@@ -441,7 +453,7 @@
                stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
   @media print {
-    .site-header, .site-footer, .foot, .acts, .sec, .vtabs { display: none !important; }
+    .site-header, .site-footer, .foot, .acts, .sec, .vtabs, .tl-zoom { display: none !important; }
     body { background: #ffffff; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -470,17 +482,17 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=c96510fd89",
+  "/trip/app.js": "/trip/app.js?v=e346eb9a0d",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=58681e1082",
   "/trip/core.js": "/trip/core.js?v=3421db6fb7",
   "/trip/icons.js": "/trip/icons.js?v=8170c18b88",
   "/trip/looks.js": "/trip/looks.js?v=632af634a5",
-  "/trip/strings.js": "/trip/strings.js?v=89e23a964f",
+  "/trip/strings.js": "/trip/strings.js?v=37667a3855",
   "/assets/js/chrome.js": "/assets/js/chrome.js?v=8056417f86"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=c96510fd89"></script>
+<script type="module" src="/trip/app.js?v=e346eb9a0d"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>
