@@ -1,0 +1,154 @@
+@charset "utf-8";
+
+/* ==========================================================================
+   TripEZGo — 全站共用的頁首、頁尾與標誌（2026-09-26 從 site.css 拆出來）
+   首頁、法律頁、/open/ 經 site.css 引用它；公開頁（trip/）自己的設計系統另外寫，
+   只載這一份——頁首頁尾跟首頁同一份，不再各畫各的（使用者要求）。
+   色票 token 也在這裡：頁首頁尾要用，而公開頁沒有載 site.css。
+   ========================================================================== */
+
+:root {
+  --bg:      #ffffff;
+  --page:    #ffffff;
+  --surface: #fbf8f4;
+  --sunken:  #f3ede5;
+  --fg:      #241d17;
+  --muted:   #7c6f63;
+  --border:      #dbd5cd;
+  --border-soft: color-mix(in srgb, var(--border) 55%, var(--bg));
+
+  --accent:     #2f918e;
+  --accent-ink: #1d7370;
+  --accent-on:  #ffffff;
+  --accent-wash: color-mix(in srgb, var(--accent) 10%, var(--bg));
+  --brand-teal: #5cc6c3;
+
+  --success: #40965d;
+  --warn:    #e9a535;
+  --danger:  #d25242;
+
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "PingFang TC",
+               "Noto Sans TC", "Microsoft JhengHei", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", Monaco, Menlo, "Courier New", monospace;
+
+  --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 18px;
+  --text-xl: 22px; --text-2xl: 28px; --text-3xl: 36px; --text-4xl: 46px;
+
+  --leading-body: 1.75;
+  --leading-tight: 1.14;
+  --tracking-display: -0.021em;
+
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px; --radius-pill: 9999px;
+  --shadow-rgb: 36, 29, 23;
+  --shadow-sm: 0 1px 2px rgba(var(--shadow-rgb), .06);
+  --shadow-md: 0 8px 24px -8px rgba(var(--shadow-rgb), .16);
+  --shadow-lg: 0 30px 60px -24px rgba(var(--shadow-rgb), .30);
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-ink);
+
+  --gutter: clamp(20px, 5vw, 40px);
+  --wrap: 1120px;
+  --section-y: clamp(64px, 9vw, 120px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:      #17120f;
+    --page:    #17120f;
+    --surface: #221c17;
+    --sunken:  #2b241e;
+    --fg:      #f3ede5;
+    --muted:   #a2958a;
+    --border:  #382f27;
+
+    --accent:     #5cc6c3;
+    --accent-ink: #7ad7d4;
+    --accent-on:  #12211f;
+    --accent-wash: color-mix(in srgb, var(--accent) 14%, var(--bg));
+
+    --success: #5cb87a;
+    --warn:    #eeb455;
+    --danger:  #ef7565;
+
+    --shadow-rgb: 0, 0, 0;
+    --shadow-lg: 0 30px 60px -24px rgba(0, 0, 0, .6);
+  }
+}
+
+/* ─── 標誌：形狀由 mask 提供，顏色由 currentColor 給 ─────────────────── */
+/* 只選兩個標誌本人：公開頁的時間表也有一個叫 .m 的副標，單寫 .m 會把它畫成一條色塊
+   （2026-09-26）。全站的 .m 都跟 m-mark／m-word 一起出現，所以首頁不受影響。 */
+.m.m-mark, .m.m-word {
+  -webkit-mask: var(--src) center / contain no-repeat;
+  mask: var(--src) center / contain no-repeat;
+  background: currentColor;
+  display: block;
+  flex: none;
+}
+.m-mark { --src: url(../img/tripezgo-mark.svg); }
+.m-word { --src: url(../img/tripezgo-wordmark.svg); }
+
+/* ─── 頁首 ─────────────────────────────────────────────────────────── */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--page) 86%, transparent);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.site-header .wrap {
+  display: flex; align-items: center; gap: 16px;
+  min-height: 64px;
+}
+.site-header .brand, .site-footer .brand {
+  display: flex; align-items: center; gap: 9px;
+  color: var(--accent); text-decoration: none; flex: none;
+}
+.site-header .brand .m-mark, .site-footer .brand .m-mark { width: 26px; height: 24px; }
+.site-header .brand .m-word, .site-footer .brand .m-word { width: 92px; height: 16px; color: var(--fg); }
+.site-header .brand:hover, .site-footer .brand:hover { color: var(--accent-ink); }
+
+.site-nav {
+  margin-inline-start: auto;
+  display: flex; align-items: center; gap: clamp(12px, 2.4vw, 26px);
+}
+.site-nav a {
+  color: var(--muted); text-decoration: none;
+  font-size: var(--text-sm); font-weight: 500; white-space: nowrap;
+}
+.site-nav a:hover { color: var(--fg); }
+.site-nav .lang {
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: .04em;
+}
+.site-nav .lang:hover { border-color: var(--accent); color: var(--accent-ink); }
+@media (max-width: 640px) {
+  .site-nav .hide-sm { display: none; }
+}
+
+/* 頁首頁尾的寬度跟首頁一樣：公開頁自己的 .wrap 比較窄（920px），這裡蓋回去。 */
+.site-header > .wrap, .site-footer > .wrap { max-width: var(--wrap); padding: 0 var(--gutter); }
+
+/* ─── 頁尾 ─────────────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border-soft);
+  padding: clamp(48px, 7vw, 72px) 0 40px;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.footer-top {
+  display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between;
+  padding-bottom: 32px; border-bottom: 1px solid var(--border-soft);
+}
+.footer-links { display: flex; flex-wrap: wrap; gap: 10px 26px; }
+.footer-links a { color: var(--muted); text-decoration: none; }
+.footer-links a:hover { color: var(--fg); text-decoration: underline; }
+.footer-bottom {
+  display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between;
+  padding-top: 24px;
+}
+.site-footer .brand .m-word { color: var(--fg); }
+

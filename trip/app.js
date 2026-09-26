@@ -15,6 +15,7 @@ import { base64UrlEncode, clock, daysOf, ITINERARY, laneLayout, linkURL, mapDayO
 import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
 import { iconOf, iconPath, swatchOf } from './looks.js';
 import { LANGS, S } from './strings.js';
+import { brandHtml, footerHtml } from '/assets/js/chrome.js';
 
 /* 類型色：App 的 EventTypeSwatch 十一族（淺／深），寫成 CSS 變數 --sw-<族>。 */
 (function paintSwatches() {
@@ -348,6 +349,10 @@ function clip(a, dx, dy, box) {
   return ok ? [t0, t1] : [1, 0];
 }
 
+/* 系統切深淺色：整張地圖重畫——底圖、線與箭頭的顏色（--walk-route）都要換。 */
+const DARK = window.matchMedia('(prefers-color-scheme: dark)');
+DARK.addEventListener('change', () => { if (mapInstance) mountMap(); });
+
 async function mountMap() {
   if (mapInstance) { mapInstance.destroy(); mapInstance = null; }
   const el = document.getElementById('map');
@@ -362,6 +367,8 @@ async function mountMap() {
   if (!document.body.contains(el)) return; /* 等 MapKit 的時候已經換過一次畫面 */
   mk.language = LANGS.find((l) => l.k === lang).html;
   const map = new mk.Map(el);
+  /* 地圖的底圖跟著深色模式（使用者回報 2026-09-26）：MapKit JS 預設是淺色，要自己說。 */
+  map.colorScheme = DARK.matches ? mk.Map.ColorSchemes.Dark : mk.Map.ColorSchemes.Light;
   const m = mapDayOf(D.days[mapDay - 1]);
   const css = getComputedStyle(document.documentElement);
   const probe = document.createElement('span');
@@ -665,6 +672,8 @@ function draw() {
 function overlayHtml() { return author === 'confirm' ? confirmHtml() : ''; }
 function afterDraw() { mountMap(); }
 function paintLang() {
+  document.getElementById('brand').innerHTML = brandHtml(lang);
+  document.getElementById('site-footer').innerHTML = footerHtml(lang);
   document.getElementById('lang').innerHTML = LANGS.map((l) =>
     '<button type="button" data-lang="' + l.k + '" lang="' + l.html + '" aria-pressed="' + (l.k === lang) + '">' + esc(l.lb) + '</button>').join('');
 }

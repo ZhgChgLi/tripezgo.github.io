@@ -135,3 +135,30 @@ test('失效畫面也跟著語言走', async ({ page }) => {
   await expect(page.locator('h1')).toHaveText('This trip could not be loaded');
   await expect(page.getByTestId('gone').locator('a')).toHaveAttribute('href', '/en/');
 });
+
+test('頁首頁尾跟首頁同一份：標誌回首頁、頁尾的連結與字跟著頁內的語言換', async ({ page }) => {
+  await useConfig(page);
+  await fakeCloudKit(page, { stores: { production: { [dated.recordName]: recordOf(dated) } } });
+  await page.goto(pathOf(dated));
+  await expect(page.locator('header.site-header .brand')).toHaveAttribute('href', '/');
+  await expect(page.locator('header.site-header .brand .m-mark')).toBeVisible();
+  const foot = page.locator('footer.site-footer');
+  await expect(foot).toContainText('旅行規劃、快樂出行，一次搞定。');
+  await expect(foot.locator('.footer-links a').first()).toHaveAttribute('href', '/privacy.html');
+  await expect(foot).toContainText('© 2026 TripEZGo');
+  /* 跟首頁同一份樣式：頁首 64px 高 */
+  expect((await page.locator('header.site-header .wrap').boundingBox()).height).toBeGreaterThanOrEqual(64);
+
+  await page.locator('[data-lang="en"]').click();
+  await expect(page.locator('header.site-header .brand')).toHaveAttribute('href', '/en/');
+  await expect(foot).toContainText('Plan the whole trip, all in one place.');
+  await expect(foot.locator('.footer-links a').first()).toHaveAttribute('href', '/en/privacy.html');
+  await page.locator('[data-lang="ja"]').click();
+  await expect(foot.locator('.footer-links a').first()).toHaveText('プライバシーポリシー');
+
+  /* 共用樣式不可以蓋到這一頁自己的 class：時間表方塊的副標也叫 .m（2026-09-26 撞過一次，
+   * 標誌的遮罩把副標畫成一條色塊） */
+  const sub = page.locator('.tl-ev .m').first();
+  await expect(sub).toBeVisible();
+  await expect(sub).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+});

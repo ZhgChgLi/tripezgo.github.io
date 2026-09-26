@@ -75,6 +75,9 @@ test.describe('iPhone、沒裝 App', () => {
     expect(hits).toEqual(['/trip/?open=1']);
     expect(decodeURIComponent(new URL(page.url()).hash.slice(1))).toBe(dated.url);
     await expect(page.getByTestId('open-kind')).toHaveText('公開旅程');
+    /* 頁首頁尾跟首頁同一份 */
+    await expect(page.locator('footer.site-footer')).toContainText('旅行規劃、快樂出行，一次搞定。');
+    await expect(page.locator('header.site-header .brand')).toHaveAttribute('href', '/');
     await expect(page.getByTestId('open-app')).toHaveAttribute('href', dated.url);
 
     const get = page.getByTestId('open-get');

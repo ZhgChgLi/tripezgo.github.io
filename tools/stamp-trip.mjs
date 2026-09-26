@@ -16,23 +16,33 @@ import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const dir = new URL('../trip/', import.meta.url);
-export const MODULES = ['app.js', 'cloudkit.js', 'config.js', 'core.js', 'icons.js', 'looks.js', 'strings.js'];
+const root = new URL('../', import.meta.url);
+const dir = new URL('trip/', root);
+/** import map 裡的每一支模組（站內的絕對路徑）。chrome.js 是全站共用的頁尾（2026-09-26）。 */
+export const MODULES = ['app.js', 'cloudkit.js', 'config.js', 'core.js', 'icons.js', 'looks.js', 'strings.js']
+  .map((m) => '/trip/' + m).concat(['/assets/js/chrome.js']);
+/** 公開頁 <head> 裡要蓋雜湊的樣式表。 */
+export const STYLES = ['/assets/css/chrome.css'];
 const START = '<!-- stamp-trip:start -->', END = '<!-- stamp-trip:end -->';
 
-function versioned(name) {
-  const hash = createHash('sha256').update(readFileSync(new URL(name, dir))).digest('hex').slice(0, 10);
-  return '/trip/' + name + '?v=' + hash;
+function versioned(path) {
+  const hash = createHash('sha256').update(readFileSync(new URL(path.slice(1), root))).digest('hex').slice(0, 10);
+  return path + '?v=' + hash;
 }
 
 /** 回傳蓋好雜湊的 HTML；已經是最新的就原樣回傳。 */
 export function stampedHtml(html) {
-  const imports = Object.fromEntries(MODULES.map((m) => ['/trip/' + m, versioned(m)]));
+  const imports = Object.fromEntries(MODULES.map((m) => [m, versioned(m)]));
   const block = START + '\n<script type="importmap">' + JSON.stringify({ imports }, null, 1) + '</script>\n'
     + '<script type="module" src="' + imports['/trip/app.js'] + '"></script>\n' + END;
   const i = html.indexOf(START), j = html.indexOf(END);
   if (i < 0 || j < 0) throw new Error('trip/index.html 裡找不到 ' + START + ' … ' + END);
-  return html.slice(0, i) + block + html.slice(j + END.length);
+  let out = html.slice(0, i) + block + html.slice(j + END.length);
+  for (const css of STYLES) {
+    const re = new RegExp('href="' + css.replace(/[.]/g, '\\.') + '(\\?v=[0-9a-f]+)?"', 'g');
+    out = out.replace(re, 'href="' + versioned(css) + '"');
+  }
+  return out;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

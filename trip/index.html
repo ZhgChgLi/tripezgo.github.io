@@ -21,6 +21,7 @@
 <meta name="theme-color" content="#1f1914" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png" />
 <link rel="apple-touch-icon" href="/assets/img/icon-180.png" />
+<link rel="stylesheet" href="/assets/css/chrome.css?v=ea9c8814ea" />
 <!-- 版面、token、三語字典都照設計稿 trip-share-public.html（Open Design e0f396c1…）。 -->
 <style>
   /* ═══ 設計系統 token ═══════════════════════════════════════════
@@ -109,31 +110,16 @@
   .mn { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: 0; }
   .wrap { width: 100%; max-width: 920px; margin: 0 auto; padding: 0 16px; }
 
-  /* ─── 頁首（原稿） ───────────────────────────────────────── */
-  .top {
-    position: sticky; top: 0; z-index: 20;
-    background: color-mix(in srgb, var(--paper) 88%, transparent);
-    backdrop-filter: saturate(1.6) blur(12px);
-    -webkit-backdrop-filter: saturate(1.6) blur(12px);
-    border-bottom: 1px solid var(--line-2);
-  }
-  .top-in { display: flex; align-items: center; gap: 12px; min-height: 52px; }
-  .brand { display: flex; align-items: center; gap: 7px; margin-right: auto; min-width: 0;
-           color: inherit; text-decoration: none; }
-  .brand svg { width: 19px; height: 19px; flex: none; fill: none; stroke: var(--machi-ink);
-               stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-  .brand b { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
-
-  .lang, .seg { display: flex; gap: 2px; padding: 3px; background: var(--sunken);
+  .tz-lang, .seg { display: flex; gap: 2px; padding: 3px; background: var(--sunken);
                 border: 1px solid var(--line); border-radius: var(--r); }
-  .lang button, .seg button {
+  .tz-lang button, .seg button {
     min-height: 30px; padding: 0 9px;
     font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.02em;
     color: var(--taupe); background: none; border: 0; border-radius: 5px; cursor: pointer;
     white-space: nowrap;
   }
-  .lang button[aria-pressed="true"], .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-  .lang button:focus-visible, .seg button:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; }
+  .tz-lang button[aria-pressed="true"], .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .tz-lang button:focus-visible, .seg button:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; }
 
   /* ─── 抬頭：封面照＋旅程本身 ───────────────────────────────
      封面放在字的上面、不墊在字底下：墊在底下就得加一層暗化才讀得到字，
@@ -316,8 +302,9 @@
   .map-full svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8;
                   stroke-linecap: round; stroke-linejoin: round; }
   .map-full:focus-visible { outline: 2px solid var(--machi-ink); outline-offset: 1px; }
-  /* 全螢幕：日期切換列跟著一起上來，地圖吃掉剩下的高度。 */
-  .map-wrap.is-full { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column;
+  /* 全螢幕：日期切換列跟著一起上來，地圖吃掉剩下的高度。
+     疊放順序：共用頁首 50（chrome.css）< 全螢幕地圖 55 < 地點卡 60／61 < toast 70。 */
+  .map-wrap.is-full { position: fixed; inset: 0; z-index: 55; display: flex; flex-direction: column;
                       padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--paper); }
   .map-wrap.is-full .map { flex: 1 1 auto; height: auto; min-height: 0; }
   /* 示意底圖：MapKit JS 真的畫出來之前的替身。色取紙色系，不用青綠。 */
@@ -369,9 +356,9 @@
 
   /* ─── 地點卡：點行程或點地圖上的點 ───────────────────────────
      手機貼底、桌機置中。兩顆鈕各開各的地圖 App——不替他挑。 */
-  .scrim { position: fixed; inset: 0; z-index: 40; background: color-mix(in srgb, var(--ink) 34%, transparent); }
+  .scrim { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--ink) 34%, transparent); }
   .pcard, .dlg {
-    position: fixed; z-index: 41; left: 50%; bottom: 16px; transform: translateX(-50%);
+    position: fixed; z-index: 61; left: 50%; bottom: 16px; transform: translateX(-50%);
     width: min(420px, calc(100% - 32px));
     background: var(--card); border: 1px solid var(--line); border-radius: 12px;
     padding: 16px;
@@ -442,7 +429,7 @@
   /* ─── toast（App 的 .toast 搬過來，色換成網頁 token） ─────────── */
   .toast {
     position: fixed; left: 0; right: 0; bottom: 24px; margin: 0 auto; width: fit-content;
-    z-index: 50; display: flex; align-items: center; gap: 9px;
+    z-index: 70; display: flex; align-items: center; gap: 9px;
     max-width: calc(100% - 48px);
     padding: 11px 16px 11px 13px; border-radius: 9999px;
     background: var(--toast-bg); color: var(--toast-on);
@@ -454,7 +441,7 @@
                stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
   @media print {
-    .top, .foot, .acts, .sec, .vtabs { display: none !important; }
+    .site-header, .site-footer, .foot, .acts, .sec, .vtabs { display: none !important; }
     body { background: #ffffff; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -463,20 +450,17 @@
 </head>
 <body>
 
-<header class="top">
-  <div class="wrap top-in">
-    <a class="brand" href="/">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="6" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/>
-        <path d="M6 8.6v4a3.4 3.4 0 0 0 3.4 3.4h5.2"/>
-      </svg>
-      <b>TripEZGo</b>
-    </a>
-    <div class="lang" role="group" id="lang"></div>
+<!-- 頁首頁尾跟首頁同一份（/assets/css/chrome.css、/assets/js/chrome.js；使用者要求 2026-09-26）。
+     右邊是這一頁自己的語言切換：在頁內換，不離開這一頁。 -->
+<header class="site-header">
+  <div class="wrap">
+    <span id="brand"></span>
+    <nav class="site-nav"><div class="seg tz-lang" role="group" id="lang"></div></nav>
   </div>
 </header>
 
 <div id="page"></div>
+<footer class="site-footer" id="site-footer"></footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden>
   <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.4 2.6 2.6L16 9.6"/></svg>
@@ -486,16 +470,17 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=8acc66738f",
+  "/trip/app.js": "/trip/app.js?v=c96510fd89",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=58681e1082",
   "/trip/core.js": "/trip/core.js?v=3421db6fb7",
   "/trip/icons.js": "/trip/icons.js?v=8170c18b88",
   "/trip/looks.js": "/trip/looks.js?v=632af634a5",
-  "/trip/strings.js": "/trip/strings.js?v=89e23a964f"
+  "/trip/strings.js": "/trip/strings.js?v=89e23a964f",
+  "/assets/js/chrome.js": "/assets/js/chrome.js?v=8056417f86"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=8acc66738f"></script>
+<script type="module" src="/trip/app.js?v=c96510fd89"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>

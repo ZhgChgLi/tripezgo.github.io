@@ -12,9 +12,10 @@
 <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
+<!-- 頁首頁尾跟首頁同一份（/assets/css/chrome.css 經 site.css、/assets/js/chrome.js），照這一頁挑的語言畫。 -->
 <header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="/" aria-label="TripEZGo">
+  <div class="wrap" id="brand">
+    <a class="brand" href="/" aria-label="TripEZGo 首頁">
       <span class="m m-mark" role="img" aria-hidden="true"></span>
       <span class="m m-word" role="img" aria-hidden="true"></span>
     </a>
@@ -99,7 +100,9 @@
   var saved = null;
   try { saved = localStorage.getItem('tez.lang'); } catch (err) { /* 私密瀏覽 */ }
   var tag = (navigator.language || 'zh').toLowerCase();
-  var t = STRINGS[saved] || STRINGS[tag.indexOf('ja') === 0 ? 'ja' : (tag.indexOf('zh') === 0 ? 'zh' : 'en')];
+  var key = STRINGS[saved] ? saved : (tag.indexOf('ja') === 0 ? 'ja' : (tag.indexOf('zh') === 0 ? 'zh' : 'en'));
+  var t = STRINGS[key];
+  document.documentElement.dataset.tz = key;   /* 底下畫頁首頁尾的那一段照這個語言 */
   /* 去哪裡拿 App：**還沒上架**，先送回首頁（各語言那一份）；上架那天換成 https://apps.apple.com/… */
   var STORE = t.home;
 
@@ -157,6 +160,13 @@
     }
   });
 })();
+</script>
+<footer class="site-footer" id="site-footer"></footer>
+<script type="module">
+import { brandHtml, footerHtml } from '/assets/js/chrome.js';
+const key = document.documentElement.dataset.tz || 'zh';
+document.getElementById('brand').innerHTML = brandHtml(key);
+document.getElementById('site-footer').innerHTML = footerHtml(key);
 </script>
 </body>
 </html>

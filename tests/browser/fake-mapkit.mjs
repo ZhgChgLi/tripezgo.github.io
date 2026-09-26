@@ -13,6 +13,7 @@ window.mapkit = {
   Style: function (o) { Object.assign(this, o); },
   PolylineOverlay: function (points, o) { this.points = points; Object.assign(this, o); }
 };
+mapkit.Map.ColorSchemes = { Light: 'light', Dark: 'dark' };
 mapkit.Map.prototype.showItems = function (a) { this.items = a; };
 mapkit.Map.prototype.removeAnnotations = function (a) { this.items = (this.items || []).filter(function (x) { return a.indexOf(x) < 0; }); };
 mapkit.Map.prototype.addEventListener = function (t, f) { (this.handlers = this.handlers || {})[t] = f; };
@@ -50,6 +51,7 @@ __mk.chevrons = function () {
     return { x: p.x, y: p.y, turn: a.el.firstChild.style.transform };
   });
 };
+__mk.scheme = function () { var m = live(); return m ? m.colorScheme || null : null; };
 __mk.region = function () {
   var m = live(), r = m && m.region;   /* 地圖還沒掛上去：null，讓 expect.poll 繼續等（拋錯的話它不會重試） */
   return r ? { lat: r.center.latitude, lng: r.center.longitude, dLat: r.span.latitudeDelta } : null;

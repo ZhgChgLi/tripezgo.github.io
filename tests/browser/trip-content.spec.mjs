@@ -107,6 +107,16 @@ test('地圖夠高；全螢幕鈕：按了佔滿視窗、切天還在全螢幕�
   await expect(page.getByTestId('map-wrap')).not.toHaveCSS('position', 'fixed');
 });
 
+test('地圖跟著深色模式：一打開照系統的設定，系統切換時跟著換', async ({ page }) => {
+  await fakeMapKit(page);
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await open(page, dated, { mapkitToken: 'test-mapkit-jwt' });
+  await showMap(page);
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.scheme())).toBe('dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect.poll(() => page.evaluate(() => window.__mk && window.__mk.scheme())).toBe('light');
+});
+
 test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一族；認不得的名字 → 通用圖釘＋雜項', async ({ page }) => {
   await open(page, dated);
   await showMap(page);

@@ -13,9 +13,10 @@ test('trip/index.html 的雜湊跟每一支 JS 現在的內容對得上（改了
 test('每一支模組都在 import map 裡，入口帶同一種雜湊', () => {
   const html = readFileSync(new URL('../../trip/index.html', import.meta.url), 'utf8');
   const map = JSON.parse(html.match(/<script type="importmap">([\s\S]*?)<\/script>/)[1]);
-  for (const name of MODULES) {
-    assert.match(map.imports['/trip/' + name], new RegExp('^/trip/' + name.replace('.', '\\.') + '\\?v=[0-9a-f]{10}$'));
+  for (const path of MODULES) {
+    assert.match(map.imports[path], new RegExp('^' + path.replace(/[.]/g, '\\.') + '\\?v=[0-9a-f]{10}$'));
   }
+  assert.match(html, /<link rel="stylesheet" href="\/assets\/css\/chrome\.css\?v=[0-9a-f]{10}"/);
   const entry = html.match(/<script type="module" src="([^"]+)"><\/script>/)[1];
   assert.equal(entry, map.imports['/trip/app.js']);
 });
