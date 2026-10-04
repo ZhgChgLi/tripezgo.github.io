@@ -49,7 +49,8 @@ test('Production 查不到就查 Development（debug build 寫的連結）', asy
   expect(ck.calls.map((c) => c.env)).toEqual(['production', 'development']);
 });
 
-test('沒有 token 的環境跳過：正式設定裡 Production 還沒有 token', async ({ page }) => {
+test('沒有 token 的環境跳過：Production 那一格是空字串就不查', async ({ page }) => {
+  await useConfig(page, { production: '' });
   const ck = await fakeCloudKit(page, { stores: { development: { [dated.recordName]: recordOf(dated) } } });
   await page.goto(pathOf(dated));
   await expect(page.locator('h1')).toHaveText('沖繩・慢活潛水');

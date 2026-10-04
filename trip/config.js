@@ -16,7 +16,7 @@
 export const CONFIG = {
   container: 'iCloud.com.zhgchgli.tripezgo',
   environments: [
-    { name: 'production', apiToken: '' },
+    { name: 'production', apiToken: 'e76211f69e50b865dbc13d130a2c9a8cd64b121b98d3be5d230aaf8f4a6bb03c' },
     { name: 'development', apiToken: '95c27dadedb8f40f5c0ad9bbdfe58d5f2d2241fffb04dad08dcfef77d19c76af' },
   ],
   /* MapKit JS 的 JWT：key TX7KT74NAS（team UGFKKJS5G7）簽的，origin 限 https://tripezgo.com
