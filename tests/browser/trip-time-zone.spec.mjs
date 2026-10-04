@@ -138,3 +138,14 @@ test.describe('紐約的旅程整趟都在標準時間（11/5 起）', () => {
     await expect(page.locator('.tl-day').getByTestId('phone-clock')).toHaveCount(0);
   });
 });
+
+/* review（e0e29db 之後）：只看畫出來的那一段。11/1 起、時間表 09:00–26:00：−12 只在 11/1 00:00–02:00（沒畫出來），
+ * 畫面上每一刻都是 −13。 */
+test.describe('紐約的旅程 11/1 起（撥回在 02:00，時間表從 09:00 起畫）', () => {
+  test('畫出來的時差全部一樣：說明寫 −13、不加「部分日子不同」，照舊畫在共用時間欄', async ({ page }) => {
+    await open(page, await variant((p) => { p.trip.tz = 'America/New_York'; p.trip.start = '2026-11-01'; }));
+    await expect(page.getByTestId('zone-note')).toHaveText('目前為東部時間，與裝置時間差 −13 小時');
+    expect((await phoneClocks(page))[0]).toBe('22:00');
+    await expect(page.locator('.tl-day').getByTestId('phone-clock')).toHaveCount(0);
+  });
+});

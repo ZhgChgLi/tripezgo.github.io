@@ -11,7 +11,7 @@
  */
 import { CONFIG } from './config.js';
 import { createClient } from './cloudkit.js';
-import { base64UrlEncode, blockRange, clock, dayOffsetMark, daysOf, ITINERARY, laneLayout, linkURL, mapDayOf, MINUTES_PER_DAY, openSealed, OpenFailure, parseFragment, phonePlan, phoneReading, phoneReadingOn, phoneShifts, plainText, sealedFromRecord, zoneDifference, zoneName, zoneOffset } from './core.js';
+import { base64UrlEncode, blockRange, clock, dayOffsetMark, daysOf, ITINERARY, laneLayout, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, phoneNoteShifts, phonePlan, phoneReading, phoneReadingOn, phoneShifts, plainText, sealedFromRecord, zoneDifference, zoneName, zoneOffset } from './core.js';
 import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
 import { iconOf, iconPath, swatchOf } from './looks.js';
 import { LANGS, S } from './strings.js';
@@ -225,7 +225,7 @@ function timeSpan() {
  *   - 時間表上方一格說明（App 的 00:00 之前那一格；這一頁的時間表不從 00:00 開始，放在整張表的上面，
  *     跟著頁面捲、不固定）。旅程時區名與時差加粗（設計稿的 `<b>`）。時差會變的旅程讀第一段不為 0 的時差，
  *     再接「部分日子不同」。 */
-let plan = { shared: null, perDay: false };
+let plan = { shared: null, perDay: false, note: null };
 const phoneHtml = (p) => esc(p.clock) + markHtml(dayOffsetMark(p.dayShift));
 function hoursHtml(r, step) {
   let out = '';
@@ -246,7 +246,7 @@ function dayPhoneHtml(r, i) {
   return out;
 }
 function zoneNoteHtml() {
-  const shifts = plan.shared || (plan.perDay && D.phone.find(Boolean));
+  const shifts = plan.note;
   if (!shifts) return '<p class="tl-tz" data-testid="zone-note" hidden></p>';
   const name = zoneName(D.copy.tz, lang), diff = zoneDifference(shifts, s());
   const parts = s().tzNote.split('%s');
@@ -259,7 +259,7 @@ function timelineHtml() {
   const r = timeSpan(), gh = (r.hi - r.lo) * PPM;
   /* 刻度：放大之後改成每 15 分一條（間距夠寬才畫，避免擠在一起）。 */
   const step = PPM >= 3 ? 15 : 30;
-  plan = phonePlan(D.phone, r.hi > MINUTES_PER_DAY);
+  plan = { ...phonePlan(D.phone, r), note: phoneNoteShifts(D.phone, r) };
   const hours = hoursHtml(r, step);
   const cols = D.days.map((d, di) => {
     const boxes = d.timed.map((x) => {

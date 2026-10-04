@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { phonePlan, phoneReadingOn, phoneShifts, phoneReading, validateCopy, zoneName, zoneNote, zoneDifference } from '../../trip/core.js';
+import { phoneNoteShifts, phonePlan, phoneReadingOn, phoneShifts, phoneReading, validateCopy, zoneName, zoneNote, zoneDifference } from '../../trip/core.js';
 import { S } from '../../trip/strings.js';
 
 const golden = JSON.parse(readFileSync(new URL('../fixtures/golden-v1.json', import.meta.url), 'utf8'));
@@ -122,28 +122,29 @@ test('說明一句，三語', () => {
 
 const nyDays = [day(2026, 10, 31), day(2026, 11, 1), day(2026, 11, 2), day(2026, 11, 3)]
   .map((d) => phoneShifts('America/New_York', 'Asia/Taipei', d));
+const WHOLE_DAY = { lo: 0, hi: 24 * 60 }, PAST_MIDNIGHT = { lo: 0, hi: 48 * 60 };
 const tokyoDays = [day(2026, 7, 30), day(2026, 7, 31), day(2026, 8, 1), day(2026, 8, 2)]
   .map((d) => phoneShifts('Asia/Tokyo', 'Asia/Taipei', d));
 
 test('每一天、每一刻時差都一樣：共用時間欄（照舊）', () => {
-  assert.deepEqual(phonePlan(tokyoDays, true), { shared: tokyoDays[0], perDay: false });
-  assert.deepEqual(phonePlan([null, null, null, null], true), { shared: null, perDay: false });
+  assert.deepEqual(phonePlan(tokyoDays, PAST_MIDNIGHT), { shared: tokyoDays[0], perDay: false });
+  assert.deepEqual(phonePlan([null, null, null, null], PAST_MIDNIGHT), { shared: null, perDay: false });
 });
 
 test('有一天跨夏令時間：每一天自己畫', () => {
-  assert.equal(phonePlan(nyDays, false).perDay, true);
-  assert.equal(phonePlan(nyDays, false).shared, null);
+  assert.equal(phonePlan(nyDays, WHOLE_DAY).perDay, true);
+  assert.equal(phonePlan(nyDays, WHOLE_DAY).shared, null);
 });
 
 test('旅程裡每天一樣、但時間表畫過午夜而隔天切換：也要每一天自己畫（最後一天的 24:00 之後是隔天）', () => {
   const before = [day(2026, 10, 29), day(2026, 10, 30), day(2026, 10, 31), day(2026, 11, 1)]
     .map((d) => phoneShifts('America/New_York', 'Asia/Taipei', d));
-  assert.equal(phonePlan(before, false).perDay, false, '時間表沒畫過午夜：不看隔天');
-  assert.equal(phonePlan(before, true).perDay, true);
+  assert.equal(phonePlan(before, WHOLE_DAY).perDay, false, '時間表沒畫過午夜：不看隔天');
+  assert.equal(phonePlan(before, PAST_MIDNIGHT).perDay, true);
 });
 
 test('有幾天偏移相同（null）、有幾天不同：每一天自己畫', () => {
-  assert.equal(phonePlan([null, tokyoDays[0], tokyoDays[0]], false).perDay, true);
+  assert.equal(phonePlan([null, tokyoDays[0], tokyoDays[0]], WHOLE_DAY).perDay, true);
 });
 
 test('過了午夜的刻度讀隔天的時差：第 1 天 26:00 是 11/1 02:00（已撥回），台北 15:00 隔天', () => {
@@ -162,4 +163,29 @@ test('時差會變的說明：第一段不為 0 的時差，再加「部分日�
     'Times are in Eastern Time, −12 h from your device’s time (varies on some days — each day shows its own device time on its left)');
   assert.equal(zoneNote('America/New_York', shifts, 'ja', S.ja, Date.UTC(2026, 9, 31), true),
     '現在はニューヨーク時間で表示しています。端末の時刻との差は −12時間（日によって異なります。各日の左側の端末の時刻を参照）');
+});
+
+/* review（e0e29db 之後）：判斷「時差會不會變」與說明讀哪一個時差，只看時間表**實際畫出來**的那一段。
+ * 紐約的旅程 11/1 起三天、時間表 09:00–26:00、台北的瀏覽器：11/1 的 −12 只在 00:00–02:00，那段沒畫出來；
+ * 畫出來的每一刻（含畫過 24:00、讀隔天的那段）都是 −13。 */
+test('畫出來的範圍時差全部一樣：共用時間欄、說明寫那一個時差，不加「部分日子不同」', () => {
+  const ny = [day(2026, 11, 1), day(2026, 11, 2), day(2026, 11, 3), day(2026, 11, 4)]
+    .map((d) => phoneShifts('America/New_York', 'Asia/Taipei', d));
+  const span = { lo: 9 * 60, hi: 26 * 60 };
+  const thirteen = [{ fromMinute: 0, deltaMinutes: 13 * 60 }];
+  assert.deepEqual(phonePlan(ny, span), { shared: thirteen, perDay: false });
+  assert.deepEqual(phoneNoteShifts(ny, span), thirteen);
+  assert.equal(zoneDifference(phoneNoteShifts(ny, span), S.zh), '−13 小時');
+  assert.equal(phonePlan(ny, { lo: 0, hi: 26 * 60 }).perDay, true, '從 00:00 起畫：看得到 −12，每一天自己畫');
+  assert.equal(zoneDifference(phoneNoteShifts(ny, { lo: 0, hi: 26 * 60 }), S.zh), '−12 小時');
+});
+
+test('畫出範圍內有切換點（10/31 起、畫過 24:00 讀到 11/1 02:00 撥回）：每一天自己畫，說明讀第一段', () => {
+  const span = { lo: 9 * 60, hi: 26 * 60 };
+  assert.equal(phonePlan(nyDays, span).perDay, true);
+  assert.equal(zoneDifference(phoneNoteShifts(nyDays, span), S.zh), '−12 小時');
+  const before = [day(2026, 10, 29), day(2026, 10, 30), day(2026, 10, 31), day(2026, 11, 1)]
+    .map((d) => phoneShifts('America/New_York', 'Asia/Taipei', d));
+  assert.equal(phonePlan(before, { lo: 9 * 60, hi: 25 * 60 }).perDay, false, '只畫到隔天 01:00：還沒撥回');
+  assert.equal(phonePlan(before, span).perDay, true, '畫到隔天 02:00：撥回那一刻看得到');
 });

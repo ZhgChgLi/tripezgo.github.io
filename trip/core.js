@@ -323,17 +323,47 @@ export function phoneReadingOn(shifts, next, minute) {
   return phoneReading(shifts || NO_SHIFT, minute);
 }
 
+/** `shifts`（一天的 `phoneShifts`，`null` ＝差 0）在那一天 `[a, b]` 分鐘之間出現的時差，照先後、相鄰的不重複。 */
+function deltasWithin(shifts, a, b) {
+  const segs = shifts || NO_SHIFT;
+  const out = [];
+  segs.forEach((x, i) => {
+    const until = i + 1 < segs.length ? segs[i + 1].fromMinute : Infinity;
+    if (x.fromMinute <= b && until > a && out[out.length - 1] !== x.deltaMinutes) out.push(x.deltaMinutes);
+  });
+  return out.length ? out : [segs[0].deltaMinutes];
+}
+
+/** 時間表實際畫出來的時差（review：只看畫出來的那一段，不看整天）。`days` 是每一天的 `phoneShifts`，
+ *  **多一格旅程隔天的**；`span` ＝時間表的 `{ lo, hi }`（分鐘，可過 24:00）。每一天回一串：`[lo, min(hi, 24:00)]`
+ *  讀那一天，畫過 24:00 的 `[24:00, hi]` 讀隔天。 */
+function visibleDeltas(days, span) {
+  return days.slice(0, -1).map((today, i) => {
+    const seen = deltasWithin(today, span.lo, Math.min(span.hi, MINUTES_PER_DAY));
+    if (span.hi > MINUTES_PER_DAY) deltasWithin(days[i + 1], 0, span.hi - MINUTES_PER_DAY)
+      .forEach((d) => { if (seen[seen.length - 1] !== d) seen.push(d); });
+    return seen;
+  });
+}
+
 /** 觀看者的時刻畫在哪裡（review F1：這一頁所有天共用左邊那一條時間欄，App 是一天一條）。
- *  `days` 是每一天的 `phoneShifts`，**多一格旅程隔天的**；`pastMidnight` ＝時間表畫過 24:00（那就要看到隔天）。
- *   - 每一天、每一刻的時差都一樣（絕大多數旅程）：`{ shared: 那一段, perDay: false }`——照舊畫在共用時間欄。
- *   - 全部偏移相同：`{ shared: null, perDay: false }`——不畫。
- *   - 其他（有一天跨夏令時間、或某幾天的時差跟別天不同）：`{ shared: null, perDay: true }`——每一天畫在自己的欄內。 */
-export function phonePlan(days, pastMidnight) {
-  const seen = pastMidnight ? days : days.slice(0, -1);
-  if (seen.every((x) => !x)) return { shared: null, perDay: false };
-  const key = (x) => JSON.stringify(x);
-  if (seen.every((x) => key(x) === key(seen[0])) && seen[0].length === 1) return { shared: seen[0], perDay: false };
-  return { shared: null, perDay: true };
+ *  `days` 是每一天的 `phoneShifts`，**多一格旅程隔天的**；`span` ＝時間表畫出來的 `{ lo, hi }`。
+ *  只看畫出來的那一段：切換點落在沒畫出來的時段（紐約 11/1 的 02:00 撥回、時間表從 09:00 起畫）不算會變。
+ *   - 畫出來的每一天、每一刻時差都一樣（絕大多數旅程）：`{ shared: [那一段], perDay: false }`——照舊畫在共用時間欄。
+ *   - 畫出來的全部偏移相同：`{ shared: null, perDay: false }`——不畫。
+ *   - 其他（畫出範圍內有切換點、或某幾天的時差跟別天不同）：`{ shared: null, perDay: true }`——每一天畫在自己的欄內。 */
+export function phonePlan(days, span) {
+  const all = visibleDeltas(days, span);
+  const first = all[0] && all[0][0];
+  if (!all.length) return { shared: null, perDay: false };
+  if (!all.every((x) => x.length === 1 && x[0] === first)) return { shared: null, perDay: true };
+  return { shared: first ? [{ fromMinute: 0, deltaMinutes: first }] : null, perDay: false };
+}
+
+/** 說明讀的時差：畫出來的範圍裡第一段不為 0 的（`zoneDifference` 吃的一段）；畫出來的全部偏移相同回 `null`。 */
+export function phoneNoteShifts(days, span) {
+  const d = visibleDeltas(days, span).flat().find((x) => x !== 0);
+  return d ? [{ fromMinute: 0, deltaMinutes: d }] : null;
 }
 
 const ZONE_LOCALE = { zh: 'zh-Hant-TW', en: 'en', ja: 'ja' };
