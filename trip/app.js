@@ -11,7 +11,7 @@
  */
 import { CONFIG } from './config.js';
 import { createClient } from './cloudkit.js';
-import { base64UrlEncode, blockRange, clock, daysOf, ITINERARY, laneLayout, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
+import { base64UrlEncode, blockRange, clock, dayOffsetMark, daysOf, ITINERARY, laneLayout, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, phoneReading, phoneShifts, plainText, sealedFromRecord, zoneDifference, zoneName, zoneOffset } from './core.js';
 import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
 import { iconOf, iconPath, swatchOf } from './looks.js';
 import { LANGS, S } from './strings.js';
@@ -123,7 +123,21 @@ function prepare(copy, found) {
     }
   });
   days.forEach((d) => d.timed.forEach((x) => { x.id = copy.items.indexOf(x.item); }));
-  return { copy, days, allday: ads, adLanes: lanes, record: found.record, env: found.env };
+  /* 每一天觀看者的時刻（null ＝那一天偏移相同、或舊連結沒有旅程時區：不畫）。日期未定的旅程沒有日子可問，
+   * 用旅程時區的今天（同 App）。 */
+  const phone = days.map((d) => phoneShifts(copy.tz, VIEWER_ZONE, d.date || todayIn(copy.tz)));
+  return { copy, days, allday: ads, adLanes: lanes, record: found.record, env: found.env, phone };
+}
+
+/* ═══ 旅程時區（使用者裁定 2026-10-05）════════════════════════
+ * App 時間欄的「手機時區」在網頁上是**瀏覽器的時區**。 */
+const VIEWER_ZONE = (() => {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (e) { return null; }
+})();
+function todayIn(zone) {
+  if (!zone) return null;
+  const t = new Date(Date.now() + zoneOffset(zone, Date.now()) * 60000);
+  return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
 }
 
 /* ═══ 抬頭 ═════════════════════════════════════════════════════ */
@@ -192,16 +206,62 @@ function timeSpan() {
   if (hi <= lo) { lo = 9 * 60; hi = 18 * 60; }
   return { lo: Math.floor(lo / 60) * 60, hi: Math.ceil(hi / 60) * 60 };
 }
+/* ═══ 時間欄的觀看者時刻（使用者裁定 2026-10-05：公開連結帶旅程時區，照 App 時間欄的規則） ═════
+ * App 一頁一天、每一天自己的時間欄；這一頁所有天共用左邊那一條（sticky）。所以那一條照**最左邊看得到的那一天**
+ * 畫：捲到別天、那一天的時差不一樣（夏令時間切換那幾天）就重畫刻度與說明。平常每一天都一樣，捲動不會重畫。
+ *   - 每個整點底下疊一行觀看者的時刻，小一階、淡一階；跨過午夜掛 +1／-1（同 App 的 DayShiftText）。
+ *   - 時間表上方一格說明（App 的 00:00 之前那一格；這一頁的時間表不從 00:00 開始，放在整張表的上面，
+ *     跟著頁面捲、不固定）。旅程時區名與時差加粗（設計稿的 `<b>`）。
+ *   - 兩者都只在那一天兩邊偏移不同時出現。 */
+let axis = { r: null, step: 30, day: 0 };
+function hoursHtml() {
+  const { r, step } = axis;
+  const shifts = D.phone[axis.day];
+  let out = '';
+  for (let t = r.lo; t <= r.hi; t += step) {
+    let sub = '';
+    if (shifts && t % 60 === 0) {
+      const p = phoneReading(shifts, t);
+      sub = '<span class="ph" data-testid="phone-clock">' + esc(p.clock) + markHtml(dayOffsetMark(p.dayShift)) + '</span>';
+    }
+    out += '<span class="tl-hr' + (t % 60 ? ' is-half' : '') + '" style="top:' + ((t - r.lo) * PPM) + 'px">' + esc(clock(t)) + sub + '</span>';
+  }
+  return out;
+}
+function zoneNoteHtml() {
+  const shifts = D.phone[axis.day];
+  if (!shifts) return '<p class="tl-tz" data-testid="zone-note" hidden></p>';
+  const name = zoneName(D.copy.tz, lang), diff = zoneDifference(shifts, s());
+  const parts = s().tzNote.split('%s');
+  return '<p class="tl-tz" data-testid="zone-note">' + esc(parts[0]) + '<b>' + esc(name) + '</b>' + esc(parts[1])
+    + '<b>' + esc(diff) + '</b>' + esc(parts[2] || '') + '</p>';
+}
+/** 橫向捲動：最左邊那一天的時差跟刻度上畫的不一樣，就重畫刻度與說明。 */
+function trackAxisDay() {
+  const sc = document.querySelector('.tl-sc');
+  const col = document.querySelector('.tl-day');
+  if (!sc || !col || !D || !D.phone.some(Boolean)) return;
+  const key = (i) => JSON.stringify(D.phone[i]);
+  const sync = () => {
+    const day = Math.max(0, Math.min(D.days.length - 1, Math.round(sc.scrollLeft / col.offsetWidth)));
+    if (day === axis.day) return;
+    const same = key(day) === key(axis.day);
+    axis.day = day;
+    if (same) return;
+    document.querySelector('.tl-axb').innerHTML = hoursHtml();
+    document.querySelector('[data-testid="zone-note"]').outerHTML = zoneNoteHtml();
+  };
+  sc.addEventListener('scroll', sync, { passive: true });
+  sync(); /* 重畫之後捲動位置可能回到最左（換語言）——照現在的位置對一次 */
+}
 function timelineHtml() {
   PPM = ZOOMS[zoom];
   HOUR = 60 * PPM;
   const r = timeSpan(), gh = (r.hi - r.lo) * PPM;
   /* 刻度：放大之後改成每 15 分一條（間距夠寬才畫，避免擠在一起）。 */
   const step = PPM >= 3 ? 15 : 30;
-  let hours = '';
-  for (let t = r.lo; t <= r.hi; t += step) {
-    hours += '<span class="tl-hr' + (t % 60 ? ' is-half' : '') + '" style="top:' + ((t - r.lo) * PPM) + 'px">' + esc(clock(t)) + '</span>';
-  }
+  axis = { r, step, day: Math.min(axis.day, D.days.length - 1) };
+  const hours = hoursHtml();
   const cols = D.days.map((d) => {
     const boxes = d.timed.map((x) => {
       const h = (x.e - x.s) * PPM, line = h < FIT1;
@@ -241,7 +301,7 @@ function timelineHtml() {
   const band = D.allday.map((a) => '<button type="button" class="tl-adb" data-testid="allday" data-ev="' + a.id + '" title="' + esc(a.name) + '" style="left:calc(var(--ax) + ' + (a.s - 1) + ' * var(--colw) + 6px)'
     + ';width:calc(' + (a.e - a.s + 1) + ' * var(--colw) - 12px);top:' + (a.lane * AD_H) + 'px">' + esc(a.name) + '</button>').join('');
   const adh = D.adLanes ? D.adLanes * AD_H + 6 : 0;
-  return '<section id="timeline"><div class="tl-sc" tabindex="0" role="group" aria-label="' + esc(s().grid) + '">'
+  return '<section id="timeline">' + zoneNoteHtml() + '<div class="tl-sc" tabindex="0" role="group" aria-label="' + esc(s().grid) + '">'
     + '<div class="tl-in" style="--gh:' + gh + 'px;--hh:' + HOUR + 'px;--adh:' + adh + 'px">'
     + '<div class="tl-ax"><div class="tl-hd"></div><div class="tl-ad"></div><div class="tl-axb">' + hours + '</div></div>'
     + cols + (band ? '<div class="tl-ads">' + band + '</div>' : '') + '</div></div>'
@@ -725,7 +785,7 @@ function draw() {
   afterDraw();
 }
 function overlayHtml() { return author === 'confirm' ? confirmHtml() : ''; }
-function afterDraw() { mountMap(); }
+function afterDraw() { mountMap(); trackAxisDay(); }
 function paintLang() {
   document.getElementById('brand').innerHTML = brandHtml(lang);
   document.getElementById('site-footer').innerHTML = footerHtml(lang);

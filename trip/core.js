@@ -152,6 +152,10 @@ export function validateCopy(json) {
   const trip = json.trip;
   if (!trip || typeof trip.name !== 'string' || !isInt(trip.days) || trip.days < 1) return null;
   if (!isStringOrNull(trip.place) || !isStringOrNull(trip.cover)) return null;
+  /* 旅程時區（2026-10-05，App 的 `trip.tz`）：沒有這一格的舊連結、瀏覽器不認得的識別碼都當作沒有——
+   * 只是不畫副時刻；型別不對就跟 App 的 JSONDecoder 一樣整份讀不懂。 */
+  if (!isStringOrNull(trip.tz)) return null;
+  const tz = has(trip, 'tz') && isZone(trip.tz) ? trip.tz : null;
   let start = null;
   if (has(trip, 'start')) {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trip.start);
@@ -202,8 +206,155 @@ export function validateCopy(json) {
     start,
     days: trip.days,
     cover: trip.cover || null,
+    tz,
     items,
   };
+}
+
+/* ═══ 旅程時區與觀看者的時刻（使用者裁定 2026-10-05） ══════════════
+ * 照 App 時間欄的規則（App repo `UI/…/TripCalendar/PhoneClock.swift`、`Trips/…/TripCalendarViewModel.phoneClock`，
+ * 2026-10-04 時區顯示裁定第 1、3、5 條）。App 的「手機時區」在這裡是**瀏覽器的時區**。
+ * 行程的分鐘已經是旅程時區的牆上時刻（App 發佈時換算好的），這裡只算「同一刻在觀看者那裡是幾點」。 */
+
+const zoneFormats = new Map();
+function zoneFormat(zone) {
+  let f = zoneFormats.get(zone);
+  if (!f) {
+    f = new Intl.DateTimeFormat('en-US', {
+      timeZone: zone, hourCycle: 'h23',
+      year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',
+    });
+    zoneFormats.set(zone, f);
+  }
+  return f;
+}
+
+/** 瀏覽器認不認得這個 IANA 識別碼。 */
+export function isZone(zone) {
+  if (typeof zone !== 'string' || !zone) return false;
+  try {
+    zoneFormat(zone);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/** `zone` 在 `ms` 那一刻比 UTC 快幾分鐘（夏令時間照那一刻）。 */
+export function zoneOffset(zone, ms) {
+  const p = {};
+  for (const part of zoneFormat(zone).formatToParts(new Date(ms))) p[part.type] = part.value;
+  const wall = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second);
+  return Math.round((wall - Math.floor(ms / 1000) * 1000) / 60000);
+}
+
+/** `zone` 的 `{y,m,d}` 那一天、從午夜起第 `minute` 分鐘是哪一個瞬間。
+ *  同 Foundation 的 `Calendar.date(from:)`：撥回那一段重複的牆上時刻取第一次，撥快跳過的那一段取跳過之後。 */
+function wallInstant(zone, date, minute) {
+  const base = Date.UTC(date.y, date.m - 1, date.d) + minute * 60000;
+  const first = base - zoneOffset(zone, base) * 60000;
+  const second = base - zoneOffset(zone, first) * 60000;
+  const wallOf = (t) => t + zoneOffset(zone, t) * 60000;
+  if (wallOf(second) === base) return second;
+  if (wallOf(first) === base) return first;
+  return Math.max(first, second);
+}
+
+/** 那一天裡兩個時區各自的夏令時間切換（以旅程時區的牆上分鐘表示）——同 App 拿
+ *  `nextDaylightSavingTimeTransition(after:)` 兩邊都問。切換不一定落在旅程時區的整點上（紐約撥回是印度的 11:30）。 */
+function transitionsWithin(tripZone, viewerZone, date) {
+  const start = wallInstant(tripZone, date, 0);
+  const end = wallInstant(tripZone, date, MINUTES_PER_DAY);
+  const offsets = (t) => [zoneOffset(tripZone, t), zoneOffset(viewerZone, t)];
+  const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+  const found = [];
+  const HOUR = 3600000;
+  for (let a = start; a < end; a += HOUR) {
+    const b = Math.min(a + HOUR, end);
+    const before = offsets(a);
+    if (same(before, offsets(b))) continue;
+    let lo = a, hi = b; /* offsets(lo) == before，offsets(hi) != before；切到一分鐘 */
+    while (hi - lo > 60000) {
+      const mid = lo + Math.floor((hi - lo) / 120000) * 60000;
+      if (mid === lo) break;
+      if (same(before, offsets(mid))) lo = mid; else hi = mid;
+    }
+    const wall = Math.round((hi + zoneOffset(tripZone, hi) * 60000 - Date.UTC(date.y, date.m - 1, date.d)) / 60000);
+    if (wall >= 0 && wall < MINUTES_PER_DAY) found.push(wall);
+  }
+  return found;
+}
+
+/** 旅程時區 `{y,m,d}` 那一天，觀看者比旅程快幾分鐘——一天裡的幾段 `[{ fromMinute, deltaMinutes }]`
+ *  （同 App 的 `PhoneClock.shifts`：瀏覽器減旅程）。每個整點、加上兩邊的切換那一刻各問一次，相同的接成一段。
+ *  **比偏移不比識別碼**：那一天整天都相同（首爾之於東京）、或沒有旅程時區，回 `null`——不畫。 */
+export function phoneShifts(tripZone, viewerZone, date) {
+  if (!tripZone || !viewerZone || !date || !isZone(tripZone) || !isZone(viewerZone)) return null;
+  const minutes = new Set();
+  for (let h = 0; h <= 24; h++) minutes.add(h * 60);
+  transitionsWithin(tripZone, viewerZone, date).forEach((m) => minutes.add(m));
+  const shifts = [];
+  for (const minute of [...minutes].sort((a, b) => a - b)) {
+    const t = wallInstant(tripZone, date, minute);
+    const delta = zoneOffset(viewerZone, t) - zoneOffset(tripZone, t);
+    if (!shifts.length || shifts[shifts.length - 1].deltaMinutes !== delta) shifts.push({ fromMinute: minute, deltaMinutes: delta });
+  }
+  return shifts.some((x) => x.deltaMinutes !== 0) ? shifts : null;
+}
+
+/** 旅程時區 `minute` 那一刻，觀看者那裡是幾點、落在旅程這一天的前一天／同一天／後一天（同 `PhoneClock.reading`）。
+ *  觀看者剛好走到午夜寫「00:00」＋隔天，不寫「24:00」。 */
+export function phoneReading(shifts, minute) {
+  const seg = shifts.filter((x) => x.fromMinute <= minute).pop() || shifts[0];
+  const phone = minute + (seg ? seg.deltaMinutes : 0);
+  const dayShift = Math.floor(phone / MINUTES_PER_DAY);
+  return { clock: clock(phone - dayShift * MINUTES_PER_DAY), dayShift };
+}
+
+const ZONE_LOCALE = { zh: 'zh-Hant-TW', en: 'en', ja: 'ja' };
+function zoneNamePart(zone, locale, style, ms) {
+  try {
+    const part = new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: style })
+      .formatToParts(new Date(ms)).find((x) => x.type === 'timeZoneName');
+    return part ? part.value : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+/** 「日本時間」——同 App 的 `PrimaryTimeZone.name`：系統的短名字；短名字只是縮寫（日文的東京是「JST」、
+ *  中文的紐約是「ET」）就退回完整的名字；都問不到寫偏移。 */
+export function zoneName(zone, lang, ms = Date.now()) {
+  const locale = ZONE_LOCALE[lang] || lang;
+  const short = zoneNamePart(zone, locale, 'shortGeneric', ms);
+  if (short && !isAbbreviation(short)) return short;
+  return zoneNamePart(zone, locale, 'longGeneric', ms) || offsetText(zoneOffset(zone, ms));
+}
+/** 「JST」「ET」「GMT+9」——全是 ASCII 大寫、數字與符號、沒有空白（同 App 的 `isAbbreviation`）。 */
+const isAbbreviation = (text) => [...text].every((ch) => ch.charCodeAt(0) < 128 && ch !== ' ' && ch === ch.toUpperCase());
+function offsetText(minutes) {
+  const a = Math.abs(minutes);
+  return 'UTC' + (minutes < 0 ? '−' : '+') + String(Math.floor(a / 60)).padStart(2, '0') + ':' + String(a % 60).padStart(2, '0');
+}
+
+/** 「+1 小時」「−2 小時 30 分」「+30 分」——旅程減觀看者，負號 U+2212；是 0 的那一半不寫（同 App 的
+ *  `PhoneClock.difference`）。讀**這一天第一段不為 0 的**時差。`t` 是 strings.js 那一語的字典。 */
+export function zoneDifference(shifts, t) {
+  const first = shifts.find((x) => x.deltaMinutes !== 0);
+  const tripMinusViewer = -(first ? first.deltaMinutes : 0);
+  const sign = tripMinusViewer < 0 ? '−' : '+';
+  const h = Math.floor(Math.abs(tripMinusViewer) / 60), m = Math.abs(tripMinusViewer) % 60;
+  const fill = (tpl, ...args) => { let i = 0; return tpl.replace(/%s/g, () => args[i++]); };
+  if (m === 0) return fill(t.tzDiffH, sign, h);
+  if (h === 0) return fill(t.tzDiffM, sign, m);
+  return fill(t.tzDiff, sign, h, m);
+}
+
+/** 「目前為日本時間，與裝置時間差 +1 小時」——時間表上方那一格（同 App 的 `PhoneClock.note`）。 */
+export function zoneNote(zone, shifts, lang, t, ms = Date.now()) {
+  let i = 0;
+  const args = [zoneName(zone, lang, ms), zoneDifference(shifts, t)];
+  return t.tzNote.replace(/%s/g, () => args[i++]);
 }
 
 /* ═══ 日子 ═══════════════════════════════════════════════════════ */

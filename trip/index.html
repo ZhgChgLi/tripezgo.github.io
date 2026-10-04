@@ -202,6 +202,15 @@
     font-variant-numeric: tabular-nums; color: var(--taupe); white-space: nowrap;
   }
   .tl-hr.is-half { font-size: 10px; color: color-mix(in srgb, var(--taupe) 58%, var(--paper)); }
+  /* 觀看者的時刻（使用者裁定 2026-10-05，同 App 時間欄的手機時刻）：整點底下疊一行，小一階、淡一階；
+   * 掛在刻度字底下，不推動刻度本身的位置（刻度照舊對齊那一條線）。 */
+  .tl-hr .ph { position: absolute; right: 0; top: 100%; margin-top: 1px; font-size: 9px;
+               color: color-mix(in srgb, var(--taupe) 58%, var(--paper)); }
+  .tl-hr .ph sup.dn { margin-left: 1px; color: inherit; }
+  /* 時間表上方那一格說明（App 的 `.tznote`：一圈細線、圓角、字小一階，旅程時區名與時差加粗）。 */
+  .tl-tz { margin: 0 0 12px; padding: 8px 12px; font-size: 12px; line-height: 1.5; color: var(--taupe);
+           background: var(--card); border: 1px solid var(--line-2); border-radius: 6px; }
+  .tl-tz b { font-weight: 600; color: var(--ink); }
   .tl-hd { flex: none; height: var(--hdh); padding: 0 10px;
            display: flex; flex-direction: column; justify-content: center; }
   .tl-hd .t { font-size: 13px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
@@ -496,17 +505,17 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=1dcbe06421",
+  "/trip/app.js": "/trip/app.js?v=e17245223f",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=d7fac2d1c8",
-  "/trip/core.js": "/trip/core.js?v=080983cd1c",
+  "/trip/core.js": "/trip/core.js?v=1fae7b2af7",
   "/trip/icons.js": "/trip/icons.js?v=179e1f6e03",
   "/trip/looks.js": "/trip/looks.js?v=d145355228",
-  "/trip/strings.js": "/trip/strings.js?v=9cdcdb8223",
+  "/trip/strings.js": "/trip/strings.js?v=7cafef9f45",
   "/assets/js/chrome.js": "/assets/js/chrome.js?v=8056417f86"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=1dcbe06421"></script>
+<script type="module" src="/trip/app.js?v=e17245223f"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>

@@ -8,6 +8,11 @@
  *   - 設計稿的「退路」卡（fb*）沒有上線：spike 證實網頁登入＋刪除做得到，退路不需要。
  *   - `signinGo`／`stopFailed`：設計稿的登入鈕是 CloudKit JS 掛進來的 Apple 按鈕（稿裡只佔位）；
  *     這一頁不載 CloudKit JS，所以按鈕自己畫、字自己給。停止失敗設計稿沒畫，用 toast 講。
+ *   - 時間欄的旅程時區說明（tz*，使用者裁定 2026-10-05）：句型逐字取自 App 的 `ui.calendar.zone.note`／
+ *     `.difference`／`.hours`／`.minutes`（UI/Resources/Localizable.xcstrings），**只有「手機」換掉**——
+ *     這一頁比的是瀏覽器的時區，看的人可能在電腦上。App 的日文本來就寫「端末の時刻」（裝置），所以中文寫
+ *     「裝置時間」、英文寫「your device’s time」，三語講同一件事、也跟 App 其中一語一致；不寫「你的時間」：
+ *     那讀起來像「你那裡現在幾點」，不是「你的時區」。
  */
 export const LANGS = [
   { k: 'zh', lb: '中', html: 'zh-Hant' },
@@ -17,6 +22,7 @@ export const LANGS = [
 
 export const S = {
   zh: {
+    tzNote: '目前為%s，與裝置時間差 %s', tzDiff: '%s%s 小時 %s 分', tzDiffH: '%s%s 小時', tzDiffM: '%s%s 分',
     days: '天', day: '第 %s 天', min: '%s 分', hr: '%s 小時', hrmin: '%s 小時 %s 分',
     undated: '日期未定', updated: '最後更新 %s',
     grid: '行程時間表，左右捲動可以看其他天',
@@ -51,6 +57,7 @@ export const S = {
     modes: { walking: '步行', driving: '開車', cycling: '騎車', transit: '大眾運輸', other: '其他' },
   },
   en: {
+    tzNote: 'Times are in %s, %s from your device’s time', tzDiff: '%s%s h %s min', tzDiffH: '%s%s h', tzDiffM: '%s%s min',
     days: 'days', day: 'Day %s', min: '%s min', hr: '%s h', hrmin: '%s h %s m',
     undated: 'Dates not set', updated: 'Last updated %s',
     grid: 'Itinerary grid — scroll sideways for the other days',
@@ -85,6 +92,7 @@ export const S = {
     modes: { walking: 'Walking', driving: 'Driving', cycling: 'Cycling', transit: 'Transit', other: 'Other' },
   },
   ja: {
+    tzNote: '現在は%sで表示しています。端末の時刻との差は %s', tzDiff: '%s%s時間%s分', tzDiffH: '%s%s時間', tzDiffM: '%s%s分',
     days: '日間', day: '%s 日目', min: '%s 分', hr: '%s 時間', hrmin: '%s 時間 %s 分',
     undated: '日程未定', updated: '最終更新 %s',
     grid: '旅程表——横にスクロールすると他の日が見られます',
