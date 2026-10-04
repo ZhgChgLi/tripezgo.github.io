@@ -108,6 +108,11 @@
     -webkit-font-smoothing: antialiased;
   }
   .mn { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+  /* 時刻的一端不折行（只在「–」後面折，App 的 RangeLineBreak）；跨日上標同 App 的 DayShiftText
+   *（設計稿 `.ov-daynext`：9px、700、上抬 3px、左距 2px）。 */
+  .nw { white-space: nowrap; }
+  sup.dn { font-family: var(--font); font-size: 9px; font-weight: 700; line-height: 0;
+           vertical-align: 3px; margin-left: 2px; color: var(--taupe); }
   .wrap { width: 100%; max-width: 920px; margin: 0 auto; padding: 0 16px; }
 
   .tz-lang, .seg { display: flex; gap: 2px; padding: 3px; background: var(--sunken);
@@ -491,17 +496,17 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=00e8641a79",
+  "/trip/app.js": "/trip/app.js?v=1dcbe06421",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=58681e1082",
-  "/trip/core.js": "/trip/core.js?v=3421db6fb7",
-  "/trip/icons.js": "/trip/icons.js?v=8170c18b88",
-  "/trip/looks.js": "/trip/looks.js?v=632af634a5",
+  "/trip/core.js": "/trip/core.js?v=080983cd1c",
+  "/trip/icons.js": "/trip/icons.js?v=179e1f6e03",
+  "/trip/looks.js": "/trip/looks.js?v=d145355228",
   "/trip/strings.js": "/trip/strings.js?v=9cdcdb8223",
   "/assets/js/chrome.js": "/assets/js/chrome.js?v=8056417f86"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=00e8641a79"></script>
+<script type="module" src="/trip/app.js?v=1dcbe06421"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>

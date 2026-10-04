@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   base64Decode,
   base64UrlEncode,
+  blockRange,
   clock,
   isSigned,
   openSealed,
@@ -133,4 +134,16 @@ test('時刻：24:00 與跨午夜的詞', () => {
   assert.equal(timeRange(1800, 2000, 'en'), 'next day 06:00 – 09:20');
   assert.equal(timeRange(-60, 60, 'ja'), '前日 23:00 – 01:00');
   assert.equal(timeRange(3000, 3100, 'en'), '2 days later 02:00 – 03:40');
+});
+
+/* 時間表方塊上的那一行：跨過午夜在那一端後面掛 +1／-1（App 的 DisplayTimeZone.spanMarks、DayShiftText）。
+ * 兩端落在同一天只標一次，掛在結尾；兩端不同天才各標各的。 */
+test('方塊時刻：跨過午夜掛 +1，兩端同一天只標結尾', () => {
+  assert.deepEqual(blockRange(540, 660), { from: '09:00', to: '11:00', startMark: null, endMark: null });
+  assert.deepEqual(blockRange(1380, 1440), { from: '23:00', to: '24:00', startMark: null, endMark: null });
+  assert.deepEqual(blockRange(1320, 1530), { from: '22:00', to: '01:30', startMark: null, endMark: '+1' });
+  assert.deepEqual(blockRange(1500, 1560), { from: '01:00', to: '02:00', startMark: null, endMark: '+1' });
+  assert.deepEqual(blockRange(-60, 60), { from: '23:00', to: '01:00', startMark: '-1', endMark: null });
+  assert.deepEqual(blockRange(-120, -60), { from: '22:00', to: '23:00', startMark: null, endMark: '-1' });
+  assert.deepEqual(blockRange(1320, 3000), { from: '22:00', to: '02:00', startMark: null, endMark: '+2' });
 });

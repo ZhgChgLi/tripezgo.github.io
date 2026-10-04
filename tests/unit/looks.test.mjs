@@ -16,18 +16,21 @@ test('內建類型沒挑過：照凍結 key 查圖示與色族', () => {
   assert.equal(swatchOf(item({ type: 'guesthouse' })), 'stayLodge');
 });
 
-test('挑過圖示：色族跟著圖示那一族', () => {
-  assert.equal(iconOf(item({ type: '我的潛水', icon: 'swimming' })), 'swimming');
-  assert.equal(swatchOf(item({ type: '我的潛水', icon: 'swimming' })), 'seeNature');
+/* App 1.0.0 (185) 起類型是固定清單（ADR-0024）：類型決定圖示與顏色，公開版本不再帶 icon／swatch。
+ * 舊版 App 發佈、還沒更新過的那幾份仍帶著這兩格——App 讀的時候視而不見，網頁也一樣。 */
+test('舊公開版本上的 icon／swatch 不算數：只看類型 key', () => {
+  assert.equal(iconOf(item({ type: 'dining', icon: 'swimming', swatch: 'stay' })), 'restaurant');
+  assert.equal(swatchOf(item({ type: 'dining', icon: 'swimming', swatch: 'stay' })), 'eat');
 });
 
-test('挑過色族：用挑的，不管圖示', () => {
-  assert.equal(swatchOf(item({ type: 'dining', icon: 'swimming', swatch: 'stay' })), 'stay');
+test('清單外的名字（舊版的自訂類型）就算帶著 icon／swatch，也是通用圖釘＋雜項（同 App 的「其他」）', () => {
+  assert.equal(iconOf(item({ type: '我的潛水', icon: 'swimming', swatch: 'seeNature' })), 'marker');
+  assert.equal(swatchOf(item({ type: '我的潛水', icon: 'swimming', swatch: 'seeNature' })), 'misc');
+  assert.equal(iconOf(item({ type: 'other' })), iconOf(item({ type: '宵夜攤' })));
+  assert.equal(swatchOf(item({ type: 'other' })), swatchOf(item({ type: '宵夜攤' })));
 });
 
-test('認不得的色族 key、認不得的圖示、自訂類型：退回圖示那一族／通用圖釘／雜項', () => {
-  assert.equal(swatchOf(item({ icon: 'swimming', swatch: 'sea' })), 'seeNature');
-  assert.equal(iconOf(item({ icon: 'no-such-icon' })), 'marker');
+test('沒有類型、或認不得的名字：通用圖釘＋雜項', () => {
   assert.equal(iconOf(item({ type: '餐廳' })), 'marker');
   assert.equal(swatchOf(item({ type: '餐廳' })), 'misc');
   assert.equal(iconOf(item({})), 'marker');

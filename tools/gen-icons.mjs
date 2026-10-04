@@ -2,8 +2,7 @@
 /* 從 App 的原始碼產生 trip/icons.js——行程類型的圖示（Maki）與色族，跟 App 同一張表。
  *
  * 來源（App repo `App/iOS/Modules/UI/Sources/UI/DesignSystem/`）：
- *   - Components/Foundation/EventTypeIcons.swift  `glyphs`（66 枚 path）、`makiOfType`（內建類型 → Maki）、
- *                                                  `pickable`（每一枚圖示的預設色族）
+ *   - Components/Foundation/EventTypeIcons.swift  `glyphs`（66 枚 path）、`makiOfType`（類型 → Maki）
  *   - EventTypeSwatch.swift                        `typeNames`（內建類型 → 色族）、light／dark 的 OKLCH 配方
  *
  * 手抄一份遲早會跟 App 分家（設計稿那一份 MAKI 表就被壓縮器壓壞過），所以用產的。
@@ -43,10 +42,8 @@ export function generate(app) {
   for (const m of block(icons, 'private static let makiOfType').matchAll(/^\s+"([a-z]+)": "([a-z-]+)",$/gm)) {
     makiOfType[m[1]] = m[2];
   }
-  const iconSwatch = {};
-  for (const m of block(icons, 'public static let pickable').matchAll(/Icon\(id: "([a-z-]+)", name: [^,]+, swatch: \.([a-zA-Z]+),/g)) {
-    iconSwatch[m[1]] = m[2];
-  }
+  /* App 1.0.0 (185) 拿掉了自訂類型（ADR-0024）：圖示紙 `pickable` 與「每一枚圖示的預設色族」跟著退場，
+   * 公開版本也不再帶 icon／swatch——類型決定圖示與顏色，只剩 makiOfType 與 typeNames 兩張表。 */
   const typeSwatch = {};
   const names = swatch.slice(swatch.indexOf('public var typeNames'));
   for (const m of names.slice(0, names.indexOf('private static let table')).matchAll(/case \.([a-zA-Z]+)(?:, \.[a-zA-Z]+)*: \[([\s\S]*?)\]/g)) {
@@ -63,8 +60,11 @@ export function generate(app) {
   const light = recipes('light');
   const dark = recipes('dark');
 
-  if (Object.keys(glyphs).length !== 66 || Object.keys(iconSwatch).length !== 66) {
-    throw new Error('圖示數量不對（' + Object.keys(glyphs).length + '／' + Object.keys(iconSwatch).length + '）——App 的格式變了，改這支產生器');
+  if (Object.keys(glyphs).length !== 66) {
+    throw new Error('圖示數量不對（' + Object.keys(glyphs).length + '）——App 的格式變了，改這支產生器');
+  }
+  if (Object.keys(makiOfType).sort().join() !== Object.keys(typeSwatch).sort().join()) {
+    throw new Error('makiOfType 與 typeNames 收的類型不一樣——App 的格式變了，改這支產生器');
   }
   if (Object.keys(light).length !== 11 || Object.keys(dark).length !== 11) throw new Error('色族配方數量不對');
 
@@ -72,11 +72,9 @@ export function generate(app) {
   return '/* 由 tools/gen-icons.mjs 從 App 的 EventTypeIcons.swift／EventTypeSwatch.swift 產生——不要手改。 */\n\n'
     + '/** Maki id → path（viewBox 0 0 15 15，evenodd 填色）。 */\n'
     + 'export const MAKI = ' + j(glyphs) + ';\n\n'
-    + '/** 內建類型的凍結 key → Maki id（沒挑過圖示時照名字查）。 */\n'
+    + '/** 類型的凍結 key → Maki id（類型決定圖示）。 */\n'
     + 'export const MAKI_OF_TYPE = ' + j(makiOfType) + ';\n\n'
-    + '/** 每一枚圖示的預設色族。 */\n'
-    + 'export const ICON_SWATCH = ' + j(iconSwatch) + ';\n\n'
-    + '/** 內建類型的凍結 key → 色族。 */\n'
+    + '/** 類型的凍結 key → 色族（類型決定顏色）。 */\n'
     + 'export const TYPE_SWATCH = ' + j(typeSwatch) + ';\n\n'
     + '/** 色族 → OKLCH（淺色／深色），同 App 的 EventTypeSwatch 配方。 */\n'
     + 'export const SWATCH_LIGHT = ' + j(light) + ';\n'

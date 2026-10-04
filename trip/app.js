@@ -11,7 +11,7 @@
  */
 import { CONFIG } from './config.js';
 import { createClient } from './cloudkit.js';
-import { base64UrlEncode, clock, daysOf, ITINERARY, laneLayout, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
+import { base64UrlEncode, blockRange, clock, daysOf, ITINERARY, laneLayout, linkURL, mapDayOf, openSealed, OpenFailure, parseFragment, plainText, sealedFromRecord } from './core.js';
 import { SWATCH_DARK, SWATCH_LIGHT } from './icons.js';
 import { iconOf, iconPath, swatchOf } from './looks.js';
 import { LANGS, S } from './strings.js';
@@ -61,6 +61,14 @@ function dur(min, s) {
   if (min < 60) return fmt(s.min, min);
   const h = Math.floor(min / 60), m = min % 60;
   return m ? fmt(s.hrmin, h, m) : fmt(s.hr, h);
+}
+/* 跨過午夜的那一段（App 的 DisplayTimeZone.spanMarks＋DayShiftText）：「22:00–01:30⁺¹」。
+ * 每一端包成不折行的一塊，整行只剩「–」後面那一個折點（App 的 RangeLineBreak）。 */
+const markHtml = (mark) => (mark ? '<sup class="dn">' + esc(mark) + '</sup>' : '');
+function rangeParts(start, end) {
+  const r = blockRange(start, end);
+  const side = (t, mark) => '<span class="nw">' + esc(t) + markHtml(mark) + '</span>';
+  return { r, html: side(r.from, r.startMark) + '–' + side(r.to, r.endMark), text: r.from + (r.startMark || '') + '–' + r.to + (r.endMark || '') };
 }
 const WD = { zh: ['日', '一', '二', '三', '四', '五', '六'], en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ja: ['日', '月', '火', '水', '木', '金', '土'] };
 /** 抬頭與欄頭的日期：「7/30（四）」／「Thu 7/30」（設計稿 `md`）。 */
@@ -212,12 +220,12 @@ function timelineHtml() {
           + (mode && lh >= LEG_LB ? '<span class="b" data-testid="leg">' + svg(IC[mode]) + '<span>' + esc(s().modes[mode])
             + ' · <span class="mn">' + esc(dur(it.leg.min, s())) + '</span></span></span>' : '') + '</div>';
       }
-      const span = clock(b.st) + '–' + clock(b.en), nm = it.title;
+      const rg = rangeParts(b.st, b.en), span = rg.text, nm = it.title;
       const sub = [it.place, dur(b.en - b.st, s())].filter(Boolean).join(' · ');
       const inner = b.line ? '<span class="nm">' + esc(nm) + '</span>'
-        : b.h >= FIT2 ? '<p class="h">' + esc(span) + '</p><p class="n">' + esc(nm) + '</p>'
+        : b.h >= FIT2 ? '<p class="h">' + rg.html + '</p><p class="n">' + esc(nm) + '</p>'
           + (b.h >= FIT3 && sub ? '<p class="m">' + esc(sub) + '</p>' : '')
-          : '<p class="one">' + (b.lanes === 1 ? '<span class="mn">' + esc(clock(b.st)) + '</span>' : '')
+          : '<p class="one">' + (b.lanes === 1 ? '<span class="mn">' + esc(rg.r.from) + markHtml(rg.r.startMark) + '</span>' : '')
           + '<span class="nm">' + esc(nm) + '</span></p>';
       let geo = 'top:' + b.top + 'px;height:' + b.h + 'px';
       if (b.lanes > 1) geo += ';left:calc(6px + ' + b.lane + ' * (100% - 12px) / ' + b.lanes + ');width:calc((100% - 12px) / ' + b.lanes + ' - 2px)';
@@ -482,7 +490,7 @@ function placeLinks(it) {
 function whenText(id) {
   for (const d of D.days) {
     const x = d.timed.find((t) => t.id === id);
-    if (x) return fmt(s().day, d.n) + ' · ' + clock(x.s) + '–' + clock(x.e);
+    if (x) return esc(fmt(s().day, d.n) + ' · ') + rangeParts(x.s, x.e).html;
   }
   return '';
 }
@@ -495,7 +503,7 @@ function openPlace(id) {
   const w = document.createElement('div');
   w.id = 'place';
   w.innerHTML = '<div class="scrim" data-close></div><div class="pcard" role="dialog" aria-modal="true" aria-labelledby="pc-t" data-testid="place-card" style="' + tyVar(it) + '">'
-    + '<p class="k">' + tyIcon(it) + '<span>' + esc(whenText(id)) + '</span></p>'
+    + '<p class="k">' + tyIcon(it) + '<span>' + whenText(id) + '</span></p>'
     + '<h3 id="pc-t">' + esc(it.title) + '</h3>' + (it.place ? '<p class="loc">' + esc(it.place) + '</p>' : '')
     + (google ? '<div class="go"><a class="btn2" target="_blank" rel="noopener" data-testid="open-google" href="' + esc(google) + '">' + svg(IC.pin) + esc(s().openGoogle) + '</a></div>' : '')
     + '<button class="linkbtn x" type="button" data-close>' + esc(s().close) + '</button></div>';

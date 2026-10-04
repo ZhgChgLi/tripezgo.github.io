@@ -173,7 +173,9 @@ export function validateCopy(json) {
       if (!Array.isArray(row.geo) || row.geo.length !== 2 || !row.geo.every((n) => typeof n === 'number')) return null;
       geo = row.geo.slice();
     }
-    for (const k of ['place', 'type', 'icon', 'swatch']) if (!isStringOrNull(row[k])) return null;
+    /* `icon`／`swatch` 不讀：App 1.0.0 (185) 拿掉了那兩格（ADR-0024），舊的公開版本裡還有——
+     * App 的解碼器對不認得的鍵視而不見，這裡也一樣（類型決定圖示與顏色，見 looks.js）。 */
+    for (const k of ['place', 'type']) if (!isStringOrNull(row[k])) return null;
     if (typeof row.color !== 'string') return null;
     let leg = null;
     if (has(row, 'leg')) {
@@ -189,8 +191,6 @@ export function validateCopy(json) {
       place: row.place || null,
       geo,
       type: row.type || null,
-      icon: row.icon || null,
-      swatch: row.swatch || null,
       color: row.color,
       leg,
     });
@@ -371,6 +371,25 @@ export function timeRange(start, end, lang) {
   if (sw === ew) return sw ? sw + ' ' + from + ' – ' + to : from + ' – ' + to;
   const pre = (w, t) => (w ? w + ' ' + t : t);
   return pre(sw, from) + ' – ' + pre(ew, to);
+}
+
+/** 同 App 的 `DisplayTimeZone.dayOffsetMark`：「+1」／「-1」（ASCII 減號，照設計稿的 `dayShift()`）；0 不寫。 */
+export function dayOffsetMark(offset) {
+  return offset === 0 ? null : offset > 0 ? '+' + offset : String(offset);
+}
+
+/** 時間表方塊上那一行的兩端與跨日記號——同 App 的 `DisplayTimeZone.spanMarks`＋`DayShiftText`：
+ *  兩端落在同一天只標一次、掛在結尾；不同天才各標各的。分鐘相對這一行所屬的那一天。 */
+export function blockRange(start, end) {
+  const so = dayOffset(start, false);
+  const eo = dayOffset(end, end > start);
+  const same = so === eo;
+  return {
+    from: clock(start - so * MINUTES_PER_DAY),
+    to: clock(end - eo * MINUTES_PER_DAY),
+    startMark: same ? null : dayOffsetMark(so),
+    endMark: dayOffsetMark(eo),
+  };
 }
 
 /** 「7/30」——App 用 `Md` template，這三種語言都是 M/d。 */

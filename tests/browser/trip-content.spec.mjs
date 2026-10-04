@@ -137,17 +137,41 @@ test('定位按鈕：地圖右下一顆圓的（同 Google 地圖）；按了才
   await expect(btn).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('類型圖示與色族照 App 的規則：挑過的圖示 → 圖示那一族；認不得的名字 → 通用圖釘＋雜項', async ({ page }) => {
+/* App 1.0.0 (185) 起類型是固定清單（ADR-0024）：類型決定圖示與顏色，公開版本不再帶 icon／swatch。 */
+test('類型圖示與色族只看類型 key：diving → swimming／seeNature；清單外的名字 → 通用圖釘＋雜項（App 的「其他」）', async ({ page }) => {
   await open(page, dated);
   await showMap(page);
   await page.locator('[data-mday="2"]').click();
   const rows = page.getByTestId('map-row');
-  /* 青之洞窟：icon swimming、swatch "sea"（不是一個色族）→ 退回 swimming 那一族 seeNature */
+  /* 青之洞窟：type diving */
   await expect(rows.nth(0).locator('svg.ty')).toHaveAttribute('data-icon', 'swimming');
   await expect(rows.nth(0)).toHaveAttribute('style', /--sw-seeNature/);
-  /* 屋台村：類型「餐廳」不是內建 key → marker、misc */
+  /* 屋台村：類型「宵夜攤」不在清單上 → marker、misc */
   await expect(rows.nth(1).locator('svg.ty')).toHaveAttribute('data-icon', 'marker');
   await expect(rows.nth(1)).toHaveAttribute('style', /--sw-misc/);
+});
+
+/* 跨過午夜（App 的 DisplayTimeZone.spanMarks／DayShiftText）：結尾掛上標 +1；
+ * 那一行只在「–」後面折（App 1.0.0 (187) 的 RangeLineBreak）——每一端自己不拆開。 */
+test('跨過午夜：方塊與地點卡在結尾掛 +1，每一端不從中間折行', async ({ page }) => {
+  await open(page, dated);
+  const ev = page.locator('.tl-ev', { hasText: '屋台村・宵夜' });
+  const head = ev.locator('.h');
+  await expect(head).toHaveText('22:00–01:30+1');
+  await expect(head.locator('sup.dn')).toHaveText('+1');
+  await expect(ev).toHaveAttribute('title', /^22:00–01:30\+1 屋台村・宵夜/);
+  for (const end of await head.locator('.nw').all()) {
+    expect(await end.evaluate((el) => getComputedStyle(el).whiteSpace)).toBe('nowrap');
+  }
+  await expect(head.locator('.nw')).toHaveText(['22:00', '01:30+1']);
+  /* 沒跨日的那幾則照舊、不掛記號 */
+  await expect(page.locator('.tl-ev', { hasText: '國際通・散策' }).locator('.h')).toHaveText('16:00–18:00');
+  await expect(page.locator('.tl-ev sup.dn')).toHaveCount(1);
+
+  await ev.click();
+  const card = page.getByTestId('place-card');
+  await expect(card.locator('.k')).toHaveText('第 2 天 · 22:00–01:30+1');
+  await expect(card.locator('.k sup.dn')).toHaveText('+1');
 });
 
 test('有 MapKit token：鏡頭對準當天第一個點、底部只列沒地點的、點之間連線並標路程（照 App）', async ({ page }) => {
