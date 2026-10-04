@@ -207,6 +207,15 @@
   .tl-hr .ph { position: absolute; right: 0; top: 100%; margin-top: 1px; font-size: 9px;
                color: color-mix(in srgb, var(--taupe) 58%, var(--paper)); }
   .tl-hr .ph sup.dn { margin-left: 1px; color: inherit; }
+  /* 時差會變的旅程（review F1）：共用時間欄只留旅程時間，裝置時刻畫在每一天的欄內左緣——同一個字級與淡度，
+   * 讓出一條窄邊（--phw），行程方塊往右挪，不壓字。底色蓋掉穿過去的那一條格線，像刻度一樣讀。 */
+  .tl-cv.is-ph { --phw: 40px; }
+  .tl-cv.is-ph .tl-cvb { position: absolute; top: 0; bottom: 0; left: var(--phw); right: 0; }
+  .tl-ph { position: absolute; left: 3px; transform: translateY(-50%); padding: 0 2px;
+           font-family: var(--mono); font-size: 9px; line-height: 1; letter-spacing: 0;
+           font-variant-numeric: tabular-nums; white-space: nowrap; background: var(--paper);
+           color: color-mix(in srgb, var(--taupe) 58%, var(--paper)); }
+  .tl-ph sup.dn { margin-left: 1px; color: inherit; }
   /* 時間表上方那一格說明（App 的 `.tznote`：一圈細線、圓角、字小一階，旅程時區名與時差加粗）。 */
   .tl-tz { margin: 0 0 12px; padding: 8px 12px; font-size: 12px; line-height: 1.5; color: var(--taupe);
            background: var(--card); border: 1px solid var(--line-2); border-radius: 6px; }
@@ -505,17 +514,17 @@
 <!-- stamp-trip:start -->
 <script type="importmap">{
  "imports": {
-  "/trip/app.js": "/trip/app.js?v=e17245223f",
+  "/trip/app.js": "/trip/app.js?v=b3bbc77192",
   "/trip/cloudkit.js": "/trip/cloudkit.js?v=da0e9f9ebd",
   "/trip/config.js": "/trip/config.js?v=d7fac2d1c8",
-  "/trip/core.js": "/trip/core.js?v=1fae7b2af7",
+  "/trip/core.js": "/trip/core.js?v=9d3b05492a",
   "/trip/icons.js": "/trip/icons.js?v=179e1f6e03",
   "/trip/looks.js": "/trip/looks.js?v=d145355228",
-  "/trip/strings.js": "/trip/strings.js?v=7cafef9f45",
+  "/trip/strings.js": "/trip/strings.js?v=9929832e15",
   "/assets/js/chrome.js": "/assets/js/chrome.js?v=8056417f86"
  }
 }</script>
-<script type="module" src="/trip/app.js?v=e17245223f"></script>
+<script type="module" src="/trip/app.js?v=b3bbc77192"></script>
 <!-- stamp-trip:end -->
 </body>
 </html>

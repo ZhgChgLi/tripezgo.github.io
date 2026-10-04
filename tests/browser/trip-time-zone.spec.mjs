@@ -93,3 +93,48 @@ test.describe('瀏覽器在首爾', () => {
     await expect(page.getByTestId('phone-clock')).toHaveCount(0);
   });
 });
+
+/* review F1：時間欄是幾天共用的，跨夏令時間就畫錯。紐約的旅程、2026-10-31 起三天、瀏覽器在台北：
+ * 第 1 天差 −12；第 2 天 02:00 撥回之後與第 3 天差 −13。時差會變的旅程，每一天在自己的欄內畫裝置時刻，
+ * 共用時間欄只留旅程時間——不管多寬、捲到哪裡，畫面上沒有一個數字是別天的。 */
+const newYork = () => variant((p) => { p.trip.tz = 'America/New_York'; p.trip.start = '2026-10-31'; });
+const dayClocks = (page, n) => page.getByTestId('day-' + n).getByTestId('phone-clock').allTextContents();
+
+for (const width of [375, 1280]) {
+  test.describe('紐約的旅程跨夏令時間、瀏覽器在台北，' + width + 'px 寬', () => {
+    test.use({ viewport: { width, height: 900 } });
+
+    test('每一天的裝置時刻畫在那一天的欄裡、各用各的時差；共用時間欄不畫', async ({ page }) => {
+      await open(page, await newYork());
+      await expect(page.locator('.tl-ax').getByTestId('phone-clock')).toHaveCount(0);
+      /* 時間表 09:00–26:00：每一天 18 個整點 */
+      const d1 = await dayClocks(page, 1), d2 = await dayClocks(page, 2), d3 = await dayClocks(page, 3);
+      expect(d1).toHaveLength(18);
+      expect(d1[0]).toBe('21:00'); /* 10/31 09:00 EDT */
+      expect(d1[15]).toBe('12:00+1'); /* 11/1 00:00 EDT */
+      expect(d1[17]).toBe('15:00+1'); /* 11/1 02:00 EST（已撥回） */
+      expect(d2[0]).toBe('22:00'); /* 11/1 09:00 EST */
+      expect(d3[0]).toBe('22:00'); /* 11/2 09:00 EST */
+      expect(d3[17]).toBe('15:00+1'); /* 11/3 02:00 EST */
+    });
+
+    test('說明寫第一段時差＋「部分日子不同」；捲到最後一天也不變', async ({ page }) => {
+      await open(page, await newYork());
+      const note = '目前為東部時間，與裝置時間差 −12 小時（部分日子不同，以每一天欄內左側的裝置時刻為準）';
+      await expect(page.getByTestId('zone-note')).toHaveText(note);
+      await page.locator('.tl-sc').evaluate((el) => { el.scrollLeft = el.scrollWidth; });
+      await expect(page.getByTestId('day-3').getByTestId('phone-clock').first()).toBeInViewport();
+      await expect(page.getByTestId('zone-note')).toHaveText(note);
+      expect((await dayClocks(page, 3))[0]).toBe('22:00');
+    });
+  });
+}
+
+test.describe('紐約的旅程整趟都在標準時間（11/5 起）', () => {
+  test('時差每天一樣：照舊畫在共用時間欄，欄內不畫', async ({ page }) => {
+    await open(page, await variant((p) => { p.trip.tz = 'America/New_York'; p.trip.start = '2026-11-05'; }));
+    await expect(page.getByTestId('zone-note')).toHaveText('目前為東部時間，與裝置時間差 −13 小時');
+    expect((await phoneClocks(page))[0]).toBe('22:00');
+    await expect(page.locator('.tl-day').getByTestId('phone-clock')).toHaveCount(0);
+  });
+});

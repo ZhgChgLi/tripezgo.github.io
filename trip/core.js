@@ -311,6 +311,31 @@ export function phoneReading(shifts, minute) {
   return { clock: clock(phone - dayShift * MINUTES_PER_DAY), dayShift };
 }
 
+const NO_SHIFT = [{ fromMinute: 0, deltaMinutes: 0 }];
+
+/** 時間表的刻度畫過 24:00 之後是隔天：`minute` ≥ 1440 讀**隔天**的時差（`next`），再加一天。
+ *  `null`（那一天偏移相同）當作差 0——照寫旅程的時刻。 */
+export function phoneReadingOn(shifts, next, minute) {
+  if (minute >= MINUTES_PER_DAY) {
+    const p = phoneReading(next || NO_SHIFT, minute - MINUTES_PER_DAY);
+    return { clock: p.clock, dayShift: p.dayShift + 1 };
+  }
+  return phoneReading(shifts || NO_SHIFT, minute);
+}
+
+/** 觀看者的時刻畫在哪裡（review F1：這一頁所有天共用左邊那一條時間欄，App 是一天一條）。
+ *  `days` 是每一天的 `phoneShifts`，**多一格旅程隔天的**；`pastMidnight` ＝時間表畫過 24:00（那就要看到隔天）。
+ *   - 每一天、每一刻的時差都一樣（絕大多數旅程）：`{ shared: 那一段, perDay: false }`——照舊畫在共用時間欄。
+ *   - 全部偏移相同：`{ shared: null, perDay: false }`——不畫。
+ *   - 其他（有一天跨夏令時間、或某幾天的時差跟別天不同）：`{ shared: null, perDay: true }`——每一天畫在自己的欄內。 */
+export function phonePlan(days, pastMidnight) {
+  const seen = pastMidnight ? days : days.slice(0, -1);
+  if (seen.every((x) => !x)) return { shared: null, perDay: false };
+  const key = (x) => JSON.stringify(x);
+  if (seen.every((x) => key(x) === key(seen[0])) && seen[0].length === 1) return { shared: seen[0], perDay: false };
+  return { shared: null, perDay: true };
+}
+
 const ZONE_LOCALE = { zh: 'zh-Hant-TW', en: 'en', ja: 'ja' };
 function zoneNamePart(zone, locale, style, ms) {
   try {
@@ -350,11 +375,12 @@ export function zoneDifference(shifts, t) {
   return fill(t.tzDiff, sign, h, m);
 }
 
-/** 「目前為日本時間，與裝置時間差 +1 小時」——時間表上方那一格（同 App 的 `PhoneClock.note`）。 */
-export function zoneNote(zone, shifts, lang, t, ms = Date.now()) {
+/** 「目前為日本時間，與裝置時間差 +1 小時」——時間表上方那一格（同 App 的 `PhoneClock.note`）。
+ *  `varies`（時差會變的旅程，review F1）：讀第一段不為 0 的時差，後面接「部分日子不同」（`tzVaries`）。 */
+export function zoneNote(zone, shifts, lang, t, ms = Date.now(), varies = false) {
   let i = 0;
   const args = [zoneName(zone, lang, ms), zoneDifference(shifts, t)];
-  return t.tzNote.replace(/%s/g, () => args[i++]);
+  return t.tzNote.replace(/%s/g, () => args[i++]) + (varies ? t.tzVaries : '');
 }
 
 /* ═══ 日子 ═══════════════════════════════════════════════════════ */

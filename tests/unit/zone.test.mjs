@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { phoneShifts, phoneReading, validateCopy, zoneName, zoneNote, zoneDifference } from '../../trip/core.js';
+import { phonePlan, phoneReadingOn, phoneShifts, phoneReading, validateCopy, zoneName, zoneNote, zoneDifference } from '../../trip/core.js';
 import { S } from '../../trip/strings.js';
 
 const golden = JSON.parse(readFileSync(new URL('../fixtures/golden-v1.json', import.meta.url), 'utf8'));
@@ -115,4 +115,51 @@ test('說明一句，三語', () => {
   assert.equal(zoneNote('Asia/Tokyo', shifts, 'zh', S.zh), '目前為日本時間，與裝置時間差 +1 小時');
   assert.equal(zoneNote('Asia/Tokyo', shifts, 'en', S.en), 'Times are in Japan Time, +1 h from your device’s time');
   assert.equal(zoneNote('Asia/Tokyo', shifts, 'ja', S.ja), '現在は日本標準時で表示しています。端末の時刻との差は +1時間');
+});
+
+/* ── 時差會變的旅程（review F1：時間欄是幾天共用的，跨夏令時間就畫錯） ──
+ * 紐約的旅程、2026-10-31 起三天、台北的瀏覽器：第 1 天差 −12、第 2 天 02:00 撥回之後與第 3 天差 −13。 */
+
+const nyDays = [day(2026, 10, 31), day(2026, 11, 1), day(2026, 11, 2), day(2026, 11, 3)]
+  .map((d) => phoneShifts('America/New_York', 'Asia/Taipei', d));
+const tokyoDays = [day(2026, 7, 30), day(2026, 7, 31), day(2026, 8, 1), day(2026, 8, 2)]
+  .map((d) => phoneShifts('Asia/Tokyo', 'Asia/Taipei', d));
+
+test('每一天、每一刻時差都一樣：共用時間欄（照舊）', () => {
+  assert.deepEqual(phonePlan(tokyoDays, true), { shared: tokyoDays[0], perDay: false });
+  assert.deepEqual(phonePlan([null, null, null, null], true), { shared: null, perDay: false });
+});
+
+test('有一天跨夏令時間：每一天自己畫', () => {
+  assert.equal(phonePlan(nyDays, false).perDay, true);
+  assert.equal(phonePlan(nyDays, false).shared, null);
+});
+
+test('旅程裡每天一樣、但時間表畫過午夜而隔天切換：也要每一天自己畫（最後一天的 24:00 之後是隔天）', () => {
+  const before = [day(2026, 10, 29), day(2026, 10, 30), day(2026, 10, 31), day(2026, 11, 1)]
+    .map((d) => phoneShifts('America/New_York', 'Asia/Taipei', d));
+  assert.equal(phonePlan(before, false).perDay, false, '時間表沒畫過午夜：不看隔天');
+  assert.equal(phonePlan(before, true).perDay, true);
+});
+
+test('有幾天偏移相同（null）、有幾天不同：每一天自己畫', () => {
+  assert.equal(phonePlan([null, tokyoDays[0], tokyoDays[0]], false).perDay, true);
+});
+
+test('過了午夜的刻度讀隔天的時差：第 1 天 26:00 是 11/1 02:00（已撥回），台北 15:00 隔天', () => {
+  assert.deepEqual(phoneReadingOn(nyDays[0], nyDays[1], 9 * 60), { clock: '21:00', dayShift: 0 });
+  assert.deepEqual(phoneReadingOn(nyDays[0], nyDays[1], 24 * 60), { clock: '12:00', dayShift: 1 });
+  assert.deepEqual(phoneReadingOn(nyDays[0], nyDays[1], 26 * 60), { clock: '15:00', dayShift: 1 });
+  assert.deepEqual(phoneReadingOn(nyDays[2], nyDays[3], 9 * 60), { clock: '22:00', dayShift: 0 });
+  assert.deepEqual(phoneReadingOn(null, null, 9 * 60), { clock: '09:00', dayShift: 0 }, '那一天偏移相同：照寫旅程時刻');
+});
+
+test('時差會變的說明：第一段不為 0 的時差，再加「部分日子不同」，三語', () => {
+  const shifts = nyDays[0];
+  assert.equal(zoneNote('America/New_York', shifts, 'zh', S.zh, Date.UTC(2026, 9, 31), true),
+    '目前為東部時間，與裝置時間差 −12 小時（部分日子不同，以每一天欄內左側的裝置時刻為準）');
+  assert.equal(zoneNote('America/New_York', shifts, 'en', S.en, Date.UTC(2026, 9, 31), true),
+    'Times are in Eastern Time, −12 h from your device’s time (varies on some days — each day shows its own device time on its left)');
+  assert.equal(zoneNote('America/New_York', shifts, 'ja', S.ja, Date.UTC(2026, 9, 31), true),
+    '現在はニューヨーク時間で表示しています。端末の時刻との差は −12時間（日によって異なります。各日の左側の端末の時刻を参照）');
 });
