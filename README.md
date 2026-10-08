@@ -100,15 +100,19 @@ GitHub repo 的 `Settings → Pages → Source` 要選 **GitHub Actions**。
 
 ## 素材來源
 
-首頁的手機截圖與功能插圖來自設計稿專案
-（Open Design `e0f396c1-0fb8-48ff-9a11-996200cddadc`），已轉成 webp 並縮到網頁尺寸。
+首頁的手機截圖（`assets/img/shots/<zh|en|ja>/`，720×1565 webp）來自 1.0.0 送審那一批商城截圖的原始畫面：
+Open Design `tripezgo` 專案的 `appstore-2026/raw/<zh-Hant|en|ja>/iphone/01–08.png`
+（calendar、overview、map、shops、shopping、collab、location、live），
+再從同批 `appstore-2026/captures/` 補三張副圖（`01b-leg`→leg、`02b-attachments`→attachments、
+`04a-notes`→notes）。`sips -z 1565 720` 縮圖後 `cwebp -q 82`。
+功能介紹的文案與順序對齊 App repo `fastlane/metadata/<locale>/description.txt` 的六大特色。
+
+功能插圖（隱私那一張）來自設計稿專案。
 標誌是設計稿切出的三份 SVG（圖標／字標／組合標），用 CSS `mask` 上色，
 所以同一個檔案在深淺色模式下各自跟著 `currentColor` 走。
 
-## 待辦
+## App Store
 
-- App Store 上架後，把首頁 hero 的「即將於 App Store 上架」`<span class="btn">`
-  換成指向 App Store 的 `<a class="btn btn-primary">`（中英各一處）。
-- App 內 `PremiumLinks.privacyURL` 目前指向 `https://zhgchg.li/tripezgo/privacy`，
-  應改為 `https://tripezgo.com/privacy.html`；`termsURL` 目前是 Apple 標準 EULA，
-  可改為 `https://tripezgo.com/terms.html`（本站條款已包含 Apple EULA 的連結與必要條文）。
+下載連結一律是 `https://apps.apple.com/app/id6801536372`（不帶地區，Apple 依使用者的商店地區導過去）：
+首頁三語的 hero 與方案段、`/open/` 的「前往下載」，首頁另有 `apple-itunes-app` Smart App Banner。
+

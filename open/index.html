@@ -103,8 +103,8 @@
   var key = STRINGS[saved] ? saved : (tag.indexOf('ja') === 0 ? 'ja' : (tag.indexOf('zh') === 0 ? 'zh' : 'en'));
   var t = STRINGS[key];
   document.documentElement.dataset.tz = key;   /* 底下畫頁首頁尾的那一段照這個語言 */
-  /* 去哪裡拿 App：**還沒上架**，先送回首頁（各語言那一份）；上架那天換成 https://apps.apple.com/… */
-  var STORE = t.home;
+  /* 去哪裡拿 App：App Store 的那一頁。不帶地區，Apple 會依使用者的商店地區導過去。 */
+  var STORE = 'https://apps.apple.com/app/id6801536372';
 
   var $ = function (id) { return document.getElementById(id); };
   document.documentElement.lang = t.lang;

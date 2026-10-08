@@ -86,8 +86,10 @@ test.describe('iPhone、沒裝 App', () => {
     await expect(get).toHaveText('前往下載');
     await expect(page.locator('h1')).toHaveText('連結已經存起來了');
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(dated.url);
+    await expect(get).toHaveAttribute('href', 'https://apps.apple.com/app/id6801536372');
+    await page.route('https://apps.apple.com/**', (route) => route.fulfill({ contentType: 'text/html', body: 'App Store' }));
     await get.click();
-    await page.waitForURL('https://tripezgo.com/');
+    await page.waitForURL('https://apps.apple.com/app/id6801536372');
   });
 
   test('加入共享：/join/ 轉到同一頁，存的是那條邀請連結', async ({ page, context }) => {

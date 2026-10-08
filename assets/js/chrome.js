@@ -7,19 +7,19 @@ const FOOTER = {
     home: '/', label: 'TripEZGo 首頁', tag: '旅行規劃、快樂出行，一次搞定。', width: '32ch', nav: '頁尾導覽',
     links: [['/privacy.html', '隱私權政策'], ['/terms.html', '使用者條款'], ['mailto:zhgchgli@gmail.com', '聯絡我們'],
       ['/en/', 'English', 'en'], ['/ja/', '日本語', 'ja']],
-    made: 'Made for iPhone · 支援繁體中文、English、日本語',
+    made: 'Made for iPhone & iPad · 支援繁體中文、English、日本語',
   },
   en: {
     home: '/en/', label: 'TripEZGo home', tag: 'Plan the whole trip, all in one place.', width: '34ch', nav: 'Footer',
     links: [['/en/privacy.html', 'Privacy Policy'], ['/en/terms.html', 'Terms of Use'], ['mailto:zhgchgli@gmail.com', 'Contact'],
       ['/', '繁體中文', 'zh-Hant'], ['/ja/', '日本語', 'ja']],
-    made: 'Made for iPhone · English, 繁體中文, 日本語',
+    made: 'Made for iPhone & iPad · English, 繁體中文, 日本語',
   },
   ja: {
     home: '/ja/', label: 'TripEZGo ホーム', tag: '旅の予定を、1本のタイムラインに。', width: '32ch', nav: 'フッター',
     links: [['/ja/privacy.html', 'プライバシーポリシー'], ['/ja/terms.html', '利用規約'], ['mailto:zhgchgli@gmail.com', 'お問い合わせ'],
       ['/', '繁體中文', 'zh-Hant'], ['/en/', 'English', 'en']],
-    made: 'Made for iPhone · 日本語、English、繁體中文',
+    made: 'Made for iPhone & iPad · 日本語、English、繁體中文',
   },
 };
 
