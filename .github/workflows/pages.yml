@@ -32,7 +32,8 @@ jobs:
           set -euo pipefail
           fail=0
           while IFS= read -r page; do
-            grep -oE '(href|src)="/[^"#?]*"' "$page" \
+            # 一條站內連結都沒有的頁面（例如 /android-auth/）：grep 回 1，在 pipefail 底下會被當成斷連結。
+            { grep -oE '(href|src)="/[^"#?]*"' "$page" || true; } \
               | sed -E 's/^(href|src)="//; s/"$//' \
               | sort -u \
               | while IFS= read -r link; do
