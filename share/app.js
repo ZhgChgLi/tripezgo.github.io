@@ -2,6 +2,7 @@
  * 表單一開始就看得到（grill Q38）；沒登入時送出鈕的位置是 Google 登入，登入完如果網址與同意都填好了就直接送。 */
 import { GOOGLE_CLIENT_ID, ENDPOINT } from './config.js';
 import { requestBody, viewFor, looksLikeUrl } from './core.js';
+import { CAPTIONS, shareTarget } from './captions.js';
 import { brandHtml, footerHtml } from '/assets/js/chrome.js';
 
 const REASONS = {
@@ -90,6 +91,80 @@ async function onCredential({ credential }) {
   if (status.view === 'ready' && ready()) return submit();
   show(status);
 }
+
+// ── 文案與分享（使用者要求 2026-10-10：挑文案 → 一鍵分享 → 把網址貼回來） ──
+
+function renderCaptions() {
+  $('captions').innerHTML = '';
+  CAPTIONS.forEach((text, i) => {
+    const label = document.createElement('label');
+    label.className = 'caption-option';
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'caption';
+    radio.checked = i === 0;
+    radio.addEventListener('change', () => { $('caption').value = text; });
+    const span = document.createElement('span');
+    span.textContent = text;
+    label.append(radio, span);
+    $('captions').append(label);
+  });
+  $('caption').value = CAPTIONS[0];
+}
+
+function hint(text) {
+  $('share-hint').hidden = !text;
+  $('share-hint').textContent = text;
+}
+
+async function copy(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+for (const button of document.querySelectorAll('[data-share]')) {
+  button.addEventListener('click', async () => {
+    const text = $('caption').value.trim();
+    if (button.dataset.share === 'native') {
+      try { await navigator.share({ text }); } catch { /* 使用者取消 */ }
+      hint('發好之後，把那篇貼文的網址貼到第 3 步。');
+      return;
+    }
+    const target = shareTarget(button.dataset.share, text);
+    // 先開視窗再做別的：手機瀏覽器只在使用者點擊的那一刻放行彈出視窗。
+    if (target.url) window.open(target.url, '_blank', 'noopener');
+    if (target.copy) {
+      const copied = await copy(text);
+      hint(copied
+        ? '文案已經複製好了，到貼文裡貼上就行。發好之後，把那篇貼文的網址貼到第 3 步。'
+        : '請手動複製上面的文案貼到貼文裡。發好之後，把那篇貼文的網址貼到第 3 步。');
+    } else {
+      hint('發好之後，把那篇貼文的網址貼到第 3 步。');
+    }
+  });
+}
+$('native-share').hidden = typeof navigator.share !== 'function';
+
+$('paste').addEventListener('click', async () => {
+  try {
+    const text = (await navigator.clipboard.readText()).trim();
+    if (looksLikeUrl(text)) {
+      $('url').value = text;
+      refreshSubmit();
+    } else {
+      hint('剪貼簿裡不是網址。到貼文的「分享」或「複製連結」拿網址，再按一次。');
+    }
+  } catch {
+    $('url').focus();
+    hint('這個瀏覽器不讓網頁讀剪貼簿，請直接在欄位裡貼上。');
+  }
+});
+
+renderCaptions();
 
 $('url').addEventListener('input', refreshSubmit);
 $('consent').addEventListener('change', refreshSubmit);

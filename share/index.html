@@ -18,8 +18,21 @@
   h1 { font-size: var(--text-2xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); margin: 0 0 12px; }
   .lede { color: var(--muted); margin: 0 0 24px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
-  ol.steps { padding-left: 20px; margin: 0 0 20px; }
-  ol.steps li { margin-bottom: 6px; }
+  h2.step { font-size: var(--text-lg); margin: 24px 0 10px; }
+  .captions { display: grid; gap: 8px; margin-bottom: 12px; }
+  .caption-option { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--border);
+                    border-radius: var(--radius-md); background: var(--bg); cursor: pointer; font-size: var(--text-sm); white-space: pre-line; }
+  .caption-option:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  textarea { box-sizing: border-box; width: 100%; font: inherit; font-size: var(--text-sm); padding: 12px 14px; border: 1px solid var(--border);
+             border-radius: var(--radius-md); background: var(--bg); color: var(--fg); resize: vertical; }
+  textarea:focus { outline: none; box-shadow: var(--focus-ring); }
+  .share-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  button.chip { font: inherit; font-size: var(--text-sm); font-weight: 600; padding: 8px 14px; border-radius: var(--radius-pill);
+                border: 1px solid var(--border); background: var(--bg); color: var(--fg); cursor: pointer; }
+  button.chip:hover { border-color: var(--accent); }
+  .url-row { display: flex; gap: 8px; align-items: center; }
+  .url-row input { flex: 1; min-width: 0; }
+  .url-row button.chip { flex: none; }
   label.field { display: block; font-weight: 600; margin-bottom: 6px; }
   input[type=url] { box-sizing: border-box; width: 100%; font: inherit; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md);
                     background: var(--bg); color: var(--fg); }
@@ -55,13 +68,32 @@
   <section class="card" id="form">
     <p class="account" id="account" hidden>目前登入：<strong id="email"></strong>　<button class="linkish" id="switch">換帳號</button></p>
     <p class="notice" id="notice" hidden></p>
-    <ol class="steps">
-      <li>在社群發一篇<strong>公開</strong>貼文，內容附上 <strong>tripezgo.com</strong> 或 TripEZGo 的 <strong>App Store 連結</strong>。</li>
-      <li>把那篇貼文的網址貼在下面，用 Google 帳號登入送出，當場檢查。</li>
-      <li>限從沒訂閱過、或訂閱已到期的 Apple 帳號；已經買斷的朋友不必參加。數量有限，送完為止<span id="deadline-line" hidden>，活動到 <span id="deadline"></span></span>。</li>
-    </ol>
+    <p class="muted">限從沒訂閱過、或訂閱已到期的 Apple 帳號；已經買斷的朋友不必參加。數量有限，送完為止<span id="deadline-line" hidden>，活動到 <span id="deadline"></span></span>。</p>
+
+    <h2 class="step">1. 選一則文案</h2>
+    <div class="captions" id="captions" role="radiogroup" aria-label="文案"></div>
+    <label class="field" for="caption">可以再改一改（記得留著 tripezgo.com）</label>
+    <textarea id="caption" rows="5"></textarea>
+
+    <h2 class="step">2. 分享到社群</h2>
+    <div class="share-buttons">
+      <button class="chip" data-share="threads">Threads</button>
+      <button class="chip" data-share="x">X</button>
+      <button class="chip" data-share="facebook">Facebook</button>
+      <button class="chip" data-share="bluesky">Bluesky</button>
+      <button class="chip" data-share="plurk">Plurk</button>
+      <button class="chip" data-share="native" id="native-share" hidden>更多…</button>
+      <button class="chip" data-share="copy">複製文案（Instagram、PTT…）</button>
+    </div>
+    <p class="muted" id="share-hint" hidden></p>
+    <p class="muted">貼文要設成<strong>公開</strong>，文案裡的 tripezgo.com 不要刪掉。</p>
+
+    <h2 class="step">3. 把貼文網址貼回來</h2>
     <label class="field" for="url">公開貼文網址</label>
-    <input id="url" type="url" inputmode="url" autocomplete="off" placeholder="https://www.threads.net/@you/post/…" />
+    <div class="url-row">
+      <input id="url" type="url" inputmode="url" autocomplete="off" placeholder="https://www.threads.net/@you/post/…" />
+      <button class="chip" id="paste">從剪貼簿貼上</button>
+    </div>
     <p class="muted">Threads、Instagram、Facebook、X、Bluesky、Mastodon、PTT、Plurk 都可以，其他公開網頁也收。</p>
     <label class="consent"><input id="consent" type="checkbox" />
       <span>我同意 TripEZGo 保存我的 Google email 與這個貼文網址（永久保存，用於審核與防止重複領取），並讀取這個公開網址的內容來檢查。</span></label>
