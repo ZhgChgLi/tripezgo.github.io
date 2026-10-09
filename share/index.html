@@ -9,15 +9,16 @@
 <meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png" />
 <link rel="apple-touch-icon" href="/assets/img/icon-180.png" />
-<link rel="stylesheet" href="/assets/css/chrome.css?v=ea9c8814ea" />
-<!-- 頁首頁尾跟首頁同一份（/assets/css/chrome.css、/assets/js/chrome.js）。版面 token 也用 chrome.css 那一套。
+<link rel="stylesheet" href="/assets/css/site.css" />
+<!-- 頁首頁尾照抄首頁（index.html）的 HTML，樣式載 site.css（裡面 @import chrome.css）——跟隱私權頁同一套做法；
+     只載 chrome.css 的話 .wrap 沒有置中，頁首頁尾會貼左邊（2026-10-10 使用者抓到）。
      流程（App repo .scratch/share-reward/，grill Q34–Q38）：貼公開貼文網址 → Google 登入 → 當場檢查。 -->
 <style>
-  body { margin: 0; background: var(--page); color: var(--fg); font: var(--text-base)/var(--leading-body) var(--font-body); }
   main { max-width: 640px; margin: 0 auto; padding: clamp(32px, 6vw, 64px) var(--gutter); }
   h1 { font-size: var(--text-2xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); margin: 0 0 12px; }
   .lede { color: var(--muted); margin: 0 0 24px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+  .card h2 { font-size: var(--text-xl); margin: 0 0 8px; }
   h2.step { font-size: var(--text-lg); margin: 24px 0 10px; }
   .captions { display: grid; gap: 8px; margin-bottom: 12px; }
   .caption-option { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--border);
@@ -57,11 +58,26 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main">跳到主要內容</a>
+
 <header class="site-header">
-  <div class="wrap"><span id="brand"></span></div>
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="TripEZGo 首頁">
+      <span class="m m-mark" role="img" aria-hidden="true"></span>
+      <span class="m m-word" role="img" aria-hidden="true"></span>
+    </a>
+    <nav class="site-nav" aria-label="主要導覽">
+      <a class="hide-sm" href="/#why">為什麼</a>
+      <a class="hide-sm" href="/#features">功能</a>
+      <a class="hide-sm" href="/#privacy">隱私</a>
+      <a class="hide-sm" href="/#plans">方案</a>
+      <a class="lang" href="/en/" hreflang="en" lang="en">EN</a>
+      <a class="lang" href="/ja/" hreflang="ja" lang="ja">日本語</a>
+    </nav>
+  </div>
 </header>
 
-<main>
+<main id="main">
   <h1>分享 TripEZGo，送你一年 Premium</h1>
   <p class="lede">在社群分享 TripEZGo，貼文附上 tripezgo.com 或 App Store 連結，就送你一組兌換碼：Premium 一年，到期不自動續訂。</p>
 
@@ -143,6 +159,29 @@
   <section class="card" data-view="error" hidden><p>出了點問題，請稍後再試。</p></section>
 </main>
 
-<footer class="site-footer" id="site-footer"></footer>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="/" aria-label="TripEZGo 首頁">
+          <span class="m m-mark" role="img" aria-hidden="true"></span>
+          <span class="m m-word" role="img" aria-hidden="true"></span>
+        </a>
+        <p style="margin:12px 0 0;max-width:32ch">旅行規劃、快樂出行，一次搞定。</p>
+      </div>
+      <nav class="footer-links" aria-label="頁尾導覽">
+        <a href="/privacy.html">隱私權政策</a>
+        <a href="/terms.html">使用者條款</a>
+        <a href="mailto:zhgchgli@gmail.com">聯絡我們</a>
+        <a href="/en/" hreflang="en" lang="en">English</a>
+        <a href="/ja/" hreflang="ja" lang="ja">日本語</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 TripEZGo</span>
+      <span>Made for iPhone &amp; iPad · 支援繁體中文、English、日本語</span>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

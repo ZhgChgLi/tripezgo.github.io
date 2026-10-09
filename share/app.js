@@ -3,7 +3,6 @@
 import { GOOGLE_CLIENT_ID, ENDPOINT } from './config.js';
 import { requestBody, viewFor, looksLikeUrl } from './core.js';
 import { CAPTIONS, shareTarget } from './captions.js';
-import { brandHtml, footerHtml } from '/assets/js/chrome.js';
 
 const REASONS = {
   'no-mention': '這篇貼文裡找不到 tripezgo.com 或 TripEZGo 的 App Store 連結。只寫名字不算，請把連結加進貼文內容。',
@@ -174,8 +173,6 @@ $('switch').addEventListener('click', () => {
   show({ view: 'signed-out' });
 });
 
-$('brand').innerHTML = brandHtml('zh');
-$('site-footer').innerHTML = footerHtml('zh');
 
 function start() {
   google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onCredential, use_fedcm_for_prompt: true });
