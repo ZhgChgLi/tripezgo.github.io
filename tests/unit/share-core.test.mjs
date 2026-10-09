@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { requestBody, viewFor, fitWithin } from '../../share/core.js';
+import { requestBody, viewFor, looksLikeUrl } from '../../share/core.js';
 
 const EMAIL = 'someone@gmail.com';
 
@@ -8,9 +8,22 @@ test('a status request carries the op and the ID token as JSON', () => {
   assert.deepEqual(JSON.parse(requestBody('status', 'tok')), { op: 'status', idToken: 'tok' });
 });
 
-test('a submit request carries the image, the consent and the language', () => {
-  assert.deepEqual(JSON.parse(requestBody('submit', 'tok', { image: 'AAA', consent: true, lang: 'ja' })),
-    { op: 'submit', idToken: 'tok', image: 'AAA', consent: true, lang: 'ja' });
+test('a submit request carries the post URL, the consent and the language', () => {
+  assert.deepEqual(JSON.parse(requestBody('submit', 'tok', { url: 'https://x.com/a/status/1', consent: true, lang: 'zh-Hant' })),
+    { op: 'submit', idToken: 'tok', url: 'https://x.com/a/status/1', consent: true, lang: 'zh-Hant' });
+});
+
+test('only an http(s) address with a host is worth sending', () => {
+  assert.ok(looksLikeUrl('https://www.threads.net/@a/post/B'));
+  assert.ok(looksLikeUrl('  http://x.com/a/status/1 '));
+  assert.equal(looksLikeUrl('tripezgo.com'), false);
+  assert.equal(looksLikeUrl('https://'), false);
+  assert.equal(looksLikeUrl(''), false);
+});
+
+test('a URL or consent the backend refuses keeps the visitor on the form with a notice', () => {
+  assert.deepEqual(viewFor({ error: 'url' }), { view: 'form-error', error: 'url' });
+  assert.deepEqual(viewFor({ error: 'consent' }), { view: 'form-error', error: 'consent' });
 });
 
 test('every signed-in view carries the Gmail account taking part', () => {
@@ -48,16 +61,7 @@ test('a rejected ID token sends the visitor back to sign in', () => {
 
 test('anything the page does not understand is an error, not a blank page', () => {
   assert.deepEqual(viewFor({ error: 'bad-request' }), { view: 'error' });
-  assert.deepEqual(viewFor({ error: 'image' }), { view: 'error' });
+  assert.deepEqual(viewFor({ error: 'server' }), { view: 'error' });
   assert.deepEqual(viewFor(null), { view: 'error' });
   assert.deepEqual(viewFor({ email: EMAIL, state: 'from-the-future' }), { view: 'error' });
-});
-
-test('a large screenshot is scaled so its long side is at most the limit, keeping the aspect ratio', () => {
-  assert.deepEqual(fitWithin(1170, 2532, 2048), { width: 946, height: 2048 });
-  assert.deepEqual(fitWithin(3000, 2000, 2048), { width: 2048, height: 1365 });
-});
-
-test('a small screenshot is left alone', () => {
-  assert.deepEqual(fitWithin(750, 1334, 2048), { width: 750, height: 1334 });
 });

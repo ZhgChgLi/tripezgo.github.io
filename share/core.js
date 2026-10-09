@@ -14,6 +14,8 @@ const VIEWS = ['ready', 'issued', 'rejected', 'pending-review', 'denied', 'close
 export function viewFor(res) {
   if (!res || typeof res !== 'object') return { view: 'error' };
   if (res.error === 'auth') return { view: 'signed-out' };
+  // 網址或同意被後端擋下：沒有算次數，留在表單上提示。
+  if (res.error === 'url' || res.error === 'consent') return { view: 'form-error', error: res.error };
   if (res.error || !VIEWS.includes(res.state)) return { view: 'error' };
   const email = res.email;
   switch (res.state) {
@@ -25,8 +27,7 @@ export function viewFor(res) {
   }
 }
 
-/** 截圖縮到長邊不超過 max（保持比例、只縮不放）；上傳前在 canvas 上用。 */
-export function fitWithin(width, height, max) {
-  const scale = Math.min(1, max / Math.max(width, height));
-  return { width: Math.round(width * scale), height: Math.round(height * scale) };
+/** 網址欄的值值得送嗎：http(s)、有主機名。真正的檢查（是不是貼文、內網、我們自己的站）在後端。 */
+export function looksLikeUrl(value) {
+  return /^https?:\/\/[^\s\/?#]+\.[^\s\/?#]+/i.test(String(value || '').trim());
 }
