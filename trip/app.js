@@ -871,6 +871,14 @@ function handOffToAndroid() {
   if (!token) return false;
   let pending = null;
   try { pending = sessionStorage.getItem('tez.auth.android'); } catch (e) { pending = null; }
+  // 有的 Android 瀏覽器在 Apple 登入一圈回來時換了分頁，sessionStorage 不在了；起始頁同時記在
+  // localStorage（15 分鐘過期）。
+  if (!pending) {
+    try {
+      const l = JSON.parse(localStorage.getItem('tez.auth.android') || 'null');
+      pending = l && Date.now() - l.at < 15 * 60 * 1000 ? l.v : null;
+    } catch (e) { pending = null; }
+  }
   if (!pending) return false;
   location.replace('/android-auth/#ckWebAuthToken=' + encodeURIComponent(token));
   return true;

@@ -54,11 +54,23 @@
   var PACKAGE = 'com.tripezgo.android';
 
   function $(id) { return document.getElementById(id); }
+  /* 旗標同時記在 sessionStorage 與 localStorage（15 分鐘過期）。sessionStorage 只在同一個分頁：
+     2026-10-09 使用者手機上的 Custom Tab 不是 Chrome，Apple 登入一圈回到 /trip/ 時旗標不見了、
+     顯示「This link is incomplete」；localStorage 在同一個瀏覽器跨分頁都在。 */
+  var FRESH_MS = 15 * 60 * 1000;
   function session(op, k, v) {
     try {
-      if (op === 'get') return sessionStorage.getItem(k);
-      if (op === 'set') sessionStorage.setItem(k, v);
-      if (op === 'remove') sessionStorage.removeItem(k);
+      if (op === 'get') {
+        var s = sessionStorage.getItem(k);
+        if (s) return s;
+        var l = JSON.parse(localStorage.getItem(k) || 'null');
+        return l && Date.now() - l.at < FRESH_MS ? l.v : null;
+      }
+      if (op === 'set') {
+        sessionStorage.setItem(k, v);
+        localStorage.setItem(k, JSON.stringify({ v: v, at: Date.now() }));
+      }
+      if (op === 'remove') { sessionStorage.removeItem(k); localStorage.removeItem(k); }
     } catch (e) { /* 存不了：起始那一步會在下面失敗，顯示錯誤 */ }
     return null;
   }
