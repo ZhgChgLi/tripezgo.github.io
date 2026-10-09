@@ -139,6 +139,13 @@ h3 { font-size: var(--text-xl); margin: 0 0 10px; font-weight: 600; }
 .phone-pair .phone:last-child { --w: clamp(180px, 23vw, 236px); margin-bottom: 26px; }
 @media (max-width: 700px) { .phone-pair .phone:last-child { display: none; } }
 
+/* 商城截圖原圖（標語、機身都在圖裡）：不裁、不加框，只給寬度。 */
+.shot { display: block; width: var(--w, clamp(230px, 30vw, 300px)); height: auto; border-radius: clamp(14px, 2vw, 22px); }
+.phone-pair .shot:last-child { --w: clamp(180px, 23vw, 236px); }
+@media (max-width: 700px) { .phone-pair .shot:last-child { display: none; } }
+.feature-media .shot { --w: clamp(220px, 26vw, 300px); }
+.phone-duo .shot { --w: clamp(140px, 22vw, 260px); }
+
 /* ─── 功能列 ───────────────────────────────────────────────────────── */
 .feature {
   display: grid; gap: clamp(32px, 5vw, 64px);

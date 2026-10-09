@@ -100,11 +100,10 @@ GitHub repo 的 `Settings → Pages → Source` 要選 **GitHub Actions**。
 
 ## 素材來源
 
-首頁的手機截圖（`assets/img/shots/<zh|en|ja>/`，720×1565 webp）來自 1.0.0 送審那一批商城截圖的原始畫面：
-Open Design `tripezgo` 專案的 `appstore-2026/raw/<zh-Hant|en|ja>/iphone/01–08.png`
-（calendar、overview、map、shops、shopping、collab、location、live），
-再從同批 `appstore-2026/captures/` 補三張副圖（`01b-leg`→leg、`02b-attachments`→attachments、
-`04a-notes`→notes）。`sips -z 1565 720` 縮圖後 `cwebp -q 82`。
+首頁的截圖（`assets/img/shots/<zh|en|ja>/01–08.webp`）**就是商城那 8 張原圖**：App repo
+`fastlane/screenshots/<zh-Hant|en-US|ja>/0N-*.png`（1320×2868，含標語與機身），只用
+`sips -z 1434 660` 等比縮半、`cwebp -q 85` 轉檔，不裁切、不加框（使用者要求 2026-10-09）。
+圖的底色就是 `--surface`；在白底與深色模式上靠 `.shot` 的圓角讀成卡片。商城圖換了就照這個重轉。
 功能介紹的文案與順序對齊 App repo `fastlane/metadata/<locale>/description.txt` 的六大特色。
 
 功能插圖（隱私那一張）來自設計稿專案。
