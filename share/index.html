@@ -8,9 +8,9 @@
 <meta name="theme-color" content="#1f1914" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png" />
 <link rel="apple-touch-icon" href="/assets/img/icon-180.png" />
-<!-- 版面與六語文案是 ticket 07；這一版只是 tracer：登入 → 後端驗身分 → 顯示狀態。 -->
+<!-- 六語文案與正式版面是 ticket 07；這一版先把流程走通：登入 → 上傳 → 判讀 → 發碼。 -->
 <style>
-  :root { --paper: #fbf8f4; --card: #ffffff; --ink: #241d17; --machi: #2f918e; --taupe: #7c6f63; --line: #dbd5cd; }
+  :root { --paper: #fbf8f4; --card: #ffffff; --ink: #241d17; --machi: #2f918e; --taupe: #7c6f63; --line: #dbd5cd; --warn: #b4532a; }
   @media (prefers-color-scheme: dark) {
     :root { --paper: #1f1914; --card: #2a231d; --ink: #f3ede6; --taupe: #b3a597; --line: #4a4037; }
   }
@@ -21,6 +21,15 @@
   h1 { font-size: 24px; line-height: 1.3; margin: 0 0 12px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-top: 20px; }
   .muted { color: var(--taupe); font-size: 14px; }
+  .notice { color: var(--warn); }
+  button, .button { display: inline-block; font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 12px 22px;
+                    background: var(--machi); color: #fff; text-decoration: none; cursor: pointer; }
+  button:disabled { opacity: .4; cursor: default; }
+  .preview { display: block; max-width: 100%; max-height: 320px; margin: 12px 0; border-radius: 8px; border: 1px solid var(--line); }
+  .code { font: 600 22px/1.4 ui-monospace, Menlo, monospace; letter-spacing: 1px; word-break: break-all;
+          padding: 12px; border: 1px dashed var(--line); border-radius: 8px; margin: 12px 0; text-align: center; }
+  ul.fine { padding-left: 20px; font-size: 13px; color: var(--taupe); }
+  label.consent { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; margin: 12px 0; }
   [hidden] { display: none !important; }
 </style>
 <script src="https://accounts.google.com/gsi/client" async></script>
@@ -29,7 +38,8 @@
 <body>
 <main>
   <h1>分享 TripEZGo，送你一年 Premium</h1>
-  <p class="muted">在社群貼出 TripEZGo 的畫面，上傳那篇貼文的截圖，通過就送你一組兌換碼。</p>
+  <p class="muted">在社群貼出 TripEZGo 的畫面，上傳那篇貼文的截圖，通過就送你一組兌換碼：Premium 一年，到期不自動續訂。
+    限從沒訂閱過、或訂閱已到期的 Apple 帳號；已經買斷的朋友不必參加。</p>
 
   <section class="card" data-view="signed-out">
     <p>先用 Google 帳號登入。</p>
@@ -41,7 +51,50 @@
   </section>
 
   <section class="card" data-view="ready" hidden>
-    <p>登入成功。你還可以上傳 <strong id="remaining"></strong> 次。</p>
+    <p>上傳你那篇社群貼文的截圖（要看得到發文帳號與 TripEZGo 的畫面）。你還可以上傳 <strong data-field="remaining"></strong> 次。</p>
+    <p class="notice" data-field="notice" hidden>剛剛判讀沒有完成，這一次不算，請再送一次。</p>
+    <input id="file" type="file" accept="image/jpeg,image/png" />
+    <img id="preview" class="preview" alt="" hidden />
+    <label class="consent"><input id="consent" type="checkbox" />
+      <span>我同意 TripEZGo 保存我的 Google email 與這張截圖（永久保存，用於審核與防止重複領取），並把截圖送到 OpenAI 判讀（OpenAI API 預設不拿來訓練模型）。</span></label>
+    <button id="submit" disabled>送出</button>
+  </section>
+
+  <section class="card" data-view="judging" hidden>
+    <p>判讀中，大約十秒…</p>
+  </section>
+
+  <section class="card" data-view="issued" hidden>
+    <p>通過了，這是你的兌換碼：</p>
+    <div class="code" data-field="code"></div>
+    <a class="button" data-field="redeem" target="_blank" rel="noopener">前往 App Store 兌換</a>
+    <p class="muted">兌換碼建立後最多要 1 小時才能兌換；之後登入這一頁，隨時看得到同一組碼。</p>
+    <ul class="fine">
+      <li>數量有限，送完為止；兌換碼須在有效期限內兌換。</li>
+      <li>可在販售 TripEZGo 的所有 App Store 國家或地區兌換。</li>
+      <li>需要 Apple 帳號，且該帳號從沒訂閱過 TripEZGo Premium，或訂閱已到期。</li>
+      <li>本兌換碼不得轉售，無現金價值。</li>
+      <li>適用 <a href="https://www.apple.com/legal/internet-services/itunes/" target="_blank" rel="noopener">Apple 媒體服務條款與條件</a>。</li>
+      <li>本優惠與內容由 TripEZGo 提供，與 Apple 無關。</li>
+    </ul>
+  </section>
+
+  <section class="card" data-view="rejected" hidden>
+    <p data-field="reason"></p>
+    <p>你還可以上傳 <strong data-field="remaining"></strong> 次。</p>
+    <button id="retry">重新上傳</button>
+  </section>
+
+  <section class="card" data-view="pending-review" hidden>
+    <p>這張需要人工確認，審完之後登入這一頁就看得到結果。</p>
+  </section>
+
+  <section class="card" data-view="denied" hidden>
+    <p>人工審核沒有通過，謝謝你的參與。</p>
+  </section>
+
+  <section class="card" data-view="closed" hidden>
+    <p>活動已經結束，謝謝你的參與。</p>
   </section>
 
   <section class="card" data-view="error" hidden>
