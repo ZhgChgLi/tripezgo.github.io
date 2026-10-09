@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.tripezgo.android",
+      "sha256_cert_fingerprints": [
+        "F3:2E:81:CB:07:A1:87:1C:84:01:CC:53:57:FF:D5:2F:4E:99:1D:C9:D6:2E:C5:D1:86:3D:FD:FB:52:53:86:B5",
+        "D9:C5:7E:54:EB:84:15:51:5F:9D:1D:0B:58:67:B2:8D:8F:1A:F9:88:8B:0E:39:94:09:2A:84:81:15:D7:47:E1"
+      ]
+    }
+  }
+]

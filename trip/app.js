@@ -862,7 +862,23 @@ async function load() {
   if (state === 'normal' && session.get(TOKEN(D.env))) checkAuthor();
 }
 
+/** Android 讀者端的登入也回到這一頁（兩把 API token 的 Sign in Callback 都指著 /trip/）。
+ *  `/android-auth/` 起始時在 sessionStorage 記了 `tez.auth.android`；看到它就把 token 放進**片段**
+ *  轉回那一頁（由它交回 App），這一頁不往下載入。片段不進伺服器記錄，`replace` 也把帶 token 的
+ *  這一筆從歷史裡換掉。App repo：App/Android/web-handoff/。 */
+function handOffToAndroid() {
+  const token = new URLSearchParams(location.search).get('ckWebAuthToken');
+  if (!token) return false;
+  let pending = null;
+  try { pending = sessionStorage.getItem('tez.auth.android'); } catch (e) { pending = null; }
+  if (!pending) return false;
+  location.replace('/android-auth/#ckWebAuthToken=' + encodeURIComponent(token));
+  return true;
+}
+
 lang = pickLanguage();
-restoreAfterSignIn();
-window.addEventListener('hashchange', load);
-load();
+if (!handOffToAndroid()) {
+  restoreAfterSignIn();
+  window.addEventListener('hashchange', load);
+  load();
+}

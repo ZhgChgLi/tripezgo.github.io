@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>TripEZGo 登入</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1d1d1f; --bg: #fff; --muted: #6e6e73; --accent: #0a84ff; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #f5f5f7; --bg: #000; --muted: #a1a1a6; } }
+  body { margin: 0; font: 16px/1.5 -apple-system, system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+  main { max-width: 420px; margin: 0 auto; padding: 48px 16px; text-align: center; }
+  p { color: var(--muted); }
+  a.btn { display: inline-block; margin-top: 16px; padding: 12px 20px; border-radius: 12px; background: var(--accent); color: #fff; text-decoration: none; }
+  [hidden] { display: none !important; }
+</style>
+<!--
+  Android 讀者端的登入頁（App repo：App/Android/web-handoff/android-auth/index.html）。
+  一頁兩用：
+
+  ① 起始：App 用 Custom Tab 開 `https://tripezgo.com/android-auth/?env=development|production&state=<亂數>`。
+     這一頁在 sessionStorage 記下 `tez.auth.android = {env, state}`，自己 fetch `users/current`
+     （瀏覽器自帶 Origin），再 `location.href = redirectURL` 去 Apple 登入。
+     **必須由瀏覽器、從這個網域發起**：App 自己拿 redirectURL 再交給瀏覽器開，最後一步
+     ck-auth 會顯示 Authentication Error（2026-10-09 spike）。
+
+  ② 回來：兩把 API token 的 Sign in Callback 都指著 `/trip/`，所以 Apple 導回的是
+     `/trip/?ckWebAuthToken=…`。`/trip/app.js` 的 patch（web-handoff/trip-app.js.patch）看到上面那個旗標，
+     就把 token 放進**片段**轉來這裡：`/android-auth/#ckWebAuthToken=…`。這一頁再用 `intent://`
+     （指名 package，不靠網域驗證）交回 App，同時留一顆按鈕給「自動跳轉被瀏覽器擋下」的情況。
+
+  token 交給 App 時放在 intent:// 的查詢字串裡：intent:// 由 Chrome 直接轉成 Android Intent，
+  不會發成 HTTP 請求；App 收到後第一件事就是用掉它（換新的一把）。
+-->
+</head>
+<body>
+<main>
+  <h1 id="title">正在前往 Apple 登入…</h1>
+  <p id="why">TripEZGo 用你的 Apple 帳號讀取別人分享給你的旅程。</p>
+  <p id="error" hidden>沒辦法開始登入。請回到 TripEZGo 再試一次。</p>
+  <a id="back" class="btn" hidden>回到 TripEZGo</a>
+</main>
+<script>
+(function () {
+  'use strict';
+  var CONTAINER = 'iCloud.com.zhgchgli.tripezgo';
+  /* 跟 trip/config.js 同兩把；本來就是公開的，而且只在 Origin 是 tripezgo.com 時有效。 */
+  var TOKENS = {
+    production: 'e76211f69e50b865dbc13d130a2c9a8cd64b121b98d3be5d230aaf8f4a6bb03c',
+    development: '95c27dadedb8f40f5c0ad9bbdfe58d5f2d2241fffb04dad08dcfef77d19c76af'
+  };
+  var FLAG = 'tez.auth.android';
+  var PACKAGE = 'com.tripezgo.android';
+
+  function $(id) { return document.getElementById(id); }
+  function session(op, k, v) {
+    try {
+      if (op === 'get') return sessionStorage.getItem(k);
+      if (op === 'set') sessionStorage.setItem(k, v);
+      if (op === 'remove') sessionStorage.removeItem(k);
+    } catch (e) { /* 存不了：起始那一步會在下面失敗，顯示錯誤 */ }
+    return null;
+  }
+  function fail() {
+    $('title').textContent = '登入沒有完成';
+    $('why').hidden = true;
+    $('error').hidden = false;
+  }
+
+  /* ② 回來：片段帶著 token。 */
+  var hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  var token = hash.get('ckWebAuthToken');
+  if (token) {
+    history.replaceState(null, '', location.pathname); /* 片段裡的 token 不留在網址列與歷史 */
+    var pending = null;
+    try { pending = JSON.parse(session('get', FLAG) || 'null'); } catch (e) { pending = null; }
+    session('remove', FLAG);
+    if (!pending || !pending.state || !TOKENS[pending.env]) { fail(); return; }
+    /* 回呼拿到的第一把**只在瀏覽器裡用得了**：直接交給 App 原生用，伺服器回 421（2026-10-09 spike
+       量到兩次——Python 與 App 的 Dart 客戶端都一樣；先在瀏覽器用掉一次，下一把原生用就 200）。
+       所以先在這裡打一次 users/current，把回應標頭裡的下一把交給 App。 */
+    var me = 'https://api.apple-cloudkit.com/database/1/' + CONTAINER + '/' + pending.env
+      + '/public/users/current?ckAPIToken=' + encodeURIComponent(TOKENS[pending.env])
+      + '&ckWebAuthToken=' + encodeURIComponent(token);
+    fetch(me).then(function (res) {
+      var next = res.headers.get('x-apple-cloudkit-web-auth-token');
+      if (!res.ok || !next) { fail(); return; }
+      var q = 'ckWebAuthToken=' + encodeURIComponent(next)
+        + '&state=' + encodeURIComponent(pending.state)
+        + '&env=' + encodeURIComponent(pending.env);
+      var intentUrl = 'intent://tripezgo.com/android-auth/done?' + q
+        + '#Intent;scheme=https;package=' + PACKAGE + ';end';
+      $('title').textContent = '登入完成';
+      $('why').textContent = '正在回到 TripEZGo。沒有自動跳回的話，請按下面的按鈕。';
+      $('back').href = intentUrl;
+      $('back').hidden = false;
+      location.href = intentUrl;
+    }).catch(fail);
+    return;
+  }
+
+  /* ① 起始。 */
+  var params = new URLSearchParams(location.search);
+  var env = params.get('env');
+  var state = params.get('state');
+  if (!TOKENS[env] || !/^[A-Za-z0-9_-]{16,128}$/.test(state || '')) { fail(); return; }
+  history.replaceState(null, '', location.pathname);
+  session('set', FLAG, JSON.stringify({ env: env, state: state }));
+  if (!session('get', FLAG)) { fail(); return; }
+
+  var url = 'https://api.apple-cloudkit.com/database/1/' + CONTAINER + '/' + env
+    + '/public/users/current?ckAPIToken=' + encodeURIComponent(TOKENS[env]);
+  fetch(url).then(function (res) { return res.json(); }).then(function (json) {
+    if (json && json.redirectURL) { location.href = json.redirectURL; return; }
+    fail();
+  }).catch(fail);
+})();
+</script>
+</body>
+</html>

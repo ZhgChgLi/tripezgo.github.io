@@ -9,8 +9,28 @@
 /* 邀請連結（https://www.tripezgo.com/join/#…）在沒裝 App 的手機上落在這裡：交給共用的跳轉頁
  * /open/（使用者要求 2026-09-26，跟「在 TripEZGo 建立這個旅程」同一頁）。
  * 交過去的是 www 那一條正式連結——那是 App 發出去的寫法，也是剪貼簿要存的那一條。
- * 這一頁本身還是要在：它是 Universal Link 認領的路徑（.well-known/apple-app-site-association）。 */
-location.replace('/open/#' + encodeURIComponent('https://www.tripezgo.com/join/' + location.hash));
+ * 這一頁本身還是要在：它是 Universal Link 認領的路徑（.well-known/apple-app-site-association）。
+ *
+ * Android（使用者裁定 2026-10-09：/join/ 接 App Link，未安裝導 Play）：
+ * www.tripezgo.com/.well-known/* 會 301 到裸網域，而 Android 驗證 App Link 時不跟轉址——www 那一條
+ * 永遠驗證不過，點下去不會直接開 App，而是落到這一頁。所以這裡用 intent://（指名 package，不靠網域
+ * 驗證）叫起 App；沒裝 App 時 Chrome 走 S.browser_fallback_url 去 Play 商店。
+ * 原本的片段（#<base64url>）留在 intent:// 的資料網址上：Intent.parseUri 從最後一個 # 切
+ * （#Intent;…;end），前面那一個 # 跟著資料網址交給 App（App/Android lib/domain/cloud/trip_invite_link.dart）。
+ * App repo：App/Android/web-handoff/join-index.html.patch。 */
+(function () {
+  var page = 'https://www.tripezgo.com/join/' + location.hash;
+  if (/Android/i.test(navigator.userAgent) && location.hash.length > 1) {
+    var play = 'https://play.google.com/store/apps/details?id=com.tripezgo.android';
+    location.replace(
+      'intent://www.tripezgo.com/join/' + location.hash +
+      '#Intent;scheme=https;package=com.tripezgo.android;' +
+      'S.browser_fallback_url=' + encodeURIComponent(play) + ';end'
+    );
+    return;
+  }
+  location.replace('/open/#' + encodeURIComponent(page));
+})();
 </script>
 </head>
 <body>
