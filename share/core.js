@@ -9,20 +9,19 @@ export function requestBody(op, idToken, extra = {}) {
 
 const VIEWS = ['ready', 'issued', 'rejected', 'pending-review', 'denied', 'closed'];
 
-/** 後端的回答 → 要畫的畫面。認不得的一律是 error，不留白頁。 */
+/** 後端的回答 → 要畫的畫面。認不得的一律是 error，不留白頁。
+ *  判讀是每天一次的排程（grill Q30），所以「未通過」不是終點：回到上傳畫面，上面寫著上一次的原因。 */
 export function viewFor(res) {
   if (!res || typeof res !== 'object') return { view: 'error' };
   if (res.error === 'auth') return { view: 'signed-out' };
-  // AI 沒回答：沒扣次數，留在上傳畫面，提示再送一次。
-  if (res.error === 'judge-unavailable' && res.state === 'ready') {
-    return { view: 'ready', remaining: res.remaining, notice: 'judge-unavailable' };
-  }
   if (res.error || !VIEWS.includes(res.state)) return { view: 'error' };
+  const email = res.email;
   switch (res.state) {
-    case 'ready': return { view: 'ready', remaining: res.remaining, deadline: res.deadline };
-    case 'issued': return { view: 'issued', code: res.code, redeemUrl: res.redeemUrl, deadline: res.deadline };
-    case 'rejected': return { view: 'rejected', reason: res.reason, remaining: res.remaining };
-    default: return { view: res.state };
+    case 'ready': return { view: 'ready', email, remaining: res.remaining, deadline: res.deadline };
+    case 'rejected':
+      return { view: 'ready', email, reason: res.reason, remaining: res.remaining, deadline: res.deadline };
+    case 'issued': return { view: 'issued', email, code: res.code, redeemUrl: res.redeemUrl };
+    default: return { view: res.state, email };
   }
 }
 
