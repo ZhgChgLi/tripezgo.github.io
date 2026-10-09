@@ -37,7 +37,7 @@
 <body>
 <main>
   <h1 id="title">正在前往 Apple 登入…</h1>
-  <p id="why">TripEZGo 用你的 Apple 帳號讀取別人分享給你的旅程。</p>
+  <p id="why">TripEZGo 用你的 Apple 帳號讀取你的旅程——你建立的、別人分享給你的都在。</p>
   <p id="error" hidden>沒辦法開始登入。請回到 TripEZGo 再試一次。</p>
   <a id="back" class="btn" hidden>回到 TripEZGo</a>
 </main>
@@ -62,10 +62,16 @@
     } catch (e) { /* 存不了：起始那一步會在下面失敗，顯示錯誤 */ }
     return null;
   }
+  /* 失敗頁的〔回到 TripEZGo〕：只開 App，不帶 token。Chrome 的 intent:// 一律加上 BROWSABLE，
+     只開得了有 BROWSABLE 的那幾條 intent-filter（啟動器那條沒有），所以借登入回呼那一條：
+     沒有 token 的回呼在 App 裡是「沒有登入成功」（已登入、沒有登入中的就不理）。 */
+  var HOME = 'intent://tripezgo.com/android-auth/done#Intent;scheme=https;package=' + PACKAGE + ';end';
   function fail() {
     $('title').textContent = '登入沒有完成';
     $('why').hidden = true;
     $('error').hidden = false;
+    $('back').href = HOME;
+    $('back').hidden = false;
   }
 
   /* ② 回來：片段帶著 token。 */
