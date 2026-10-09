@@ -4,8 +4,8 @@ import { requestBody, viewFor, fitWithin } from './core.js';
 
 const MAX_SIDE = 2048;
 const REASONS = {
-  'not-social-post': '這張看起來不是社群貼文的截圖。請截整篇貼文，要看得到發文帳號。',
-  'no-tripezgo': '貼文的圖片裡看不到 TripEZGo 的畫面。只在文字提到不算，要附上 App 的截圖。',
+  'not-social-post': '上一張看起來不是社群貼文的截圖。請截整篇貼文，要看得到發文帳號。',
+  'no-tripezgo': '上一張貼文的圖片裡看不到 TripEZGo 的畫面。只在文字提到不算，要附上 App 的截圖。',
 };
 
 let idToken = '';
@@ -15,23 +15,31 @@ const $ = (id) => document.getElementById(id);
 
 function show(next) {
   for (const el of document.querySelectorAll('[data-view]')) el.hidden = el.dataset.view !== next.view;
+  $('account').hidden = !next.email;
+  $('email').textContent = next.email || '';
   const section = document.querySelector(`[data-view="${next.view}"]`);
   const field = (name) => section && section.querySelector(`[data-field="${name}"]`);
-  if (field('remaining')) field('remaining').textContent = next.remaining;
-  if (field('notice')) field('notice').hidden = next.notice !== 'judge-unavailable';
+  if (next.view === 'ready') {
+    field('remaining').textContent = next.remaining;
+    field('deadline').textContent = next.deadline;
+    field('reason').hidden = !next.reason;
+    field('reason').textContent = next.reason ? REASONS[next.reason] || REASONS['not-social-post'] : '';
+  }
   if (next.view === 'issued') {
     field('code').textContent = next.code;
     field('redeem').href = next.redeemUrl;
   }
-  if (next.view === 'rejected') field('reason').textContent = REASONS[next.reason] || REASONS['not-social-post'];
 }
 
 async function call(op, extra) {
   try {
     // 不設 Content-Type：fetch 會送 text/plain，屬於「簡單請求」，不觸發 preflight。
     const res = await fetch(ENDPOINT, { method: 'POST', body: requestBody(op, idToken, extra) });
-    return await res.json();
-  } catch {
+    const body = await res.json();
+    if (body && body.error && body.error !== 'auth') console.warn('share backend', op, body);
+    return body;
+  } catch (err) {
+    console.warn('share backend', op, err);
     return null;
   }
 }
@@ -57,6 +65,13 @@ function refreshSubmit() {
   $('submit').disabled = !(image && $('consent').checked);
 }
 
+function clearUpload() {
+  image = '';
+  $('file').value = '';
+  $('preview').hidden = true;
+  refreshSubmit();
+}
+
 $('file').addEventListener('change', async () => {
   const file = $('file').files[0];
   image = '';
@@ -72,18 +87,17 @@ $('file').addEventListener('change', async () => {
 $('consent').addEventListener('change', refreshSubmit);
 
 $('submit').addEventListener('click', async () => {
-  show({ view: 'judging' });
-  const lang = document.documentElement.lang;
-  show(viewFor(await call('submit', { image, consent: $('consent').checked, lang })));
-  image = '';
-  $('file').value = '';
-  $('preview').hidden = true;
-  refreshSubmit();
+  const email = $('email').textContent;
+  show({ view: 'loading', email });
+  show(viewFor(await call('submit', { image, consent: $('consent').checked, lang: document.documentElement.lang })));
+  clearUpload();
 });
 
-$('retry').addEventListener('click', async () => {
-  show({ view: 'loading' });
-  show(viewFor(await call('status')));
+$('switch').addEventListener('click', () => {
+  google.accounts.id.disableAutoSelect();
+  idToken = '';
+  clearUpload();
+  show({ view: 'signed-out' });
 });
 
 function start() {

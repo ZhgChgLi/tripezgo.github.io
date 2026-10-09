@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { requestBody, viewFor, fitWithin } from '../../share/core.js';
 
+const EMAIL = 'someone@gmail.com';
+
 test('a status request carries the op and the ID token as JSON', () => {
   assert.deepEqual(JSON.parse(requestBody('status', 'tok')), { op: 'status', idToken: 'tok' });
 });
@@ -11,32 +13,33 @@ test('a submit request carries the image, the consent and the language', () => {
     { op: 'submit', idToken: 'tok', image: 'AAA', consent: true, lang: 'ja' });
 });
 
+test('every signed-in view carries the Gmail account taking part', () => {
+  for (const state of ['ready', 'rejected', 'pending-review', 'issued', 'denied', 'closed']) {
+    assert.equal(viewFor({ email: EMAIL, state }).email, EMAIL, state);
+  }
+});
+
 test('a ready answer shows the upload view with the attempts left', () => {
-  assert.deepEqual(viewFor({ state: 'ready', remaining: 3, deadline: '2026-12-31' }),
-    { view: 'ready', remaining: 3, deadline: '2026-12-31' });
+  assert.deepEqual(viewFor({ email: EMAIL, state: 'ready', remaining: 3, deadline: '2026-12-31' }),
+    { view: 'ready', email: EMAIL, remaining: 3, deadline: '2026-12-31' });
+});
+
+test('a rejection shows the upload view again, with the reason and the attempts left', () => {
+  assert.deepEqual(viewFor({ email: EMAIL, state: 'rejected', reason: 'no-tripezgo', remaining: 2, deadline: '2026-12-31' }),
+    { view: 'ready', email: EMAIL, reason: 'no-tripezgo', remaining: 2, deadline: '2026-12-31' });
 });
 
 test('an issued answer shows the code and the redeem link', () => {
-  const v = viewFor({ state: 'issued', code: 'ABC', redeemUrl: 'https://apps.apple.com/redeem?code=ABC', deadline: '2026-12-31' });
+  const v = viewFor({ email: EMAIL, state: 'issued', code: 'ABC', redeemUrl: 'https://apps.apple.com/redeem?code=ABC' });
   assert.equal(v.view, 'issued');
   assert.equal(v.code, 'ABC');
   assert.equal(v.redeemUrl, 'https://apps.apple.com/redeem?code=ABC');
 });
 
-test('a rejection keeps the reason and the attempts left', () => {
-  assert.deepEqual(viewFor({ state: 'rejected', reason: 'no-tripezgo', remaining: 2 }),
-    { view: 'rejected', reason: 'no-tripezgo', remaining: 2 });
-});
-
-test('waiting for a human, denied and closed each have their own view', () => {
-  assert.equal(viewFor({ state: 'pending-review' }).view, 'pending-review');
-  assert.equal(viewFor({ state: 'denied' }).view, 'denied');
-  assert.equal(viewFor({ state: 'closed' }).view, 'closed');
-});
-
-test('when the AI did not answer, the visitor stays on upload with a notice and nothing spent', () => {
-  assert.deepEqual(viewFor({ state: 'ready', remaining: 3, error: 'judge-unavailable' }),
-    { view: 'ready', remaining: 3, notice: 'judge-unavailable' });
+test('waiting, taken part and closed each have their own view', () => {
+  assert.equal(viewFor({ email: EMAIL, state: 'pending-review' }).view, 'pending-review');
+  assert.equal(viewFor({ email: EMAIL, state: 'denied' }).view, 'denied');
+  assert.equal(viewFor({ email: EMAIL, state: 'closed' }).view, 'closed');
 });
 
 test('a rejected ID token sends the visitor back to sign in', () => {
@@ -47,7 +50,7 @@ test('anything the page does not understand is an error, not a blank page', () =
   assert.deepEqual(viewFor({ error: 'bad-request' }), { view: 'error' });
   assert.deepEqual(viewFor({ error: 'image' }), { view: 'error' });
   assert.deepEqual(viewFor(null), { view: 'error' });
-  assert.deepEqual(viewFor({ state: 'from-the-future' }), { view: 'error' });
+  assert.deepEqual(viewFor({ email: EMAIL, state: 'from-the-future' }), { view: 'error' });
 });
 
 test('a large screenshot is scaled so its long side is at most the limit, keeping the aspect ratio', () => {
