@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{{title}}</title>
+<meta name="description" content="{{description}}" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png" />
+<link rel="apple-touch-icon" href="/assets/img/icon-180.png" />
+<link rel="stylesheet" href="/assets/css/site.css" />
+<!-- 這一頁是 tools/gen-share.mjs 從 tools/share-template.html 產生的，不要手改；改模板或 share/strings.js 後重跑。
+     頁首頁尾從同語言的首頁抽出來，樣式載 site.css（裡面 @import chrome.css）；只載 chrome.css 的話
+     .wrap 沒有置中，頁首頁尾會貼左邊（2026-10-10 使用者抓到）。
+     流程（App repo .scratch/share-reward/，grill Q34–Q38）：貼公開貼文網址 → Google 登入 → 當場檢查。 -->
+<style>
+  main { max-width: 640px; margin: 0 auto; padding: clamp(32px, 6vw, 64px) var(--gutter); }
+  h1 { font-size: var(--text-2xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); margin: 0 0 12px; }
+  .lede { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+  .card h2 { font-size: var(--text-xl); margin: 0 0 8px; }
+  h2.step { font-size: var(--text-lg); margin: 24px 0 10px; }
+  .captions { display: grid; gap: 8px; margin-bottom: 12px; }
+  .caption-option { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--border);
+                    border-radius: var(--radius-md); background: var(--bg); cursor: pointer; font-size: var(--text-sm); white-space: pre-line; }
+  .caption-option:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  textarea { box-sizing: border-box; width: 100%; font: inherit; font-size: var(--text-sm); padding: 12px 14px; border: 1px solid var(--border);
+             border-radius: var(--radius-md); background: var(--bg); color: var(--fg); resize: vertical; }
+  textarea:focus { outline: none; box-shadow: var(--focus-ring); }
+  .share-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  button.chip { font: inherit; font-size: var(--text-sm); font-weight: 600; padding: 8px 14px; border-radius: var(--radius-pill);
+                border: 1px solid var(--border); background: var(--bg); color: var(--fg); cursor: pointer; }
+  button.chip:hover { border-color: var(--accent); }
+  .url-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .url-row input { flex: 1 1 220px; min-width: 0; }
+  .url-row button.chip { flex: none; }
+  label.field { display: block; font-weight: 600; margin-bottom: 6px; }
+  input[type=url] { box-sizing: border-box; width: 100%; font: inherit; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md);
+                    background: var(--bg); color: var(--fg); }
+  input[type=url]:focus { outline: none; box-shadow: var(--focus-ring); }
+  label.consent { display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-sm); color: var(--muted); margin: 16px 0; }
+  .notice { color: var(--danger); margin: 0 0 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  button.primary, a.primary { display: inline-block; font: inherit; font-weight: 600; border: 0; border-radius: var(--radius-pill);
+                              padding: 12px 24px; background: var(--accent); color: var(--accent-on); text-decoration: none; cursor: pointer; }
+  button.primary:disabled { opacity: .4; cursor: default; }
+  .account { font-size: var(--text-sm); color: var(--muted); margin: 0 0 16px; }
+  .account strong { color: var(--fg); word-break: break-all; }
+  .linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent-ink); cursor: pointer; text-decoration: underline; }
+  .muted { color: var(--muted); font-size: var(--text-sm); }
+  .code { font: 600 var(--text-xl)/1.4 var(--font-mono); letter-spacing: 1px; word-break: break-all; text-align: center;
+          padding: 14px; border: 1px dashed var(--border); border-radius: var(--radius-md); margin: 12px 0 16px; background: var(--bg); }
+  ul.fine { padding-left: 20px; font-size: var(--text-xs); color: var(--muted); margin: 16px 0 0; }
+  [hidden] { display: none !important; }
+</style>
+<script src="https://accounts.google.com/gsi/client?hl={{gisLang}}" async></script>
+<script type="module" src="/share/app.js"></script>
+</head>
+<body>
+
+{{skipLink}}
+
+{{header}}
+
+<main id="main">
+  <h1 data-t="title"></h1>
+  <p class="lede" data-t="lede"></p>
+
+  <section class="card" id="form">
+    <p class="account" id="account" hidden><span data-t="account"></span><strong id="email"></strong>　<button class="linkish" id="switch" data-t="switch"></button></p>
+    <p class="notice" id="notice" hidden></p>
+    <p class="muted"><span data-t="eligibility"></span> <span id="deadline-line" hidden></span></p>
+
+    <h2 class="step" data-t="step1"></h2>
+    <div class="captions" id="captions" role="radiogroup"></div>
+    <label class="field" for="caption" data-t="captionEdit"></label>
+    <textarea id="caption" rows="5"></textarea>
+
+    <h2 class="step" data-t="step2"></h2>
+    <div class="share-buttons">
+      <button class="chip" data-share="threads">Threads</button>
+      <button class="chip" data-share="x">X</button>
+      <button class="chip" data-share="facebook">Facebook</button>
+      <button class="chip" data-share="bluesky">Bluesky</button>
+      <button class="chip" data-share="plurk">Plurk</button>
+      <button class="chip" data-share="native" id="native-share" data-t="more" hidden></button>
+      <button class="chip" data-share="copy" data-t="copyCaption"></button>
+    </div>
+    <p class="muted" id="share-hint" hidden></p>
+    <p class="muted" data-t-html="publicNote"></p>
+
+    <h2 class="step" data-t="step3"></h2>
+    <label class="field" for="url" data-t="urlLabel"></label>
+    <div class="url-row">
+      <input id="url" type="url" inputmode="url" autocomplete="off" placeholder="https://www.threads.net/@you/post/…" />
+      <button class="chip" id="paste" data-t="paste"></button>
+    </div>
+    <p class="muted" data-t="platforms"></p>
+    <label class="consent"><input id="consent" type="checkbox" /> <span data-t="consent"></span></label>
+    <p class="muted" id="remaining-line" hidden></p>
+    <div class="actions">
+      <div id="signin"></div>
+      <button class="primary" id="submit" data-t="submit" hidden disabled></button>
+    </div>
+  </section>
+
+  <section class="card" data-view="loading" hidden><p class="muted" data-t="checking"></p></section>
+
+  <section class="card" data-view="pending-review" hidden>
+    <p class="account"><span data-t="account"></span><strong data-field="email"></strong></p>
+    <h2 data-t="pendingTitle"></h2>
+    <p data-t="pendingBody"></p>
+  </section>
+
+  <section class="card" data-view="issued" hidden>
+    <p class="account"><span data-t="account"></span><strong data-field="email"></strong></p>
+    <h2 data-t="issuedTitle"></h2>
+    <p data-t="issuedLead"></p>
+    <div class="code" data-field="code"></div>
+    <a class="primary" data-field="redeem" data-t="redeem" target="_blank" rel="noopener"></a>
+    <p class="muted" data-t="issuedNote"></p>
+    <ul class="fine" id="fine"></ul>
+  </section>
+
+  <section class="card" data-view="denied" hidden>
+    <p class="account"><span data-t="account"></span><strong data-field="email"></strong></p>
+    <h2 data-t="deniedTitle"></h2>
+    <p data-t="deniedBody"></p>
+  </section>
+
+  <section class="card" data-view="closed" hidden>
+    <h2 data-t="closedTitle"></h2>
+    <p data-t="closedBody"></p>
+  </section>
+
+  <section class="card" data-view="error" hidden><p data-t="error"></p></section>
+</main>
+
+{{footer}}
+
+</body>
+</html>

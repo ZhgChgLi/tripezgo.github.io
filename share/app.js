@@ -2,15 +2,13 @@
  * 表單一開始就看得到（grill Q38）；沒登入時送出鈕的位置是 Google 登入，登入完如果網址與同意都填好了就直接送。 */
 import { GOOGLE_CLIENT_ID, ENDPOINT } from './config.js';
 import { requestBody, viewFor, looksLikeUrl } from './core.js';
-import { CAPTIONS, shareTarget } from './captions.js';
+import { shareTarget } from './captions.js';
+import { S, langKey } from './strings.js';
 
-const REASONS = {
-  'no-mention': '這篇貼文裡找不到 tripezgo.com 或 TripEZGo 的 App Store 連結。只寫名字不算，請把連結加進貼文內容。',
-  unreachable: '讀不到這篇貼文。請確認貼文是公開的，網址是貼文本身（不是個人首頁）。',
-  'duplicate-url': '這篇貼文已經被其他帳號用過了。',
-  url: '這看起來不是社群貼文的網址。',
-  consent: '請先勾選同意。',
-};
+// 頁面的語言由 /share/、/en/share/、/ja/share/ 的 <html lang> 決定；靜態的字產生頁面時就填好了（tools/gen-share.mjs），
+// 這裡只管會變的字。
+const t = S[langKey(document.documentElement.lang)];
+const GIS_LOCALE = { zh: 'zh_TW', en: 'en', ja: 'ja' }[langKey(document.documentElement.lang)];
 
 let idToken = '';
 let email = '';
@@ -19,7 +17,7 @@ const $ = (id) => document.getElementById(id);
 
 function setNotice(code) {
   $('notice').hidden = !code;
-  $('notice').textContent = code ? REASONS[code] || REASONS.unreachable : '';
+  $('notice').textContent = code ? t.reasons[code] || t.reasons.unreachable : '';
 }
 
 function show(next) {
@@ -44,8 +42,8 @@ function show(next) {
   $('submit').hidden = !idToken;
   $('remaining-line').hidden = next.view !== 'ready';
   if (next.view === 'ready') {
-    $('remaining').textContent = next.remaining;
-    $('deadline').textContent = next.deadline || '';
+    $('remaining-line').textContent = t.remaining.replace('{n}', next.remaining);
+    $('deadline-line').textContent = next.deadline ? t.deadline.replace('{d}', next.deadline) : '';
     $('deadline-line').hidden = !next.deadline;
     setNotice(next.reason);
   }
@@ -95,7 +93,8 @@ async function onCredential({ credential }) {
 
 function renderCaptions() {
   $('captions').innerHTML = '';
-  CAPTIONS.forEach((text, i) => {
+  $('captions').setAttribute('aria-label', t.captionsLabel);
+  t.captions.forEach((text, i) => {
     const label = document.createElement('label');
     label.className = 'caption-option';
     const radio = document.createElement('input');
@@ -108,7 +107,7 @@ function renderCaptions() {
     label.append(radio, span);
     $('captions').append(label);
   });
-  $('caption').value = CAPTIONS[0];
+  $('caption').value = t.captions[0];
 }
 
 function hint(text) {
@@ -130,7 +129,7 @@ for (const button of document.querySelectorAll('[data-share]')) {
     const text = $('caption').value.trim();
     if (button.dataset.share === 'native') {
       try { await navigator.share({ text }); } catch { /* 使用者取消 */ }
-      hint('發好之後，把那篇貼文的網址貼到第 3 步。');
+      hint(t.hintAfter);
       return;
     }
     const target = shareTarget(button.dataset.share, text);
@@ -138,11 +137,9 @@ for (const button of document.querySelectorAll('[data-share]')) {
     if (target.url) window.open(target.url, '_blank', 'noopener');
     if (target.copy) {
       const copied = await copy(text);
-      hint(copied
-        ? '文案已經複製好了，到貼文裡貼上就行。發好之後，把那篇貼文的網址貼到第 3 步。'
-        : '請手動複製上面的文案貼到貼文裡。發好之後，把那篇貼文的網址貼到第 3 步。');
+      hint(copied ? t.hintCopied : t.hintCopyFailed);
     } else {
-      hint('發好之後，把那篇貼文的網址貼到第 3 步。');
+      hint(t.hintAfter);
     }
   });
 }
@@ -155,11 +152,11 @@ $('paste').addEventListener('click', async () => {
       $('url').value = text;
       refreshSubmit();
     } else {
-      hint('剪貼簿裡不是網址。到貼文的「分享」或「複製連結」拿網址，再按一次。');
+      hint(t.hintNotUrl);
     }
   } catch {
     $('url').focus();
-    hint('這個瀏覽器不讓網頁讀剪貼簿，請直接在欄位裡貼上。');
+    hint(t.hintNoClipboard);
   }
 });
 
@@ -173,10 +170,10 @@ $('switch').addEventListener('click', () => {
   show({ view: 'signed-out' });
 });
 
-
 function start() {
   google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onCredential, use_fedcm_for_prompt: true });
-  google.accounts.id.renderButton($('signin'), { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with' });
+  google.accounts.id.renderButton($('signin'),
+    { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', locale: GIS_LOCALE });
   show({ view: 'signed-out' });
 }
 
