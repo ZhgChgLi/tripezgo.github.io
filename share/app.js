@@ -1,34 +1,61 @@
-/* 分享換 Premium 活動頁：Google Sign-In → 後端（Apps Script）→ 畫面。判斷在 core.js。 */
+/* 分享換 Premium 活動頁：貼網址 → Google Sign-In → 後端（Apps Script）當場檢查 → 畫面。判斷在 core.js。
+ * 表單一開始就看得到（grill Q38）；沒登入時送出鈕的位置是 Google 登入，登入完如果網址與同意都填好了就直接送。 */
 import { GOOGLE_CLIENT_ID, ENDPOINT } from './config.js';
-import { requestBody, viewFor, fitWithin } from './core.js';
+import { requestBody, viewFor, looksLikeUrl } from './core.js';
+import { brandHtml, footerHtml } from '/assets/js/chrome.js';
 
-const MAX_SIDE = 2048;
 const REASONS = {
-  'not-social-post': '上一張看起來不是社群貼文的截圖。請截整篇貼文，要看得到發文帳號。',
-  'no-tripezgo': '上一張貼文的圖片裡看不到 TripEZGo 的畫面。只在文字提到不算，要附上 App 的截圖。',
+  'no-mention': '這篇貼文裡找不到 tripezgo.com 或 TripEZGo 的 App Store 連結。只寫名字不算，請把連結加進貼文內容。',
+  unreachable: '讀不到這篇貼文。請確認貼文是公開的，網址是貼文本身（不是個人首頁）。',
+  'duplicate-url': '這篇貼文已經被其他帳號用過了。',
+  url: '這看起來不是社群貼文的網址。',
+  consent: '請先勾選同意。',
 };
 
 let idToken = '';
-let image = ''; // 壓縮後 JPEG 的 base64（不含 data: 前綴）
+let email = '';
 
 const $ = (id) => document.getElementById(id);
 
+function setNotice(code) {
+  $('notice').hidden = !code;
+  $('notice').textContent = code ? REASONS[code] || REASONS.unreachable : '';
+}
+
 function show(next) {
+  if (next.view === 'form-error') {
+    for (const el of document.querySelectorAll('[data-view]')) el.hidden = true;
+    $('form').hidden = false;
+    setNotice(next.error);
+    return;
+  }
+  if (next.email !== undefined) email = next.email || '';
+  if (next.view === 'signed-out') {
+    idToken = '';
+    email = '';
+  }
+  const onForm = next.view === 'ready' || next.view === 'signed-out';
+  $('form').hidden = !onForm;
   for (const el of document.querySelectorAll('[data-view]')) el.hidden = el.dataset.view !== next.view;
-  $('account').hidden = !next.email;
-  $('email').textContent = next.email || '';
-  const section = document.querySelector(`[data-view="${next.view}"]`);
-  const field = (name) => section && section.querySelector(`[data-field="${name}"]`);
+
+  $('account').hidden = !email;
+  $('email').textContent = email;
+  $('signin').hidden = !!idToken;
+  $('submit').hidden = !idToken;
+  $('remaining-line').hidden = next.view !== 'ready';
   if (next.view === 'ready') {
-    field('remaining').textContent = next.remaining;
-    field('deadline').textContent = next.deadline;
-    field('reason').hidden = !next.reason;
-    field('reason').textContent = next.reason ? REASONS[next.reason] || REASONS['not-social-post'] : '';
+    $('remaining').textContent = next.remaining;
+    $('deadline').textContent = next.deadline || '';
+    $('deadline-line').hidden = !next.deadline;
+    setNotice(next.reason);
   }
+  for (const el of document.querySelectorAll('[data-field="email"]')) el.textContent = email;
   if (next.view === 'issued') {
-    field('code').textContent = next.code;
-    field('redeem').href = next.redeemUrl;
+    const card = document.querySelector('[data-view="issued"]');
+    card.querySelector('[data-field="code"]').textContent = next.code;
+    card.querySelector('[data-field="redeem"]').href = next.redeemUrl;
   }
+  refreshSubmit();
 }
 
 async function call(op, extra) {
@@ -44,65 +71,40 @@ async function call(op, extra) {
   }
 }
 
+const ready = () => looksLikeUrl($('url').value) && $('consent').checked;
+
+function refreshSubmit() {
+  $('submit').disabled = !ready();
+}
+
+async function submit() {
+  show({ view: 'loading' });
+  show(viewFor(await call('submit', { url: $('url').value.trim(), consent: $('consent').checked, lang: document.documentElement.lang })));
+}
+
 async function onCredential({ credential }) {
   idToken = credential;
   show({ view: 'loading' });
-  show(viewFor(await call('status')));
+  const status = viewFor(await call('status'));
+  // 網址與同意都填好了才按登入的：登入完直接送，不必再按一次（Q38）。
+  if (status.view === 'ready' && ready()) return submit();
+  show(status);
 }
 
-/** 選的圖畫進 canvas、縮到長邊 2048、轉 JPEG；重新畫過一次，EXIF（含拍攝地點）也就不會送出去。 */
-async function compress(file) {
-  const bitmap = await createImageBitmap(file);
-  const { width, height } = fitWithin(bitmap.width, bitmap.height, MAX_SIDE);
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
-  return canvas.toDataURL('image/jpeg', 0.85);
-}
-
-function refreshSubmit() {
-  $('submit').disabled = !(image && $('consent').checked);
-}
-
-function clearUpload() {
-  image = '';
-  $('file').value = '';
-  $('preview').hidden = true;
-  refreshSubmit();
-}
-
-$('file').addEventListener('change', async () => {
-  const file = $('file').files[0];
-  image = '';
-  $('preview').hidden = true;
-  if (file) {
-    const dataUrl = await compress(file);
-    image = dataUrl.slice(dataUrl.indexOf(',') + 1);
-    $('preview').src = dataUrl;
-    $('preview').hidden = false;
-  }
-  refreshSubmit();
-});
+$('url').addEventListener('input', refreshSubmit);
 $('consent').addEventListener('change', refreshSubmit);
-
-$('submit').addEventListener('click', async () => {
-  const email = $('email').textContent;
-  show({ view: 'loading', email });
-  show(viewFor(await call('submit', { image, consent: $('consent').checked, lang: document.documentElement.lang })));
-  clearUpload();
-});
-
+$('submit').addEventListener('click', submit);
 $('switch').addEventListener('click', () => {
   google.accounts.id.disableAutoSelect();
-  idToken = '';
-  clearUpload();
   show({ view: 'signed-out' });
 });
 
+$('brand').innerHTML = brandHtml('zh');
+$('site-footer').innerHTML = footerHtml('zh');
+
 function start() {
   google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onCredential, use_fedcm_for_prompt: true });
-  google.accounts.id.renderButton($('signin'), { theme: 'outline', size: 'large', shape: 'pill' });
+  google.accounts.id.renderButton($('signin'), { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with' });
   show({ view: 'signed-out' });
 }
 

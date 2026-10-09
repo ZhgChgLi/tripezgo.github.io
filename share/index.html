@@ -4,79 +4,83 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>分享 TripEZGo，送你一年 Premium</title>
-<meta name="theme-color" content="#fbf8f4" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#1f1914" media="(prefers-color-scheme: dark)" />
+<meta name="description" content="在社群分享 TripEZGo，附上 tripezgo.com 或 App Store 連結，就送你一年 Premium。" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png" />
 <link rel="apple-touch-icon" href="/assets/img/icon-180.png" />
-<!-- 六語文案與正式版面是 ticket 07。流程（grill Q30–Q33）：登入前只有登入鈕；登入後顯示 Gmail 帳號，
-     依狀態給上傳／審核中／審核成功＋序號／已參加活動。判讀是每天 09:00 的排程。 -->
+<link rel="stylesheet" href="/assets/css/chrome.css?v=ea9c8814ea" />
+<!-- 頁首頁尾跟首頁同一份（/assets/css/chrome.css、/assets/js/chrome.js）。版面 token 也用 chrome.css 那一套。
+     流程（App repo .scratch/share-reward/，grill Q34–Q38）：貼公開貼文網址 → Google 登入 → 當場檢查。 -->
 <style>
-  :root { --paper: #fbf8f4; --card: #ffffff; --ink: #241d17; --machi: #2f918e; --taupe: #7c6f63; --line: #dbd5cd; --warn: #b4532a; }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper: #1f1914; --card: #2a231d; --ink: #f3ede6; --taupe: #b3a597; --line: #4a4037; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink);
-         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif; }
-  main { max-width: 560px; margin: 0 auto; padding: 32px 16px 48px; }
-  h2 { font-size: 20px; line-height: 1.35; margin: 0 0 8px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-top: 16px; }
-  .account { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-size: 14px; color: var(--taupe); }
-  .account strong { color: var(--ink); word-break: break-all; }
-  .linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--machi); cursor: pointer; text-decoration: underline; }
-  .muted { color: var(--taupe); font-size: 14px; }
-  .notice { color: var(--warn); }
-  ul.rules { padding-left: 20px; margin: 8px 0 16px; font-size: 14px; }
-  button.primary, a.primary { display: inline-block; font: inherit; font-weight: 600; border: 0; border-radius: 999px;
-                              padding: 12px 22px; background: var(--machi); color: #fff; text-decoration: none; cursor: pointer; }
+  body { margin: 0; background: var(--page); color: var(--fg); font: var(--text-base)/var(--leading-body) var(--font-body); }
+  main { max-width: 640px; margin: 0 auto; padding: clamp(32px, 6vw, 64px) var(--gutter); }
+  h1 { font-size: var(--text-2xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); margin: 0 0 12px; }
+  .lede { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+  ol.steps { padding-left: 20px; margin: 0 0 20px; }
+  ol.steps li { margin-bottom: 6px; }
+  label.field { display: block; font-weight: 600; margin-bottom: 6px; }
+  input[type=url] { box-sizing: border-box; width: 100%; font: inherit; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md);
+                    background: var(--bg); color: var(--fg); }
+  input[type=url]:focus { outline: none; box-shadow: var(--focus-ring); }
+  label.consent { display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-sm); color: var(--muted); margin: 16px 0; }
+  .notice { color: var(--danger); margin: 0 0 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  button.primary, a.primary { display: inline-block; font: inherit; font-weight: 600; border: 0; border-radius: var(--radius-pill);
+                              padding: 12px 24px; background: var(--accent); color: var(--accent-on); text-decoration: none; cursor: pointer; }
   button.primary:disabled { opacity: .4; cursor: default; }
-  .preview { display: block; max-width: 100%; max-height: 320px; margin: 12px 0; border-radius: 8px; border: 1px solid var(--line); }
-  .code { font: 600 22px/1.4 ui-monospace, Menlo, monospace; letter-spacing: 1px; word-break: break-all;
-          padding: 12px; border: 1px dashed var(--line); border-radius: 8px; margin: 12px 0; text-align: center; }
-  ul.fine { padding-left: 20px; font-size: 13px; color: var(--taupe); }
-  label.consent { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; margin: 12px 0; }
-  .signin { display: flex; justify-content: center; padding-top: 30vh; }
+  .account { font-size: var(--text-sm); color: var(--muted); margin: 0 0 16px; }
+  .account strong { color: var(--fg); word-break: break-all; }
+  .linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent-ink); cursor: pointer; text-decoration: underline; }
+  .muted { color: var(--muted); font-size: var(--text-sm); }
+  .code { font: 600 var(--text-xl)/1.4 var(--font-mono); letter-spacing: 1px; word-break: break-all; text-align: center;
+          padding: 14px; border: 1px dashed var(--border); border-radius: var(--radius-md); margin: 12px 0 16px; background: var(--bg); }
+  ul.fine { padding-left: 20px; font-size: var(--text-xs); color: var(--muted); margin: 16px 0 0; }
   [hidden] { display: none !important; }
 </style>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <script type="module" src="./app.js"></script>
 </head>
 <body>
+
+<header class="site-header">
+  <div class="wrap"><span id="brand"></span></div>
+</header>
+
 <main>
-  <div class="signin" data-view="signed-out"><div id="signin"></div></div>
+  <h1>分享 TripEZGo，送你一年 Premium</h1>
+  <p class="lede">在社群分享 TripEZGo，貼文附上 tripezgo.com 或 App Store 連結，就送你一組兌換碼：Premium 一年，到期不自動續訂。</p>
 
-  <div class="card account" id="account" hidden>
-    <span>目前登入：<strong id="email"></strong></span>
-    <button class="linkish" id="switch">換帳號</button>
-  </div>
-
-  <section class="card" data-view="loading" hidden>
-    <p class="muted">確認中…</p>
-  </section>
-
-  <section class="card" data-view="ready" hidden>
-    <h2>分享 TripEZGo，送你一年 Premium</h2>
-    <p class="notice" data-field="reason" hidden></p>
-    <ul class="rules">
-      <li>在社群貼出 TripEZGo 的畫面，上傳那篇貼文的截圖（要看得到發文帳號與 App 的畫面）。</li>
-      <li>每天 09:00 審核一次，通過就送一組兌換碼：Premium 一年，到期不自動續訂。</li>
-      <li>限從沒訂閱過、或訂閱已到期的 Apple 帳號；已經買斷的朋友不必參加。</li>
-      <li>數量有限，送完為止；活動到 <span data-field="deadline"></span>。</li>
-    </ul>
-    <p>你還可以上傳 <strong data-field="remaining"></strong> 次。</p>
-    <input id="file" type="file" accept="image/jpeg,image/png" />
-    <img id="preview" class="preview" alt="" hidden />
+  <section class="card" id="form">
+    <p class="account" id="account" hidden>目前登入：<strong id="email"></strong>　<button class="linkish" id="switch">換帳號</button></p>
+    <p class="notice" id="notice" hidden></p>
+    <ol class="steps">
+      <li>在社群發一篇<strong>公開</strong>貼文，內容附上 <strong>tripezgo.com</strong> 或 TripEZGo 的 <strong>App Store 連結</strong>。</li>
+      <li>把那篇貼文的網址貼在下面，用 Google 帳號登入送出，當場檢查。</li>
+      <li>限從沒訂閱過、或訂閱已到期的 Apple 帳號；已經買斷的朋友不必參加。數量有限，送完為止<span id="deadline-line" hidden>，活動到 <span id="deadline"></span></span>。</li>
+    </ol>
+    <label class="field" for="url">公開貼文網址</label>
+    <input id="url" type="url" inputmode="url" autocomplete="off" placeholder="https://www.threads.net/@you/post/…" />
     <label class="consent"><input id="consent" type="checkbox" />
-      <span>我同意 TripEZGo 保存我的 Google email 與這張截圖（永久保存，用於審核與防止重複領取），並把截圖送到 OpenAI 判讀（OpenAI API 預設不拿來訓練模型）。</span></label>
-    <button class="primary" id="submit" disabled>送出</button>
+      <span>我同意 TripEZGo 保存我的 Google email 與這個貼文網址（永久保存，用於審核與防止重複領取），並讀取這個公開網址的內容來檢查。</span></label>
+    <p class="muted" id="remaining-line" hidden>這個帳號還可以送 <strong id="remaining"></strong> 次。</p>
+    <div class="actions">
+      <div id="signin"></div>
+      <button class="primary" id="submit" hidden disabled>送出</button>
+    </div>
   </section>
+
+  <section class="card" data-view="loading" hidden><p class="muted">檢查中…</p></section>
 
   <section class="card" data-view="pending-review" hidden>
+    <p class="account">目前登入：<strong data-field="email"></strong></p>
     <h2>審核中</h2>
-    <p>收到你的截圖了。每天 09:00 審核一次，之後用同一個帳號登入這一頁就看得到結果。</p>
+    <p>這篇需要人工確認，審完之後用同一個帳號登入這一頁就看得到結果。</p>
   </section>
 
   <section class="card" data-view="issued" hidden>
+    <p class="account">目前登入：<strong data-field="email"></strong></p>
     <h2>審核成功</h2>
     <p>這是你的兌換碼：</p>
     <div class="code" data-field="code"></div>
@@ -93,6 +97,7 @@
   </section>
 
   <section class="card" data-view="denied" hidden>
+    <p class="account">目前登入：<strong data-field="email"></strong></p>
     <h2>已參加活動</h2>
     <p>這個帳號已經參加過，這次沒有通過審核。謝謝你的分享。</p>
   </section>
@@ -102,9 +107,9 @@
     <p>謝謝你的參與。</p>
   </section>
 
-  <section class="card" data-view="error" hidden>
-    <p>出了點問題，請稍後再試。</p>
-  </section>
+  <section class="card" data-view="error" hidden><p>出了點問題，請稍後再試。</p></section>
 </main>
+
+<footer class="site-footer" id="site-footer"></footer>
 </body>
 </html>
