@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>小工具・購物清單</title>
+<!--
+  小工具分頁・購物清單（App：Modules/Widgets/…/Shopping/ShoppingViewController.swift ＋ UI/…/Shopping/ShoppingWallView.swift）。
+  參數：?lang=zh-Hant-TW|en|ja
+  抬頭與四格切換照 SubTabContainer.swift ＋ screens/ref/zh/shop.png 量；狀態格、分類籌碼、購物牆照兩支 Swift 的 Metrics。
+  參數另有 &scroll=0（購物牆往上捲幾 pt；釘住的狀態格與籌碼不動——已購買／不買了排在最後，要捲才看得到）。
+  基準圖是空的，這一頁畫十項（6 待購買／3 已購買／1 不買了）——品名、價格、封面是範例（ITEMS），
+  封面是 screens/img/shop-*.svg 的中性插圖，不是商品照。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  /* ── 抬頭＋四格切換（SubTabContainer：上 12+2、左右 20、標題 xxl semibold -0.02em、切換列上 4+6、下 6）── */
+  /* 抬頭的中日文字：UIKit 畫出來比 Chromium 的 PingFang 小一號（量 ref：字高 24 對 25.7、寬 76 對 80）——只縮 CJK 那一段 */
+  @font-face { font-family: "TZTitleCJK"; src: local("PingFangTC-Semibold"), local("PingFang TC Semibold"); font-weight: 600;
+    unicode-range: U+3000-30FF, U+3400-9FFF, U+FF00-FFEF; size-adjust: 95%; }
+  .wg-title { position: absolute; left: 20px; top: 75.4px; font: 600 var(--t-xxl)/34px var(--font); letter-spacing: -.56px; }
+  html[lang^="zh"] .wg-title { font-family: "TZTitleCJK", var(--font); }
+  .seg { position: absolute; left: 20px; width: 362px; top: 119.67px; height: 45px; border-radius: 22.5px; background: #eeeeef; }
+  .seg-pill { position: absolute; top: 2.33px; height: 40.33px; width: 86.7px; border-radius: 20.2px; background: #fff;
+    box-shadow: 0 0 0 .5px rgba(0,0,0,.03), 0 2px 6px rgba(0,0,0,.04); }
+  .seg-t { position: absolute; top: 0; height: 45px; width: 86.7px; display: grid; place-items: center;
+    font: 400 var(--t-sm)/16px var(--font); color: #73675b; white-space: nowrap; }
+  .seg-t.on { font-weight: 700; color: var(--ink); }
+  .ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 釘住那一段：上 14、左右 20 */
+  .head { position: absolute; left: 20px; right: 20px; top: 184px; }
+  /* 狀態格：surface 底、圓角 8、三等分；每格上下 12 左右 4、間距 1；數字 xl semibold 等寬。
+     沒篩的時候三格都是「開」（statusFilter 預設全選）：sunken 底、數字與字都是 ink——基準圖就是這樣 */
+  .stats { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .stat { position: relative; flex: 1; padding: 11px 4px; text-align: center; background: var(--sunken); }
+  .stat + .stat::before { content: ""; position: absolute; left: -1px; top: -1px; bottom: -1px; border-left: 1px solid var(--border-soft); }
+  .stat b { display: block; font: 600 var(--t-xl)/26.3px var(--font); color: var(--ink); }
+  .stat.todo b { color: var(--ink); }
+  .stat i { display: block; margin-top: 1px; font: 400 var(--t-xs)/14.3px var(--font); font-style: normal; color: var(--ink); }
+  /* 分類籌碼：高 44、左右 14、圓角 12、間距 8；選中 ink 底 bold */
+  .chips { margin-top: 12px; display: flex; gap: 8px; overflow: hidden; margin-right: 0; }
+  .chip { flex: none; height: 44px; padding: 0 13px; border-radius: 12px; border: 1px solid var(--border); background: var(--sunken);
+    display: flex; align-items: center; font: 400 var(--t-sm)/16px var(--font); color: var(--ink); white-space: nowrap; }
+  .chip.on { background: var(--ink); border-color: var(--ink); color: var(--card); font-weight: 700; padding: 0 14px; border: 0; }
+
+  /* 購物牆：捲動區上 12；兩欄、間距 10，最矮的那一欄先放（ShoppingWallView.render） */
+  .wall-clip { position: absolute; left: 0; right: 0; bottom: 0; overflow: hidden; }
+  .wall { position: absolute; left: 20px; right: 20px; display: flex; gap: 10px; align-items: flex-start; }
+  .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .card.linked { border: 2px solid var(--accent); }
+  .media { position: relative; overflow: hidden; }
+  .media .content { position: relative; }
+  .media img { display: block; width: 100%; height: auto; }
+  .bought .content { opacity: .55; } .skipped .content { opacity: .32; }
+  /* 角標：寬＝封面 25%、正方、圓角 8；購物袋（已購買，accentInk 底）／禁止符（不買了，inkDeep 74%） */
+  .badge { position: absolute; left: 37.5%; width: 25%; aspect-ratio: 1; top: 50%; transform: translateY(-50%);
+    border-radius: 8px; display: grid; place-items: center; }
+  .bought .badge { background: var(--accent-ink); color: #fff; }
+  .skipped .badge { background: rgba(31,25,20,.74); color: #fff; }
+  .badge svg { width: 57.7%; height: 57.7%; stroke-width: 2; }
+  /* 「目前行程」角標：左上 8、左右 7 上下 3、圓角 8、accentInk 底、xs bold */
+  .flag { position: absolute; left: 8px; top: 8px; padding: 3px 7px; border-radius: 8px; background: var(--accent-ink);
+    color: #fff; font: 700 var(--t-xs)/14.3px var(--font); box-shadow: 0 1px 1.5px rgba(31,25,20,.3); }
+  /* 說明：上 8、左右 10、下 10、間距 2；品名 sm semibold、價格 xs muted（不買了：劃掉） */
+  .cap { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .cap .n { font: 600 var(--t-sm)/15.5px var(--font); color: var(--ink); }
+  .cap .p { font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted); }
+  .skipped .cap .n { color: var(--muted); text-decoration: line-through; }
+  .skipped .cap .p { color: var(--muted-faint); text-decoration: line-through; }
+
+  /* 浮動「＋」：52 圓、右 16、離分頁列上緣 16；白底＋1px border＋elev-raised */
+  .fab { position: absolute; right: 16px; top: 723px; width: 52px; height: 52px; border-radius: 50%; background: var(--card); z-index: 30;
+    border: 1px solid var(--border); box-shadow: 0 6px 18px -8px rgba(31,25,20,.22), 0 4px 14px rgba(31,25,20,.06); display: grid; place-items: center; color: var(--ink); }
+  .fab svg { width: 22px; height: 22px; stroke-width: 2; }
+  .scrim { position: absolute; left: 0; right: 0; top: 760px; bottom: 0; z-index: 20;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 30px); }
+  /* 金額：中日文頁的 -apple-system 會拿 PingFang 畫數字；tzMonoDigits 要 SF 的等寬數字 */
+  .mono { font-family: system-ui, -apple-system, sans-serif; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { lang, params, chrome, ready, fmt } from './chrome.js';
+
+const d = document.getElementById('d');
+
+// App 的字（Scripts/i18n/maps/Widgets.json、Domain.json、UI.json）
+const s = {
+  'zh-Hant-TW': { title: '小工具', subs: ['筆記', '掃描', '匯率換算', '購物清單'], all: '全部',
+    stat: ['待購買', '已購買', '不買了'], flag: '目前行程', sep: '　·　', yen: '¥',
+    cats: { drug: '藥妝', cloth: '衣服', souv: '紀念品', food: '食品', lux: '精品', goods: '雜貨' } },
+  en: { title: 'Tools', subs: ['Notes', 'Scan', 'Currency', 'Shopping'], all: 'All',
+    stat: ['To buy', 'Bought', 'Skipped'], flag: 'On itinerary', sep: ' · ', yen: '¥',
+    cats: { drug: 'Drugstore', cloth: 'Clothing', souv: 'Souvenirs', food: 'Food', lux: 'Luxury', goods: 'Daily Goods' } },
+  ja: { title: 'ツール', subs: ['メモ', 'スキャン', '為替', '買い物'], all: 'すべて',
+    stat: ['購入予定', '購入済み', 'やめた'], flag: '予定あり', sep: '　·　', yen: '￥',
+    cats: { drug: 'ドラッグストア', cloth: '衣類', souv: 'お土産', food: '食品', lux: 'ブランド品', goods: '雑貨' } },
+}[lang];
+
+// 範例項目（範本裡沒有購物清單）。img 的高寬比跟 svg 的 viewBox 一致。
+const N = (zh, en, ja) => ({ 'zh-Hant-TW': zh, en, ja }[lang]);
+const ITEMS = [
+  { img: 'manju', r: 1, name: N('紅葉饅頭 12 入', 'Momiji manju, box of 12', 'もみじ饅頭 12 個入'), cat: 'souv', price: 1600, status: 'pending', linked: true },
+  { img: 'brush', r: .75, name: N('熊野筆 腮紅刷', 'Kumano blush brush', '熊野筆 チークブラシ'), cat: 'lux', price: 4800, status: 'pending' },
+  { img: 'drops', r: 1, name: N('眼藥水', 'Eye drops', '目薬'), cat: 'drug', price: 698, status: 'pending' },
+  { img: 'soy', r: 1, name: N('牡蠣醬油', 'Oyster soy sauce', 'かき醤油'), cat: 'food', price: 540, status: 'pending' },
+  { img: 'shamoji', r: .75, name: N('宮島杓子', 'Miyajima rice paddle', '宮島しゃもじ'), cat: 'souv', price: 880, status: 'pending' },
+  { img: 'tote', r: 1, name: N('倉敷帆布托特包', 'Kurashiki canvas tote', '倉敷帆布トート'), cat: 'goods', price: 6380, status: 'pending' },
+  { img: 'lemon', r: .75, name: N('瀨戶田檸檬蛋糕', 'Setoda lemon cakes', '瀬戸田レモンケーキ'), cat: 'food', price: 1296, status: 'bought' },
+  { img: 'denim', r: 1, name: N('兒島丹寧外套', 'Kojima denim jacket', '児島デニムジャケット'), cat: 'cloth', price: 16500, status: 'bought' },
+  { img: 'sunscreen', r: 1, name: N('防曬乳', 'Sunscreen', '日焼け止め'), cat: 'drug', price: 1078, status: 'bought' },
+  { img: 'sauce', r: 1, name: N('御好燒醬', 'Okonomi sauce', 'お好みソース'), cat: 'food', price: 430, status: 'skipped' },
+];
+
+const IC = {
+  shoppingBag: '<path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/>',
+  ban: '<circle cx="12" cy="12" r="10"/><path d="m4.929 4.929 14.142 14.142"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+};
+const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+
+// 抬頭＋四格切換
+const TAB = 3;
+d.insertAdjacentHTML('beforeend', `<div class="wg-title">${s.title}</div>
+  <div class="seg"><div class="seg-pill" style="left:${2 + TAB * 90.3}px"></div>
+  ${s.subs.map((x, i) => `<div class="seg-t${i === TAB ? ' on' : ''}" style="left:${2 + i * 90.3}px">${x}</div>`).join('')}</div>`);
+
+const count = st => ITEMS.filter(i => i.status === st).length;
+const cats = ['drug', 'cloth', 'souv', 'food', 'lux', 'goods'];
+d.insertAdjacentHTML('beforeend', `<div class="head" id="head">
+  <div class="stats">${['pending', 'bought', 'skipped'].map((st, i) =>
+    `<div class="stat${i === 0 ? ' todo' : ''}"><b class="mono">${count(st)}</b><i>${s.stat[i]}</i></div>`).join('')}</div>
+  <div class="chips"><div class="chip on">${s.all}</div>${cats.map(c => `<div class="chip">${s.cats[c]}</div>`).join('')}</div>
+</div>`);
+
+// 牆：最矮的那一欄先放（估計高度＝封面高寬比＋0.5，同 ShoppingCardView.estimatedHeight）
+const yen = v => `${s.yen}${v.toLocaleString('en-US')}`;
+const cols = [[], []], h = [0, 0];
+for (const it of ITEMS) {
+  const k = h[0] <= h[1] ? 0 : 1;
+  cols[k].push(it); h[k] += it.r + .5;
+}
+const card = it => `<div class="card ${it.status}${it.linked ? ' linked' : ''}">
+  <div class="media"><div class="content"><img src="img/shop-${it.img}.svg" alt="">${it.linked ? `<span class="flag">${s.flag}</span>` : ''}</div>
+    ${it.status === 'bought' ? `<div class="badge">${ic('shoppingBag')}</div>` : it.status === 'skipped' ? `<div class="badge">${ic('ban')}</div>` : ''}</div>
+  <div class="cap"><div class="n">${fmt(it.name)}</div><div class="p"><span class="mono">${yen(it.price)}</span>${s.sep}${s.cats[it.cat]}</div></div></div>`;
+const headBottom = document.getElementById('head').getBoundingClientRect().bottom;
+const scroll = +(params.get('scroll') || 0);
+d.insertAdjacentHTML('beforeend', `<div class="wall-clip" style="top:${headBottom + 12}px"><div class="wall" style="top:${-scroll}px">${cols.map(c => `<div class="col">${c.map(card).join('')}</div>`).join('')}</div></div>
+  <div class="fab">${ic('plus')}</div><div class="scrim"></div>`);
+
+chrome(d, { tab: 3 });
+await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+ready();
+</script>
+</body>
+</html>

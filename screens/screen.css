@@ -1,0 +1,84 @@
+/* ==========================================================================
+   TripEZGo 畫面複刻——官網與商店截圖用
+
+   每一個 .html 是一支 iPhone 17 Pro 的螢幕（402×874pt），tools/screens.mjs 用 3x 渲染成
+   1206×2622，跟模擬器截圖同尺寸，才能疊圖比對（screens/ref/）。
+
+   色票照抄 App 的 Palette.swift ＋ SemanticColors.swift：sRGB 混色的那幾格寫成
+   color-mix(in srgb …)，EventSwatch 的配方是 OKLCH 混色，寫成 color-mix(in oklch …)，
+   同一個公式，不是目測出來的近似色。
+   ========================================================================== */
+
+:root {
+  /* Palette.swift — Neutral / Teal / Green / Amber / Red（淺色） */
+  --n0: #ffffff; --n10: #fbf8f4; --n40: #dbd5cd; --n100: #7c6f63; --n400: #241d17; --n500: #1f1914;
+  --teal50: #5cc6c3; --teal100: #2f918e; --teal300: #1d7370;
+  --green100: #40965d; --green200: #367f4f;
+  --amber100: #e9a535; --amber200: #8a6212;
+  --red100: #d25242; --red200: #c14b3c;
+
+  /* SemanticColors.swift */
+  --card: var(--n0);
+  --surface: var(--n10);
+  --page: var(--n0);
+  --sunken: color-mix(in srgb, var(--n40) 28%, var(--n10));
+  --ink: var(--n400);
+  --muted: var(--n100);
+  --muted-on-sunken: color-mix(in srgb, var(--n100) 90%, var(--n400));
+  --muted-faint: color-mix(in srgb, var(--n100) 62%, var(--n0));
+  --border: var(--n40);
+  --border-soft: color-mix(in srgb, var(--n40) 55%, var(--n0));
+  --accent: var(--teal100);
+  --accent-ink: var(--teal300);
+  --brand-teal: var(--teal50);
+  --success: var(--green100);
+  --warning: var(--amber100);
+  --danger: var(--red100);
+
+  /* Typography.swift：xs 12 / sm 13 / base 15 / lg 16 / xl 22 / xxl 28 */
+  --t-xs: 12px; --t-sm: 13px; --t-base: 15px; --t-lg: 16px; --t-xl: 22px; --t-xxl: 28px;
+  --font: -apple-system, "SF Pro Text", "PingFang TC", "Hiragino Sans", sans-serif;
+}
+html[lang="ja"] { --font: -apple-system, "SF Pro Text", "Hiragino Sans", sans-serif; }
+
+/* 行程類型的色票（EventTypeSwatch.swift）在 chrome.js 裡照 App 的 OKLCh.mix 算好再塞進來。 */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #888; }
+body { width: 402px; height: 874px; overflow: hidden; }
+
+.device {
+  position: relative; width: 402px; height: 874px; overflow: hidden;
+  background: var(--page); color: var(--ink);
+  font-family: var(--font); -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 系統外框：狀態列、動態島、主畫面橫條。量自 iCloud1 的模擬器截圖（screens/ref） ── */
+.sb { position: absolute; inset: 0 0 auto 0; height: 54px; z-index: 50; pointer-events: none; color: #000; }
+.sb-time { position: absolute; left: 47px; top: 20.5px; width: 51px; text-align: center;
+  font: 600 18.5px/22px -apple-system, sans-serif; letter-spacing: -.2px; }
+.sb-island { position: absolute; left: 138.3px; top: 14px; width: 125px; height: 36.3px;
+  border-radius: 18.2px; background: #000; }
+.sb-icons { position: absolute; left: 288px; top: 26px; }
+.sb.on-dark { color: #fff; }
+
+.home { position: absolute; left: 130px; bottom: 8px; width: 141px; height: 5px; border-radius: 3px;
+  background: #000; z-index: 50; }
+.home.on-dark { background: #fff; }
+
+/* ── 分頁列（iOS 26 浮動玻璃分頁列，系統元件；照截圖量） ── */
+.tabbar { position: absolute; left: 21px; right: 21px; top: 791px; height: 62px; z-index: 40;
+  border-radius: 31px; background: rgba(255,255,255,.94);
+  box-shadow: 0 0 0 .5px rgba(0,0,0,.04), 0 8px 30px rgba(0,0,0,.08);
+  display: grid; grid-template-columns: repeat(5, 1fr); padding: 4px 4px; }
+.tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1px; color: #1a1a1a; font: 500 10px/12px var(--font); border-radius: 27px; }
+.tab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round; }
+.tab.on { background: rgba(0,0,0,.08); color: var(--accent-ink); }
+.tab.on svg { stroke-width: 2; }
+
+/* 「–」「→」：見 chrome.js 的 fmt()。-apple-system 在中文頁會被解析成 PingFang，指名西文字型才畫得出窄的那一個 */
+.lt { font-family: "Helvetica Neue", Helvetica, sans-serif; }
+.lt.ar { font-family: "Lucida Grande", "Helvetica Neue", sans-serif; }

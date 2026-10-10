@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>行事曆模式</title>
+<!--
+  旅程分頁・行事曆模式（App：Modules/UI/…/TripCalendar）。
+  參數：?lang=zh-Hant-TW|en|ja &day=2（第幾天）&today=1（第幾天是今天）&start=2026-10-10（第 1 天的日期）
+        &top=7（畫面最上面那一條時刻線是幾點）
+  版面數字照 TripCalendarMetrics.swift；系統外框照 screens/ref/zh/calendar.png 量。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  .head { position: absolute; left: 20px; top: 74px; width: 314px; }
+  .greet { font-size: var(--t-xs); line-height: 14px; color: var(--muted); letter-spacing: .24px; }
+  .title { margin-top: 2px; font: 600 var(--t-xxl)/34px var(--font); letter-spacing: -.59px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .head-act { position: absolute; left: 346px; top: 70px; width: 44px; height: 44px;
+    display: grid; place-items: center; color: var(--ink); }
+  .head-act svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 日期籤：DayChipCell — 高 44、左右 14、圓角 12、間距 8 */
+  .chips { position: absolute; top: 138px; left: 0; display: flex; gap: 8px; white-space: nowrap; }
+  .chip { height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--sunken); display: flex; flex-direction: column; justify-content: center; gap: 1px; }
+  .chip b { font: 600 var(--t-sm)/16px var(--font); color: var(--muted-on-sunken); display: flex; align-items: center; gap: 6px; }
+  .chip span { font: 400 var(--t-xs)/14px var(--font); color: var(--muted-on-sunken); }
+  .chip.on { background: var(--ink); border-color: var(--ink); }
+  .chip.on b { color: var(--card); font-weight: 700; }
+  .chip.on span { color: color-mix(in oklch, var(--card) 28%, var(--ink)); }
+  .chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .chip.on i { background: var(--brand-teal); }
+
+  /* 全日：AllDayBandView — 上 8、下 6、列高 36、間距 4、左右 10、邊條 4 */
+  .allday { position: absolute; top: 186px; left: 0; right: 0; padding: 8px 20px 6px 52px;
+    border-bottom: 1px solid var(--border-soft); background: var(--card); }
+  .allday-label { position: absolute; left: 20px; top: 13px; font-size: var(--t-xs); line-height: 20px; color: var(--muted); }
+  .ad { position: relative; height: 36px; border: 1px solid var(--sw-stroke); border-radius: 8px;
+    background: var(--sw-fill); overflow: hidden; display: flex; align-items: center; padding: 0 22px 0 14px;
+    font: 600 var(--t-sm)/18px var(--font); color: var(--ink); white-space: nowrap; }
+  .ad + .ad { margin-top: 4px; }
+  .ad::before, .ev::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--sw-base); }
+  .todo-dot { position: absolute; right: 7px; top: 6px; width: 11px; height: 11px; border-radius: 50%;
+    background: var(--danger); border: 1.5px solid var(--card); }
+
+  /* 時間軸：hourHeight 66、topInset 10、標籤寬 44、canvasLeading 56、右邊 20 */
+  .grid { position: absolute; left: 0; right: 0; top: 277px; bottom: 0; overflow: hidden; }
+  .hour { position: absolute; left: 0; right: 0; height: 0; }
+  .hour::after { content: ""; position: absolute; left: 64px; right: 0; top: 0; border-top: 1px solid var(--border-soft); }
+  .hour span { position: absolute; left: 0; width: 44px; text-align: right; top: -8px; font-size: var(--t-xs);
+    line-height: 16px; color: var(--muted); }
+  .route { position: absolute; left: 227.5px; width: 2px; background: var(--muted); }
+  .ev { position: absolute; left: 56px; right: 20px; border: 1px solid var(--sw-stroke); border-radius: 8px;
+    background: var(--sw-fill); overflow: hidden; padding: 0 10px 0 14px; }
+  .ev .t { margin-top: -1px; }
+  .ev .t { font: 600 var(--t-sm)/17px var(--font); color: var(--ink); }
+  .ev .m { font: 400 var(--t-xs)/16px var(--font); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev.line { border: 0; background: none; overflow: visible; padding: 0; }
+  .ev.line::before { width: var(--bar); top: 1px; bottom: 1px; }
+  .ev.line .t { position: absolute; left: calc(var(--bar) + 8px); top: -1px; white-space: nowrap; background: var(--card); padding-right: 2px; }
+
+  /* 路程膠囊：RouteLegCell — 高 24、白底一圈蓋住路線 */
+  .leg { position: absolute; left: 228.5px; transform: translateX(-50%); }
+  .leg-pill { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 12px; border-radius: 13px;
+    background: var(--card); border: 1px solid var(--border); box-shadow: 0 0 0 4px var(--card);
+    font: 600 var(--t-sm)/16px var(--font); color: var(--ink); white-space: nowrap; }
+  .leg-pill svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .leg-pill .pk { width: 15px; height: 15px; color: var(--muted); stroke-width: 2; }
+  .leg-pill .g { margin-left: 8px; } .leg-pill .g + span { margin-left: 6px; }
+
+  .fab { position: absolute; left: 335px; top: 728px; width: 50px; height: 50px; border-radius: 50%;
+    background: var(--accent); display: grid; place-items: center; z-index: 30;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 6px 16px rgba(31,25,20,.18); }
+  .fab svg { width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; }
+  .scrim { position: absolute; left: 0; right: 0; top: 760px; bottom: 0; z-index: 20;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 30px); }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { fmt, params, t, loadTrip, loadCategories, categoryName, chrome, svg, swatchClass, duration, toMin, ready } from './chrome.js';
+
+const d = document.getElementById('d');
+const trip = await loadTrip();
+await loadCategories();
+const dayNo = +(params.get('day') || 2);
+const todayNo = +(params.get('today') || 1);
+const start = new Date((params.get('start') || '2026-10-10') + 'T00:00:00');
+const topHour = +(params.get('top') ?? 7);
+const dateOf = n => new Date(start.getTime() + (n - 1) * 864e5);
+const today = dateOf(todayNo);
+
+// 頁首
+d.insertAdjacentHTML('beforeend', `
+  <div class="head"><div class="greet">${t.monthDay(today.getMonth() + 1, today.getDate())} · ${t.weekday[today.getDay()]}</div>
+  <div class="title">${fmt(trip.title)}</div></div>
+  <div class="head-act">${svg('readingTimeline')}</div>`);
+
+// 日期籤：把選中那一籤捲進畫面（App 捲到「選中那一籤的前一籤露出一點」——照截圖，第 2 天時往左捲 24）
+const chips = Array.from({ length: trip.dayCount }, (_, i) => {
+  const n = i + 1, dt = dateOf(n), isToday = n === todayNo;
+  return `<div class="chip${n === dayNo ? ' on' : ''}"><b>${isToday ? '<i></i>' : ''}${isToday ? t.today : t.day(n)}</b>
+    <span>${t.shortDate(dt.getMonth() + 1, dt.getDate())} ${t.weekday[dt.getDay()]}</span></div>`;
+}).join('');
+d.insertAdjacentHTML('beforeend', `<div class="chips" id="chips">${chips}</div>`);
+const chipsEl = document.getElementById('chips');
+const firstX = 28 - (dayNo > 1 ? 24 : 0);
+chipsEl.style.left = firstX + 'px';
+
+// 全日
+const allDay = trip.allDayEvents.filter(a => a.fromDay <= dayNo && dayNo <= a.toDay);
+d.insertAdjacentHTML('beforeend', `<div class="allday" id="allday"><div class="allday-label">${t.allDay}</div>
+  ${allDay.map(a => `<div class="ad ${swatchClass(a.category)}">${fmt(a.title)}${(a.todos || []).length ? '<span class="todo-dot"></span>' : ''}</div>`).join('')}</div>`);
+const gridTop = document.getElementById('allday').getBoundingClientRect().bottom;
+
+// 時間軸
+const H = 66;
+const grid = document.createElement('div');
+grid.className = 'grid'; grid.style.top = gridTop + 'px';
+d.appendChild(grid);
+const firstLine = 33.5;                // 第一條可見時刻線距離時間軸頂端（照截圖：07:00 在 310.3）
+const y = min => firstLine + (min - topHour * 60) / 60 * H;
+let html = '';
+for (let h = topHour - 1; h <= 24; h++) html += `<div class="hour" style="top:${y(h * 60)}px"><span>${String(h).padStart(2, '0')}:00</span></div>`;
+
+const day = trip.days.find(x => x.day === dayNo);
+const evs = day.events.filter(e => e.start && e.end).map(e => ({ ...e, s: toMin(e.start), e2: toMin(e.end) }));
+const M = 3; // blockMarginVMax
+evs.forEach((e, i) => {
+  const top = y(e.s), bot = y(e.e2), hgt = bot - top;
+  const sw = swatchClass(e.category);
+  if (hgt < 20) {            // 太短：畫成一條色條＋旁邊的名稱（EventBlockCell 的 line 形）
+    html += `<div class="ev line ${sw}" style="top:${top}px;height:${hgt}px;--bar:123px"><div class="t">${fmt(e.title)}</div></div>`;
+  } else {
+    const meta = [categoryName(e.category), e.place && e.place.name].filter(Boolean).join(' · ');
+    html += `<div class="ev ${sw}" style="top:${top + M}px;height:${hgt - 2 * M}px">
+      <div class="t">${fmt(e.title)}</div><div class="m">${fmt(`${e.start} – ${e.end}`)} · ${duration(e.e2 - e.s)}</div>
+      ${hgt > 52 ? `<div class="m">${fmt(meta)}</div>` : ''}</div>`;
+  }
+  // 跟上一個行程之間的路線與路程膠囊
+  const prev = evs[i - 1];
+  if (prev) {
+    const a = y(prev.e2) + 4, b = top - 4;
+    if (b > a) html += `<div class="route" style="top:${a}px;height:${b - a}px"></div>`;
+    const leg = e.leg;
+    if (leg && leg.mode === 'transit' && leg.runs && b - a > 34) {
+      const run = leg.runs[leg.selectedRunIndex || 0];
+      const mins = toMin(run.arrival) - toMin(run.departure);
+      html += `<div class="leg" style="top:${(a + b) / 2 - 13}px"><div class="leg-pill">${svg('transit')}<span>${run.name}</span>
+        <span class="g">${run.departure}</span><span>${duration(mins)}</span>${svg('picker', 'pk')}</div></div>`;
+    }
+  }
+});
+grid.innerHTML = html;
+
+d.insertAdjacentHTML('beforeend', `<div class="fab">${svg('plus')}</div><div class="scrim"></div>`);
+chrome(d, { tab: 1 });
+ready();
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>時間軸模式</title>
+<!--
+  旅程分頁・時間軸模式（App：Modules/UI/…/TripCalendar 的 Route*Cell、TimelineAxis、RouteGraph）。
+  參數：?lang=zh-Hant-TW|en|ja &day=2（第幾天）&today=1（第幾天是今天）&start=2026-10-10（第 1 天的日期）
+  軸的刻度照 TimelineAxis.make 算（膠囊高度跟 App 一樣是量 DOM 出來的，不是加出來的）；
+  捲動位置照 App 的 reveal：第一個停點停在時間軸頂端下 24pt。系統外框照 screens/ref/zh/timeline.png 量。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  .head { position: absolute; left: 20px; top: 74px; width: 314px; }
+  .greet { font-size: var(--t-xs); line-height: 14px; color: var(--muted); letter-spacing: .24px; }
+  .title { margin-top: 2px; font: 600 var(--t-xxl)/34px var(--font); letter-spacing: -.59px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* HeadIconButton.setToggle(lit: true)：圖示 23、tzAccentInk，底是 tzOnTint（teal100 14% 混白）的 44pt 圓 */
+  .head-act { position: absolute; left: 346px; top: 70px; width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center; color: var(--accent-ink);
+    background: color-mix(in srgb, var(--teal100) 14%, #fff); }
+  .head-act svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 日期籤、全日：同 calendar.html */
+  .chips { position: absolute; top: 138px; left: 0; display: flex; gap: 8px; white-space: nowrap; }
+  .chip { height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--sunken); display: flex; flex-direction: column; justify-content: center; gap: 1px; }
+  .chip b { font: 600 var(--t-sm)/16px var(--font); color: var(--muted-on-sunken); display: flex; align-items: center; gap: 6px; }
+  .chip span { font: 400 var(--t-xs)/14px var(--font); color: var(--muted-on-sunken); }
+  .chip.on { background: var(--ink); border-color: var(--ink); }
+  .chip.on b { color: var(--card); font-weight: 700; }
+  .chip.on span { color: color-mix(in oklch, var(--card) 28%, var(--ink)); }
+  .chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .chip.on i { background: var(--brand-teal); }
+  .allday { position: absolute; top: 186px; left: 0; right: 0; padding: 8px 20px 5px 52px; z-index: 5;
+    border-bottom: 1px solid var(--border-soft); background: var(--card); }
+  .allday-label { position: absolute; left: 20px; top: 13px; font-size: var(--t-xs); line-height: 20px; color: var(--muted); }
+  .ad { position: relative; height: 36px; border: 1px solid var(--sw-stroke); border-radius: 8px;
+    background: var(--sw-fill); overflow: hidden; display: flex; align-items: center; padding: 0 22px 0 14px;
+    font: 600 var(--t-sm)/18px var(--font); color: var(--ink); white-space: nowrap; }
+  .ad + .ad { margin-top: 4px; }
+  .ad::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--sw-base); }
+  .todo-dot { position: absolute; right: 7px; top: 6px; width: 11px; height: 11px; border-radius: 50%;
+    background: var(--danger); border: 1.5px solid var(--card); }
+
+  /* 時間軸：捲動內容整塊往上推 scroll 點 */
+  .grid { position: absolute; left: 0; right: 0; bottom: 83px; overflow: hidden; } /* 捲動區止於分頁列頂（照截圖：791） */
+  .content { position: absolute; left: 0; right: 0; top: 0; }
+  /* TimelineRulerView：每個停點一條一像素的線（從 64 起）＋置中在線上的時刻 */
+  .rule { position: absolute; left: 64px; right: 0; height: 1px; background: var(--border-soft); transform: scaleY(.3334); transform-origin: top; }
+  .stamp { position: absolute; left: 0; width: 44px; text-align: right; letter-spacing: .65px; font-size: var(--t-xs); line-height: 16px; color: var(--muted); }
+  .links { position: absolute; left: 0; top: 0; overflow: visible; }
+  /* RouteStayCell：寬 4、色票底色 50% */
+  .stay { position: absolute; width: 4px; border-radius: 2px; margin-left: -2px; background: var(--sw-base); opacity: .5; }
+  /* RouteDotCell：14／11（空心挖 6），外面一圈 4pt 頁面色 */
+  .dot { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: var(--card);
+    display: grid; place-items: center; }
+  .dot i { width: 14px; height: 14px; border-radius: 50%; background: var(--sw-base); display: grid; place-items: center; }
+  .dot.end i { width: 11px; height: 11px; }
+  .dot.end i::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--card); }
+  .bookend { position: absolute; width: 21px; height: 21px; margin: -10.5px 0 0 -10.5px; border-radius: 8px; background: var(--card);
+    display: grid; place-items: center; }
+  .bookend i { width: 13px; height: 13px; border-radius: 4px; background: var(--sw-base); }
+  /* RouteNodeCell：方框（圓角 sm=8，外圈 3pt 頁面色）＋底下 3pt 處一句停留時間 */
+  .node { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 3px; transform: translateX(-50%); }
+  .halo { padding: 3px; border-radius: 11px; background: var(--card); max-width: 100%; }
+  .npill { display: flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 8px; background: var(--surface);
+    border: 1px solid var(--sw-base); min-width: 0; }
+  .npill svg { width: 14px; height: 14px; flex: none; fill: var(--sw-base); fill-rule: evenodd; }
+  .npill span { font: 600 var(--t-sm)/15.667px var(--font); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: -1px 0; padding: 1px 0; }
+  .stayt { padding: 0 5px; border-radius: 8px; background: var(--card); font: 400 var(--t-xs)/14px var(--font); color: var(--muted); white-space: nowrap; }
+  /* RouteLegCell：膠囊，外圈 3pt 頁面色，內距 11／4，圖示 14，間距 5 */
+  .lpill { position: absolute; padding: 3px; border-radius: 99px; background: var(--card); transform: translateX(-50%); }
+  .lpill > div { display: flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px;
+    background: var(--surface); border: 1px solid var(--border); }
+  .lpill.unset > div { background: var(--card); border-style: dashed; }
+  .lpill svg { width: 14px; height: 14px; flex: none; }
+  .lpill svg.maki { fill: var(--ink); fill-rule: evenodd; }
+  .lpill svg.line { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+  .lpill svg.swap { stroke: var(--muted); }
+  .lpill.unset svg.line { stroke: var(--muted); }
+  .lpill span { font: 600 var(--t-sm)/15.667px var(--font); color: var(--ink); white-space: pre; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .lpill.unset span { font-weight: 500; color: var(--muted); }
+
+  .fab { position: absolute; left: 335px; top: 728px; width: 50px; height: 50px; border-radius: 50%;
+    background: var(--accent); display: grid; place-items: center; z-index: 30;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 6px 16px rgba(31,25,20,.18); }
+  .fab svg { width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { fmt, params, lang, t, loadTrip, loadCategories, chrome, svg, swatchClass, toMin, ready } from './chrome.js';
+
+// EventTypeIcons.swift（Maki，15 格，even-odd 填色）——只收這份範本用得到的類型
+const MAKI = {
+  airport: 'M6.8182,0.6818H4.7727 C4.0909,0.6818,4.0909,0,4.7727,0h5.4545c0.6818,0,0.6818,0.6818,0,0.6818H8.1818c0,0,0.8182,0.5909,0.8182,1.9545V4h6v2L9,8l-0.5,5 l2.5,1.3182V15H4v-0.6818L6.5,13L6,8L0,6V4h6V2.6364C6,1.2727,6.8182,0.6818,6.8182,0.6818z',
+  artgallery: 'm10.71 3-2.86-2.849996c-.1945-.1960996-.511-.1973996-.7071-.0029-.001.001-.0019.0019-.0029.0029l-2.85 2.849996h-2.79c-.2761 0-.5.2239-.5.5v9c0 .2761.2239.5.5.5h12c.2761 0 .5-.2239.5-.5v-9c0-.2761-.2239-.5-.5-.5zm-3.21-1.79 1.79 1.79h-3.58zm5.5 10.79h-11v-8h11zm-8-5c-.5523 0-1-.4477-1-1s.4477-1 1-1 1 .4477 1 1-.4477 1-1 1zm7 4h-7.5l1.5-3 1.25 2.5 2.25-4.5z',
+  bus: 'M2 3C2 1.9 2.9 1 4 1H11C12.1 1 13 1.9 13 3V11C13 12 12 12 12 12V13C12 13.55 11.55 14 11 14C10.45 14 10 13.55 10 13V12H5V13C5 13.55 4.55 14 4 14C3.45 14 3 13.55 3 13V12C2 12 2 11 2 11V3ZM3.5 4C3.22 4 3 4.22 3 4.5V7.5C3 7.78 3.22 8 3.5 8H11.5C11.78 8 12 7.78 12 7.5V4.5C12 4.22 11.78 4 11.5 4H3.5ZM4 9C3.45 9 3 9.45 3 10C3 10.55 3.45 11 4 11C4.55 11 5 10.55 5 10C5 9.45 4.55 9 4 9ZM11 9C10.45 9 10 9.45 10 10C10 10.55 10.45 11 11 11C11.55 11 12 10.55 12 10C12 9.45 11.55 9 11 9ZM4 2.5C4 2.78 4.22 3 4.5 3H10.5C10.78 3 11 2.78 11 2.5C11 2.22 10.78 2 10.5 2H4.5C4.22 2 4 2.22 4 2.5Z',
+  cablecar: 'M13,5H8V2.6c0.1854-0.1047,0.3325-0.2659,0.42-0.46L13.5,1.5C13.7761,1.5,14,1.2761,14,1s-0.2239-0.5-0.5-0.5L8.28,1.15 C8.0954,0.9037,7.8077,0.7562,7.5,0.75C7.0963,0.752,6.7334,0.9966,6.58,1.37L1.5,2C1.2239,2,1,2.2239,1,2.5S1.2239,3,1.5,3 l5.22-0.65C6.7967,2.4503,6.8917,2.5351,7,2.6V5H2C1.4477,5,1,5.4477,1,6v7c0,0.5523,0.4477,1,1,1h11c0.5523,0,1-0.4477,1-1V6 C14,5.4477,13.5523,5,13,5z M7,11H3V7h4V11z M12,11H8V7h4V11z',
+  cafe: 'M12,5h-2V3H2v4c0.0133,2.2091,1.8149,3.9891,4.024,3.9758C7.4345,10.9673,8.7362,10.2166,9.45,9H12c1.1046,0,2-0.8954,2-2 S13.1046,5,12,5z M12,8H9.86C9.9487,7.6739,9.9958,7.3379,10,7V6h2c0.5523,0,1,0.4477,1,1S12.5523,8,12,8z M10,12.5 c0,0.2761-0.2239,0.5-0.5,0.5h-7C2.2239,13,2,12.7761,2,12.5S2.2239,12,2.5,12h7C9.7761,12,10,12.2239,10,12.5z',
+  castle: 'M11,4H4C3.4477,4,3,3.5523,3,3V0.5C3,0.2239,3.2239,0,3.5,0S4,0.2239,4,0.5V2h1V1c0-0.5523,0.4477-1,1-1s1,0.4477,1,1v1h1V1 c0-0.5523,0.4477-1,1-1s1,0.4477,1,1v1h1V0.5C11,0.2239,11.2239,0,11.5,0S12,0.2239,12,0.5V3C12,3.5523,11.5523,4,11,4z M14,14.5 c0,0.2761-0.2239,0.5-0.5,0.5h-12C1.2239,15,1,14.7761,1,14.5S1.2239,14,1.5,14H2c0.5523,0,1-0.4477,1-1c0,0,1-6,1-7 c0-0.5523,0.4477-1,1-1h5c0.5523,0,1,0.4477,1,1c0,1,1,7,1,7c0,0.5523,0.4477,1,1,1h0.5c0.2723-0.0001,0.4946,0.2178,0.5,0.49V14.5z M9,10.5C9,9.6716,8.3284,9,7.5,9S6,9.6716,6,10.5V14h3V10.5z',
+  dessert: 'M13,4a1,1,0,0,0-1-1,1,1,0,0,0-2,0V5.0673A3.4808,3.4808,0,0,0,4.3583,9H2a1,1,0,0,0,0,2,1,1,0,0,0,1,1,1,1,0,0,0,2,0V9.9326A3.4807,3.4807,0,0,0,10.6417,6H13a1,1,0,0,0,0-2ZM7.5,9.9925A2.484,2.484,0,0,1,6.3184,5.319a1.0809,1.0809,0,0,1,.5459.307A2.1243,2.1243,0,0,1,7.25,7.0117l.001.9561A2.5821,2.5821,0,0,0,7.76,9.7031a1.5462,1.5462,0,0,0,.2591.2333A2.4861,2.4861,0,0,1,7.5,9.9925ZM8.6815,9.681a1.0813,1.0813,0,0,1-.5458-.307A2.1243,2.1243,0,0,1,7.75,7.9883l-.001-.9561A2.5821,2.5821,0,0,0,7.24,5.2969a1.5557,1.5557,0,0,0-.2592-.2334A2.4843,2.4843,0,0,1,8.6815,9.681Z',
+  dining: 'M3.5,0l-1,5.5c-0.1464,0.805,1.7815,1.181,1.75,2L4,14c-0.0384,0.9993,1,1,1,1s1.0384-0.0007,1-1L5.75,7.5 c-0.0314-0.8176,1.7334-1.1808,1.75-2L6.5,0H6l0.25,4L5.5,4.5L5.25,0h-0.5L4.5,4.5L3.75,4L4,0H3.5z M12,0 c-0.7364,0-1.9642,0.6549-2.4551,1.6367C9.1358,2.3731,9,4.0182,9,5v2.5c0,0.8182,1.0909,1,1.5,1L10,14c-0.0905,0.9959,1,1,1,1 s1,0,1-1V0z',
+  ferry: 'M5.33,11c0.6745,0.009,1.3262,0.245,1.85,0.67l0.26,0.23h0.05l0.31-0.28c0.9817-0.8115,2.379-0.8846,3.44-0.18L13.5,7L12,6 V2.45c-0.0466-0.8-0.6989-1.4305-1.5-1.45H10c0.0343-0.518-0.3579-0.9657-0.8759-1C9.0828-0.0027,9.0413-0.0027,9,0H6 C5.482-0.0343,5.0343,0.3579,5,0.8759C4.9973,0.9172,4.9973,0.9587,5,1H4.5C3.6989,1.0195,3.0466,1.65,3,2.45V6L1.5,7l2.25,4.53 C4.2143,11.2041,4.7631,11.02,5.33,11z M4,2.45c0.0105-0.2594,0.2293-0.4611,0.4886-0.4506C4.4924,1.9996,4.4962,1.9998,4.5,2h6 c0.259-0.0171,0.4829,0.1789,0.5,0.4379c0.0014,0.0207,0.0014,0.0414,0,0.0621v3l-3.5-2L4,5.45C4,5.45,4,2.45,4,2.45z M14,13v1 c-0.2626,0.0194-0.5069,0.1416-0.68,0.34c-0.2717,0.2883-0.6178,0.4959-1,0.6c-0.6147,0.1815-1.2795,0.0425-1.77-0.37l-0.39-0.35 c-0.3043-0.3026-0.7957-0.3026-1.1,0c-0.14,0.12-0.27,0.25-0.42,0.37c-0.7328,0.5856-1.7814,0.556-2.48-0.07l-0.39-0.35 c-0.2864-0.2502-0.7136-0.2502-1,0c-0.19,0.15-0.36,0.32-0.55,0.47c-0.7043,0.5215-1.6732,0.4968-2.35-0.06l-0.31-0.27 C1.4153,14.1443,1.2172,14.0346,1,14v-1c0.2585-0.032,0.5205,0.0169,0.75,0.14c0.2782,0.1722,0.5424,0.3661,0.79,0.58 c0.2051,0.2235,0.5147,0.319,0.81,0.25c0.1125-0.0333,0.2177-0.0876,0.31-0.16c0.16-0.12,0.29-0.26,0.45-0.39 c0.7106-0.5888,1.7394-0.5888,2.45,0c0.16,0.13,0.31,0.28,0.47,0.41c0.2864,0.2502,0.7136,0.2502,1,0c0.16-0.13,0.31-0.28,0.47-0.41 c0.7123-0.5943,1.7477-0.5943,2.46,0c0.15,0.13,0.29,0.27,0.44,0.39c0.2864,0.2502,0.7136,0.2502,1,0l0.47-0.41 C13.1895,13.1408,13.5886,12.9995,14,13z',
+  flight: 'M15,6.8182L15,8.5l-6.5-1 l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182 L15,6.8182z',
+  hotel: 'M0.5,2.5C0.2,2.5,0,2.7,0,3v7.5v2C0,12.8,0.2,13,0.5,13S1,12.8,1,12.5V11h13v1.5 c0,0.3,0.2,0.5,0.5,0.5s0.5-0.2,0.5-0.5v-2c0-0.3-0.2-0.5-0.5-0.5H1V3C1,2.7,0.8,2.5,0.5,2.5z M3.5,3C2.7,3,2,3.7,2,4.5l0,0 C2,5.3,2.7,6,3.5,6l0,0C4.3,6,5,5.3,5,4.5l0,0C5,3.7,4.3,3,3.5,3L3.5,3z M7,4C5.5,4,5.5,5.5,5.5,5.5V7h-3C2.2,7,2,7.2,2,7.5v1 C2,8.8,2.2,9,2.5,9H6h9V6.5C15,4,12.5,4,12.5,4H7z',
+  market: 'M 13.199219 1.5 C 13.199219 1.5 11.808806 1.4588 11.253906 2 C 10.720406 2.5202 10.5 2.9177 10.5 4 L 1.1992188 4 L 2.59375 8.8144531 C 2.59725 8.8217531 2.6036219 8.8287375 2.6074219 8.8359375 C 2.8418219 9.4932375 3.4545469 9.9666406 4.1855469 9.9941406 C 4.1885469 9.9954406 4.1992187 10 4.1992188 10 L 10.699219 10 L 10.699219 10.199219 C 10.699219 10.199219 10.7 10.500391 10.5 10.900391 C 10.3 11.300391 10.200391 11.5 9.4003906 11.5 L 2.9003906 11.5 C 1.9003906 11.5 1.9003906 13 2.9003906 13 L 4.0996094 13 L 4.1992188 13 L 9.0996094 13 L 9.1992188 13 L 9.3007812 13 C 10.500781 13 11.399219 12.299609 11.699219 11.599609 C 11.999219 10.899609 12 10.300781 12 10.300781 L 12 10 L 12 4 C 12 3.4764 12.228619 3 12.699219 3 L 13.25 3 C 13.6642 3 14 2.6642 14 2.25 C 14 1.8358 13.6642 1.5 13.25 1.5 L 13.199219 1.5 z M 9.1992188 13 C 8.5992188 13 8.1992188 13.4 8.1992188 14 C 8.1992188 14.6 8.5992187 15 9.1992188 15 C 9.7992187 15 10.199219 14.6 10.199219 14 C 10.199219 13.4 9.7992188 13 9.1992188 13 z M 4.1992188 13 C 3.5992188 13 3.1992188 13.4 3.1992188 14 C 3.1992188 14.6 3.5992187 15 4.1992188 15 C 4.7992188 15 5.1992188 14.6 5.1992188 14 C 5.1992188 13.4 4.7992187 13 4.1992188 13 z',
+  museum: 'M7.5,0L1,3.5V4h13V3.5L7.5,0z M2,5v5l-1,1.6V13h13v-1.4L13,10V5H2z M4,6h1v5.5H4V6z M7,6h1v5.5H7V6z M10,6h1 v5.5h-1V6z',
+  park: 'M14,5.75c0.0113-0.6863-0.3798-1.3159-1-1.61C12.9475,3.4906,12.4014,2.9926,11.75,3 c-0.0988,0.0079-0.1962,0.0281-0.29,0.06c-0.0607-0.66-0.6449-1.1458-1.3048-1.0851C9.8965,1.9987,9.6526,2.1058,9.46,2.28l0,0 c0-0.6904-0.5596-1.25-1.25-1.25S6.96,1.5896,6.96,2.28C6.96,2.28,7,2.3,7,2.33C6.4886,1.8913,5.7184,1.9503,5.2797,2.4618 C5.1316,2.6345,5.0347,2.8451,5,3.07C4.8417,3.0195,4.6761,2.9959,4.51,3C3.6816,2.9931,3.0044,3.659,2.9975,4.4874 C2.9958,4.6872,3.0341,4.8852,3.11,5.07C2.3175,5.2915,1.8546,6.1136,2.0761,6.9061C2.2163,7.4078,2.6083,7.7998,3.11,7.94 c0.2533,0.7829,1.0934,1.2123,1.8763,0.959C5.5216,8.7258,5.9137,8.2659,6,7.71C6.183,7.8691,6.4093,7.9701,6.65,8v5L5,14h5l-1.6-1 v-2c0.7381-0.8915,1.6915-1.5799,2.77-2c0.8012,0.1879,1.603-0.3092,1.7909-1.1103C12.9893,7.7686,13.0025,7.6444,13,7.52 c0.0029-0.0533,0.0029-0.1067,0-0.16C13.6202,7.0659,14.0113,6.4363,14,5.75z M8.4,10.26V6.82C8.6703,7.3007,9.1785,7.5987,9.73,7.6 h0.28c0.0156,0.4391,0.2242,0.849,0.57,1.12C9.7643,9.094,9.0251,9.6162,8.4,10.26z',
+  shopping: 'm13.33 5h-1.83l-.39-2.33c-.1601-.7182-.7017-1.2905-1.41-1.49-.3493-.1124-.7131-.173-1.08-.18h-2.24c-.3669.007-.7307.0676-1.08.18-.7083.1995-1.2499.7718-1.41 1.49l-.39 2.33h-1.83c-.2761-.0017-.5013.2208-.503.497-.0003.0519.0074.1035.023.153l1.88 6.3c.1964.6246.7753 1.0496 1.43 1.05h6c.651-.0047 1.2247-.4289 1.42-1.05l1.88-6.3c.0829-.2634-.0635-.5441-.3269-.627-.0463-.0146-.0945-.0223-.1431-.023zm-8.81 0 .36-2.17c.0807-.3625.3736-.6395.74-.7.2463-.0776.5019-.1213.76-.13h2.24c.2614.0078.5205.0515.77.13.3664.0605.6593.3375.74.7l.35 2.17h-6z',
+  sight: 'M6,2C5.446,2,5.2478,2.5045,5,3L4.5,4h-2C1.669,4,1,4.669,1,5.5v5C1,11.331,1.669,12,2.5,12h10 c0.831,0,1.5-0.669,1.5-1.5v-5C14,4.669,13.331,4,12.5,4h-2L10,3C9.75,2.5,9.554,2,9,2H6z M2.5,5C2.7761,5,3,5.2239,3,5.5 S2.7761,6,2.5,6S2,5.7761,2,5.5S2.2239,5,2.5,5z M7.5,5c1.6569,0,3,1.3431,3,3s-1.3431,3-3,3s-3-1.3431-3-3S5.8431,5,7.5,5z M7.5,6.5C6.6716,6.5,6,7.1716,6,8l0,0c0,0.8284,0.6716,1.5,1.5,1.5l0,0C8.3284,9.5,9,8.8284,9,8l0,0C9,7.1716,8.3284,6.5,7.5,6.5 L7.5,6.5z',
+  souvenir: 'M10.5 1.00152C9.0967.957116 7.8503 1.89192 7.5 3.25152 7.1497 1.89192 5.9033.957116 4.5 1.00152 2.7678.947006 2.23515 2.79746 2.81831 4H1.5C1.22386 4 1 4.22386 1 4.5V5.5C1 5.77614 1.22386 6 1.5 6H13.5C13.7761 6 14 5.77614 14 5.5V4.5C14 4.22386 13.7761 4 13.5 4H12.1938C12.8 2.81516 12.2922 1.00143 10.5404 1.00112 10.5269 1.00112 10.5135 1.00122 10.5 1.00152ZM10.6831 4H8.5C8.50082 2.8961 9.3959 2.00152 10.5 2.00152 11.675 2.00152 11.8827 3.87414 10.6831 4ZM6.5 4H4.29187C3.25675 3.88256 3.19576 2.10553 4.3323 2.00152 4.3881 1.99642 4.4442 1.99642 4.5 2.00152 5.60409 2.00152 6.49918 2.8961 6.5 4ZM2 7.00146V11.5015C2 12.3299 2.6716 13.0015 3.5 13.0015H6.5V7.00146H2ZM8.5 7.00146V13.0015H11.5C12.3284 13.0015 13 12.3299 13 11.5015V7.00146H8.5Z',
+  station: 'M5.5,0c0,0-0.75,0-1,1L3,6.5V10c0,1,1,1,1,1h7c0,0,1,0,1-1V6.5L10.5,1c-0.2727-1-1-1-1-1H5.5z M6.5,1.5h2 c0,0,0.5357,0,0.75,1L10,6c0.2146,1.0017-1,1-1,1H6c0,0-1.2146,0.0017-1-1l0.75-3.5C5.9643,1.5,6.5,1.5,6.5,1.5z M5,8 c0.5523,0,1,0.4477,1,1s-0.4477,1-1,1S4,9.5523,4,9S4.4477,8,5,8z M6.75,8h1.5C8.3885,8,8.5,8.1115,8.5,8.25S8.3885,8.5,8.25,8.5 h-1.5C6.6115,8.5,6.5,8.3885,6.5,8.25S6.6115,8,6.75,8z M10,8c0.5523,0,1,0.4477,1,1s-0.4477,1-1,1S9,9.5523,9,9S9.4477,8,10,8z M4.125,12L3,15h1.5l0.375-1h5.25l0.375,1H12l-1.125-3h-1.5l0.375,1h-4.5l0.375-1H4.125z',
+  temple: 'M13.4978,6.9989h-0.5329c-0.09997-1.10708-0.53528-2.15731-1.2478-3.0105l0.378-0.3784 c0.19605-0.19447,0.19733-0.51105,0.00286-0.7071C11.90698,2.71037,11.59733,2.70518,11.4,2.8912l0,0l-0.0123,0.0123L11.01,3.2815 c-0.85331-0.71298-1.90385-1.14864-3.0113-1.2488V1.5c0-0.27614-0.22386-0.5-0.5-0.5s-0.5,0.22386-0.5,0.5v0.5327 C5.8916,2.13306,4.84144,2.56871,3.9884,3.2815L3.61,2.9C3.41007,2.70952,3.09358,2.71717,2.9031,2.9171 c-0.184,0.19312-0.184,0.49668,0,0.6898l0.3784,0.3775C2.56787,4.83856,2.13216,5.89031,2.0327,6.9989H1.5 c-0.27614,0-0.5,0.22386-0.5,0.5s0.22386,0.5,0.5,0.5h0.5327c0.09987,1.10695,0.535,2.15711,1.2473,3.0103l-0.3779,0.3779 c-0.19538,0.19514-0.19557,0.51173-0.00043,0.70711c0.19053,0.19076,0.49798,0.19611,0.69503,0.01209L3.609,12.094l0.3779-0.3779 c0.8533,0.71312,1.90395,1.1488,3.0115,1.2488v0.5329c0,0.27614,0.22386,0.5,0.5,0.5s0.5-0.22386,0.5-0.5v-0.5329 c1.10719-0.10026,2.15744-0.53592,3.0105-1.2488l0.3779,0.3779c0.19514,0.19538,0.51173,0.19557,0.70711,0.00043 c0.19076-0.19053,0.19611-0.49798,0.01209-0.69503l-0.0123-0.0123l0,0l-0.3779-0.3779c0.71283-0.8531,1.14848-1.90333,1.2488-3.0105 h0.5329c0.27609-0.00544,0.49549-0.23366,0.49006-0.50975C13.98227,7.22064,13.76611,7.00435,13.4978,6.9989z M7.9987,3.0505 c0.83871,0.09248,1.63383,0.42154,2.2926,0.9488l-2.15,2.15c-0.04663-0.0218-0.09436-0.04116-0.143-0.058V3.0505H7.9987z M6.9987,3.0505V6.091c-0.04864,0.01684-0.09637,0.0362-0.143,0.058l-2.15-2.15c0.65897-0.52726,1.45431-0.85622,2.2932-0.9485 H6.9987z M3.9987,4.7062l2.15,2.15c-0.0218,0.04663-0.04116,0.09436-0.058,0.143H3.0505 c0.09243-0.83886,0.42154-1.63413,0.9489-2.293L3.9987,4.7062z M3.0505,7.9987H6.091c0.01687,0.04863,0.03623,0.09636,0.058,0.143 l-2.15,2.15C3.47173,9.63281,3.14276,8.83753,3.0505,7.9987z M6.9989,11.9471c-0.83871-0.09248-1.63383-0.42154-2.2926-0.9488 l2.15-2.15c0.04663,0.0218,0.09436,0.04116,0.143,0.058v3.0405L6.9989,11.9471z M7.9989,11.9471V8.9066 c0.04864-0.01683,0.09638-0.03619,0.143-0.058l2.15,2.15c-0.65895,0.5273-1.4543,0.85627-2.2932,0.9485H7.9989z M10.9989,10.2914 l-2.15-2.15c0.02177-0.04664,0.04113-0.09437,0.058-0.143h3.0415c-0.09276,0.83901-0.42232,1.6343-0.9502,2.293H10.9989z M8.9066,6.9989c-0.01684-0.04864-0.0362-0.09637-0.058-0.143l2.15-2.15c0.52726,0.65877,0.85632,1.45389,0.9488,2.2926H8.9066 V6.9989z',
+  train: 'M 3 1 C 2.4477 1 2 1.4477 2 2 L 2 10 C 2 10.5523 2.4477 11 3 11 L 12 11 C 12.5523 11 13 10.5523 13 10 L 13 2 C 13 1.4477 12.5523 1 12 1 L 3 1 z M 5.75 1.5 L 5.7597656 1.5 L 9.2597656 1.5 C 9.3978656 1.5 9.5097656 1.6119 9.5097656 1.75 C 9.5097656 1.8881 9.3978656 2 9.2597656 2 L 5.75 2 C 5.6119 2 5.5 1.8881 5.5 1.75 C 5.5 1.6119 5.6119 1.5 5.75 1.5 z M 3.5 3 L 7 3 L 7 7 L 3.5 7 C 3.2239 7 3 6.7761 3 6.5 L 3 3.5 C 3 3.2239 3.2239 3 3.5 3 z M 8 3 L 11.5 3 C 11.7761 3 12 3.2239 12 3.5 L 12 6.5 C 12 6.7761 11.7761 7 11.5 7 L 8 7 L 8 3 z M 5 8 C 5.5523 8 6 8.4477 6 9 C 6 9.5523 5.5523 10 5 10 C 4.4477 10 4 9.5523 4 9 C 4 8.4477 4.4477 8 5 8 z M 10 8 C 10.5523 8 11 8.4477 11 9 C 11 9.5523 10.5523 10 10 10 C 9.4477 10 9 9.5523 9 9 C 9 8.4477 9.4477 8 10 8 z M 10.445312 11.994141 C 10.380597 11.999652 10.314981 12.018581 10.253906 12.050781 C 10.030606 12.168381 9.9302313 12.433922 10.019531 12.669922 L 10.189453 13 L 4.8105469 13 L 4.9394531 12.730469 C 5.0371531 12.472169 4.9067375 12.183637 4.6484375 12.085938 C 4.4124375 11.996738 4.1468969 12.097113 4.0292969 12.320312 L 3.0292969 14.320312 C 3.0080969 14.377912 2.9986 14.4387 3 14.5 C 3 14.7761 3.2239 15 3.5 15 C 3.6802 14.999 3.8450875 14.899434 3.9296875 14.740234 L 3.9296875 14.689453 L 4 14.689453 L 4.3105469 14 L 10.689453 14 L 11 14.689453 L 11 14.740234 C 11.0846 14.899434 11.249488 14.999 11.429688 15 C 11.705787 15 11.929688 14.7761 11.929688 14.5 C 11.949587 14.4212 11.949587 14.338566 11.929688 14.259766 L 10.929688 12.259766 C 10.833163 12.076541 10.639459 11.977608 10.445312 11.994141 z',
+  viewpoint: 'M6.02,8.425a2.3859,2.3859,0,0,0-.46.44l-4.55-3.5a7.9976,7.9976,0,0,1,1.51-1.51Zm6.46-4.56-3.5,4.55a2.3971,2.3971,0,0,1,.45.45l4.56-3.5A7.945,7.945,0,0,0,12.48,3.865ZM7.3042,10.0129a1.5,1.5,0,1,0,1.6829,1.2914h0A1.5,1.5,0,0,0,7.3042,10.0129ZM6.43,2.235a7.9329,7.9329,0,0,0-2.06.55l2.2,5.32a2.0438,2.0438,0,0,1,.61-.17Zm2.14.01-.75,5.69a2.49,2.49,0,0,1,.61.16l2.2-5.3A7.2129,7.2129,0,0,0,8.57,2.245Z',
+};
+
+// App 字串（Scripts/i18n/maps：UI.json durationMinutes／durationHours／durationHoursMinutes、runFieldSeparator、
+// parenthesised、noGapAtAll 的「無間隔」；Domain.json legMode*）
+const S = {
+  'zh-Hant-TW': { min: m => `${m} 分`, hr: h => `${h} 小時`, hm: (h, m) => `${h} 小時 ${m} 分`, sep: '　',
+    paren: (a, b) => `${a}（${b}）`, noGap: '無間隔',
+    mode: { walking: '步行', driving: '開車', cycling: '騎車', transit: '大眾運輸', other: '其他' } },
+  en: { min: m => `${m} min`, hr: h => `${h} h`, hm: (h, m) => `${h} h ${m} min`, sep: ' · ',
+    paren: (a, b) => `${a} (${b})`, noGap: 'No gap',
+    mode: { walking: 'Walking', driving: 'Driving', cycling: 'Cycling', transit: 'Transit', other: 'Other' } },
+  ja: { min: m => `${m} 分`, hr: h => `${h} 時間`, hm: (h, m) => `${h} 時間 ${m} 分`, sep: '　',
+    paren: (a, b) => `${a}（${b}）`, noGap: '間隔なし',
+    mode: { walking: '徒歩', driving: '車', cycling: '自転車', transit: '公共交通', other: 'その他' } },
+};
+const s = S[lang] || S['zh-Hant-TW'];
+const dur = m => m < 60 ? s.min(m) : (m % 60 ? s.hm(Math.floor(m / 60), m % 60) : s.hr(m / 60));
+
+// DesignIcon.swift：24 格線條
+const LINE = {
+  walking: '<circle cx="13" cy="4" r="2" fill="currentColor" stroke="none"/><path d="M11.5 8.5 9 13l3 2 1 6M13.5 8.5l2 3.5 3 1M12 15l-3 6"/>',
+  transit: '<rect x="6" y="4" width="12" height="12" rx="2"/><path d="M6 11h12M9.5 19.5 8 22M14.5 19.5 16 22"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.2V12l3 1.8"/>',
+  ellipsis: '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+  swap: '<path d="m7 9 5-5 5 5M7 15l5 5 5-5"/>',
+};
+const line = (n, w, cls = '') => `<svg class="line ${cls}" viewBox="0 0 24 24" style="stroke-width:${w}">${LINE[n]}</svg>`;
+const maki = (k, cls = 'maki') => `<svg class="${cls}" viewBox="0 0 15 15"><path d="${MAKI[k] || ''}"/></svg>`;
+
+const d = document.getElementById('d');
+const trip = await loadTrip();
+await loadCategories();
+const dayNo = +(params.get('day') || 2);
+const todayNo = +(params.get('today') || 1);
+const start = new Date((params.get('start') || '2026-10-10') + 'T00:00:00');
+const dateOf = n => new Date(start.getTime() + (n - 1) * 864e5);
+const today = dateOf(todayNo);
+
+// 頁首
+d.insertAdjacentHTML('beforeend', `
+  <div class="head"><div class="greet">${t.monthDay(today.getMonth() + 1, today.getDate())} · ${t.weekday[today.getDay()]}</div>
+  <div class="title">${fmt(trip.title)}</div></div>
+  <div class="head-act">${svg('readingCalendar')}</div>`);
+
+const chips = Array.from({ length: trip.dayCount }, (_, i) => {
+  const n = i + 1, dt = dateOf(n), isToday = n === todayNo;
+  return `<div class="chip${n === dayNo ? ' on' : ''}"><b>${isToday ? '<i></i>' : ''}${isToday ? t.today : t.day(n)}</b>
+    <span>${t.shortDate(dt.getMonth() + 1, dt.getDate())} ${t.weekday[dt.getDay()]}</span></div>`;
+}).join('');
+d.insertAdjacentHTML('beforeend', `<div class="chips" id="chips">${chips}</div>`);
+document.getElementById('chips').style.left = (28 - (dayNo > 1 ? 24 : 0)) + 'px';
+
+const allDay = trip.allDayEvents.filter(a => a.fromDay <= dayNo && dayNo <= a.toDay);
+d.insertAdjacentHTML('beforeend', `<div class="allday" id="allday"><div class="allday-label">${t.allDay}</div>
+  ${allDay.map(a => `<div class="ad ${swatchClass(a.category)}">${fmt(a.title)}${(a.todos || []).length ? '<span class="todo-dot"></span>' : ''}</div>`).join('')}</div>`);
+const gridTop = document.getElementById('allday').getBoundingClientRect().bottom;
+
+// ── 這一天的行程，換算成主要時區（Asia/Tokyo）的分鐘 ──
+const ZONE = { 'Asia/Taipei': 480, 'Asia/Tokyo': 540 };
+const shift = z => z ? 540 - (ZONE[z] ?? 540) : 0;
+const day = trip.days.find(x => x.day === dayNo);
+const evs = day.events.filter(e => e.start && e.end && !e.isCancelled).map(e => ({
+  ...e,
+  s: toMin(e.start) + shift(e.startTimeZoneID || e.timeZoneID),
+  e2: toMin(e.end) + shift(e.endTimeZoneID || e.timeZoneID),
+})).sort((a, b) => a.s - b.s);
+const opening = allDay.find(a => (a.openingDays || []).includes(dayNo));
+const closing = allDay.find(a => (a.closingDays || []).includes(dayNo));
+
+// ── 欄位：一條線時在 columns.content 的正中（照截圖：229） ──
+const CX = 229;
+const grid = document.createElement('div');
+grid.className = 'grid'; grid.style.top = gridTop + 'px';
+const content = document.createElement('div');
+content.className = 'content';
+grid.appendChild(content);
+d.appendChild(grid);
+
+// ── 量膠囊（TimelineAxis.Room：DayView.measuredRoom 量的是八個字的名字＋一句停留時間） ──
+function nodeHTML(e, cls) {
+  return `<div class="node ${cls}"><div class="halo"><div class="npill">${MAKI[e.category] ? maki(e.category, '') : ''}<span>${fmt(e.title)}</span></div></div>
+    ${e.e2 > e.s ? `<div class="stayt">${dur(e.e2 - e.s)}</div>` : ''}</div>`;
+}
+function measure(html) {
+  content.insertAdjacentHTML('beforeend', html);
+  const el = content.lastElementChild, h = el.getBoundingClientRect().height;
+  el.remove();
+  return h;
+}
+const namePillHeight = measure(nodeHTML({ category: 'dining', title: '八個中文字八個字', s: 0, e2: 45 }, ''));
+const legPillHeight = measure(`<div class="lpill"><div>${line('clock', 1.8)}<span>${dur(45)}</span></div></div>`);
+
+// ── TimelineAxis.make ──
+const DOT = 14, BREATH = 6, BASE = 66 / 60, MAX_SCALE = 6, MAX_SPAN = 5, TOP_INSET = 10, DOT_MIN_Y = 16;
+const minSpan = kind => DOT / 2 + BREATH + (kind === 'stay' ? namePillHeight : legPillHeight) + BREATH + DOT / 2;
+const minSpanAny = Math.max(minSpan('stay'), minSpan('gap'));
+const minutes = [...new Set(evs.flatMap(e => [e.s, e.e2]))].sort((a, b) => a - b);
+const segs = minutes.slice(1).map((u, i) => {
+  const l = minutes[i];
+  return { min: u - l, kind: evs.some(e => e.s <= l && e.e2 >= u) ? 'stay' : 'gap' };
+});
+const needed = Math.max(...segs.filter(g => g.min > 0).map(g => minSpan(g.kind) / g.min));
+const scale = Math.min(Math.max(needed, BASE), BASE * MAX_SCALE);
+let yy = TOP_INSET + DOT_MIN_Y, openingY = null, closingY = null;
+if (opening) { openingY = yy; yy += Math.ceil(minSpanAny); }
+const stopY = new Map([[minutes[0], yy]]);
+segs.forEach((g, i) => {
+  const span = Math.min(Math.max(g.min * scale, minSpan(g.kind)), minSpan(g.kind) * MAX_SPAN);
+  yy += Math.ceil(span);
+  stopY.set(minutes[i + 1], yy);
+});
+if (closing) { yy += Math.ceil(minSpanAny); closingY = yy; }
+const Y = m => stopY.get(m);
+
+// 捲動：App 的 reveal 把第一個停點放在可視區頂端下 24pt
+const scroll = Y(minutes[0]) - 24;
+content.style.top = -scroll + 'px';
+
+// ── 刻度：線＋時刻（時刻之間至少空 18pt 才畫下一個） ──
+let html = '', lastBottom = -1e9;
+const clock = m => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+for (const m of minutes) {
+  const y = Y(m), top = y - 8;
+  html += `<div class="rule" style="top:${y}px"></div>`;
+  if (top >= lastBottom + 18) { html += `<div class="stamp" lang="en" style="top:${top}px">${clock(m)}</div>`; lastBottom = top + 16; }
+}
+
+// ── 路程（RouteLinksView）：設過的是 muted 實線，沒設的是 border 色 [4,4] 虛線 ──
+const legs = [];
+if (opening && evs[0]) legs.push({ from: openingY, to: Y(evs[0].s), leg: evs[0].leg?.mode ? evs[0].leg : null, gap: evs[0].s });
+evs.slice(1).forEach((e, i) => {
+  const p = evs[i];
+  legs.push({ from: Y(p.e2), to: Y(e.s), leg: e.leg?.mode ? e.leg : null, gap: e.s - p.e2 });
+});
+const last = evs[evs.length - 1];
+if (closing && last) legs.push({ from: Y(last.e2), to: closingY, leg: last.closingLeg?.mode ? last.closingLeg : null, gap: 1440 - last.e2 });
+const H = yy + 72;
+let paths = '';
+for (const l of legs) {
+  // 量過：虛線的相位從下游那一端起算（截圖上第一段實線貼著 07:30 那顆點的外圈）
+  paths += `<path d="M${CX} ${l.to}V${l.from}" stroke="${l.leg ? 'var(--muted)' : 'var(--border)'}"${l.leg ? '' : ' stroke-dasharray="4 4"'}/>`;
+}
+html += `<svg class="links" width="402" height="${H}" fill="none" stroke-width="2" stroke-linecap="round">${paths}</svg>`;
+
+// ── 停留、點、書擋 ──
+for (const e of evs) {
+  const sw = swatchClass(e.category), a = Y(e.s), b = Y(e.e2);
+  if (b - a >= 14) html += `<div class="stay ${sw}" style="left:${CX}px;top:${a}px;height:${b - a}px"></div>`;
+}
+for (const e of evs) {
+  const sw = swatchClass(e.category), a = Y(e.s), b = Y(e.e2);
+  html += `<div class="dot ${sw}" style="left:${CX}px;top:${a}px"><i></i></div>`;
+  if (b - a >= 14) html += `<div class="dot end ${sw}" style="left:${CX}px;top:${b}px"><i></i></div>`;
+}
+if (opening) html += `<div class="bookend ${swatchClass(opening.category)}" style="left:${CX}px;top:${openingY}px"><i></i></div>`;
+if (closing) html += `<div class="bookend ${swatchClass(closing.category)}" style="left:${CX}px;top:${closingY}px"><i></i></div>`;
+content.innerHTML = html;
+
+// ── 名稱膠囊：停留那一段的正中，最寬到整欄減兩邊 8 ──
+const colW = 402 - 56;
+for (const e of evs) {
+  const a = Y(e.s), b = Y(e.e2);
+  if (b - a < minSpan('stay')) continue;
+  content.insertAdjacentHTML('beforeend', nodeHTML(e, swatchClass(e.category)));
+  const el = content.lastElementChild;
+  el.style.left = CX + 'px'; el.style.maxWidth = (colW - 16) + 'px';
+  el.style.top = ((a + b) / 2 - el.getBoundingClientRect().height / 2) + 'px';
+}
+
+// ── 路程膠囊：RouteText.legPill，標在兩顆點的正中 ──
+function legText(l) {
+  const lg = l.leg;
+  if (!lg) return l.gap <= 0 ? s.noGap : dur(l.gap);
+  const run = lg.runs && lg.runs[lg.selectedRunIndex || 0];
+  if (run) return [run.name, run.departure, dur(toMin(run.arrival) - toMin(run.departure))].join(s.sep);
+  const name = s.mode[lg.mode] || lg.mode, tm = lg.durationMinutes || 0;
+  if (!tm) return l.gap > 0 ? `${name} · ${dur(l.gap)}` : name;
+  const diff = tm - l.gap;
+  if (!diff || Math.abs(diff) > 180) return `${name} ${dur(tm)}`;
+  return s.paren(`${name} ${dur(tm)}`, `${diff > 0 ? '+' : '−'}${dur(Math.abs(diff))}`);
+}
+function legIcon(lg) {
+  if (!lg) return line('clock', 1.8);
+  if (lg.mode === 'transit' && lg.transitKind && MAKI[lg.transitKind]) return maki(lg.transitKind);
+  return line({ walking: 'walking', transit: 'transit', other: 'ellipsis' }[lg.mode] || 'clock', 1.8);
+}
+for (const l of legs) {
+  if (l.to - l.from < legPillHeight + 2 * DOT) continue;
+  const alt = l.leg && l.leg.runs && l.leg.runs.length > 1;
+  content.insertAdjacentHTML('beforeend', `<div class="lpill${l.leg ? '' : ' unset'}"><div>${legIcon(l.leg)}<span>${fmt(legText(l))}</span>${alt ? line('swap', 1.8, 'swap') : ''}</div></div>`);
+  const el = content.lastElementChild;
+  el.style.left = CX + 'px'; el.style.maxWidth = (colW - 16) + 'px';
+  el.style.top = ((l.from + l.to) / 2 - el.getBoundingClientRect().height / 2) + 'px';
+}
+
+d.insertAdjacentHTML('beforeend', `<div class="fab">${svg('plus')}</div>`);
+chrome(d, { tab: 1 });
+ready();
+</script>
+</body>
+</html>

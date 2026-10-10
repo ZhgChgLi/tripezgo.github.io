@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>檢視行程</title>
+<!--
+  檢視行程 sheet（App：Modules/UI/…/TripEventDetail）。
+  參數：?lang=zh-Hant-TW|en|ja &event=jr-pass（範本 JSON 裡行程的 key；全日或定時都可）
+        &start=2026-10-10（第 1 天的日期）&extra=1（附件多兩列：PDF 電子票券與一張照片——行銷用，範本裡沒有）
+  版面數字照 TripEventDetailMetrics.swift／EventDetailCells.swift／EventTodoListCell.swift；
+  sheet 外框（large detent、圓角 12、抓桿、iOS 26 玻璃導覽鈕）照 screens/ref/zh/event.png 量。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  /* 字型：BlinkMacSystemFont 是 SF，漢字交給 CoreText 自己的 cascade（跟 UIKit 同一條路）。-apple-system 在中日文頁
+     會整段解析成 PingFang／Hiragino，連拉丁字母、「·」「–」都用它的，比 App 寬、比 App 細。 */
+  .device { background: #ccc; --font: BlinkMacSystemFont, "PingFang TC", sans-serif; }
+  /* 全形括號：CoreText 把「」（）多出來的那半格空白擠掉（ref 裡「讓「臨時」「站」不」「Pass（5 日）」都是半形寬；
+     緊跟在西文後面的開括號不擠——「Pass（」那一格是全寬） */
+  .halt { font-feature-settings: "halt"; }
+  .halt.po { margin-left: .1em; }  /* 漢字後面的「（」：擠成半格，但 CoreText 在前面留了一小段（「球場前 (廣島縣」） */
+  .ar { margin: 0 .06em; }
+  html[lang="zh-Hant-TW"] .md { font-family: "PingFang TC"; }
+  html[lang="ja"] .md { font-family: "Hiragino Sans"; }
+  html[lang="ja"] .device { --font: BlinkMacSystemFont, "Hiragino Sans", sans-serif; }  /* large detent：後面那一層整片被系統壓成灰，看不到行事曆 */
+
+  /* ── 系統：sheet（large detent），照 ref 量：頂 62、圓角 12、抓桿 36×5 距頂 5 ── */
+  .sheet { position: absolute; left: 0; right: 0; top: 62px; bottom: 0; background: var(--page);
+    border-radius: 12px 12px 0 0; overflow: hidden;
+    text-autospace: normal; /* UIKit（iOS 17+）在漢字與西文／數字之間自動留一點空 */ }
+  .grabber { position: absolute; left: 183px; top: 5px; width: 36px; height: 5px; border-radius: 2.5px; background: #c1c1c3; }
+
+  /* ── 系統：iOS 26 玻璃導覽鈕（照 ref 量：高 44、距 sheet 頂 16） ── */
+  .glass { position: absolute; top: 16px; height: 44px; border-radius: 22px; background: #fdfdfd;
+    box-shadow: 0 4px 22px rgba(0,0,0,.07); display: flex; align-items: center; }
+  .glass.l { left: 16px; width: 44px; justify-content: center; }
+  .glass.r { left: 166px; width: 220px; }
+  .glass svg { width: 24px; height: 24px; fill: none; stroke: #191919; stroke-width: 1.8;  /* 導覽列鈕是 template 圖，系統染成 label 色 */
+    stroke-linecap: round; stroke-linejoin: round; }
+  .glass .slot { position: absolute; top: 0; width: 44px; height: 44px; display: grid; place-items: center; }
+  /* BookendPinButton：36 的圓，底 surface、邊 border，字形 16、線寬 2 */
+  .pin { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+    display: grid; place-items: center; }
+  .pin svg { width: 16px; height: 16px; stroke-width: 2; stroke: var(--ink); }
+
+  /* ── 事實列：EventFactsView ── */
+  .facts { position: absolute; left: 20px; right: 20px; top: 82.67px; }
+  /* ≥20pt 的字：模擬器上漢字（PingFang 走 SF 的 cascade）比同級數的 Chromium 小約 4.8%，西文不變——
+     行事曆的 28pt 抬頭量到同一個比例。漢字段包進 .cjk 縮回去（只在 ≥20pt 那兩行用；13pt 的量起來一樣大） */
+  .cjk { font-size: .952em; line-height: 1; vertical-align: .045em; }
+  .h1 { font: 700 var(--t-xxl)/33.4px var(--font); text-align: center; color: var(--ink); margin-bottom: 2px; }
+  .date { font: 500 var(--t-sm)/15.5px var(--font); color: var(--muted-on-sunken); margin-bottom: 4px; }  /* factsDateGap 3 ＋ 22pt 那一行的行高差（照 ref） */
+  .range { font: 600 var(--t-xl)/26.25px var(--font); color: var(--ink); margin-bottom: 2px; }
+  .sub { font: 400 var(--t-sm)/15.5px var(--font); color: var(--muted); }
+
+  /* ── 表：備註、待辦、附件 ── */
+  .body { position: absolute; left: 0; right: 0; }
+  .notes { padding: 0 20px 8px;  /* EventNotesCell：底下 ≤8，自動列高時就是 8 */ font: 400 var(--t-sm)/15.5px var(--font); color: var(--ink); white-space: pre-wrap; }
+  .sec-head { display: flex; align-items: baseline; gap: 10px; padding: 20px 20px 6px; }
+  .sec-head b { flex: 1; font: 700 var(--t-sm)/15.5px var(--font); color: var(--ink); }
+  .count { display: flex; align-items: center; gap: 6px; font: 700 var(--t-xs)/14.3px var(--font); color: var(--muted); }
+  .count.due { color: rgb(168,73,45); }               /* tzDanger 在 OKLCH 裡混 22% ink（TodoCountView） */
+  .count i { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); }
+  /* 待辦列：圓框 22（命中區 44、左 4）、字 13、列高至少 48、上下 8、間距 10 */
+  .todo { position: relative; display: flex; align-items: center; min-height: 48px; padding: 8px 20px 8px 0; margin-left: 20px; }
+  .todo + .todo::before, .todo.composer::before { content: ""; position: absolute; left: 0; right: 20px; top: 0;
+    border-top: 1px solid var(--border-soft); }
+  .todo .box { flex: none; width: 44px; height: 44px; margin: -11px 10px -11px 4px; display: grid; place-items: center; }
+  .todo .box i { width: 22px; height: 22px; border-radius: 50%; border: 1.6px solid var(--border); }
+  .todo .box svg { width: 22px; height: 22px; }
+  .todo span { font: 400 var(--t-sm)/15.5px var(--font); color: var(--ink); }
+  .todo.composer span { color: rgba(60,60,67,.3); }  /* UITextField 的 placeholder（系統色） */
+  /* 附件列：EventFileCell —— 圖示 16、間距 8、列高至少 44、上下 4、箭頭 15 */
+  .file { display: flex; align-items: center; gap: 8px; min-height: 44px; margin: 4px 20px; }
+  .file svg { flex: none; width: 16px; height: 16px; fill: none; stroke: var(--muted); stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; }
+  .file .nm { flex: 1; min-width: 0; font: 400 var(--t-sm)/15.5px var(--font); color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file .mt { flex: none; font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted); }
+  .file .chev { width: 15px; height: 15px; stroke-width: 2; }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { params, lang, loadTrip, loadCategories, categoryName, chrome, ready } from './chrome.js';
+
+// App 的字串（Scripts/i18n/maps：Trips.detailAllDay、UI.daySpan／todoListTitle／addTodo／filesLabel）
+const S = {
+  'zh-Hant-TW': { allDay: s => `全日 · ${s}`, span: (a, b) => a === b ? `第 ${a} 天` : `第 ${a}–${b} 天`,
+    todos: '待辦清單', addTodo: '新增待辦', files: '附件', locale: 'zh-TW' },
+  en: { allDay: s => `All-day · ${s}`, span: (a, b) => a === b ? `Day ${a}` : `Days ${a}–${b}`,
+    todos: 'To-Do List', addTodo: 'Add to-do', files: 'Files', locale: 'en-US' },
+  ja: { allDay: s => `終日 · ${s}`, span: (a, b) => a === b ? `${a}日目` : `${a}〜${b} 日目`,
+    todos: 'やることリスト', addTodo: 'やることを追加', files: '添付', locale: 'ja-JP' },
+}[lang] || null;
+const L = S || { allDay: s => `全日 · ${s}`, span: (a, b) => `第 ${a}–${b} 天`, todos: '待辦清單', addTodo: '新增待辦', files: '附件', locale: 'zh-TW' };
+
+// 範本裡沒有的附件（extra=1）：一份 PDF 電子票券、一張照片。列的長相、圖示、第二行（副檔名大寫）照 App。
+const EXTRA = {
+  'zh-Hant-TW': [['JR Pass 電子票券.pdf', 'pdf'], ['兌換收據.jpg', 'image']],
+  en: [['JR Pass e-ticket.pdf', 'pdf'], ['Exchange receipt.jpg', 'image']],
+  ja: [['JR Pass 電子チケット.pdf', 'pdf'], ['引換レシート.jpg', 'image']],
+}[lang] || [];
+
+// DesignIcon.swift 的轉寫（24 格）。收進 chrome.js 之前先放這裡。
+const I = {
+  cancel: '<circle cx="12" cy="12" r="9"/><path d="M8 8l8 8"/>',
+  dayOpening: '<path d="M5 4h14M12 20V8.5M7.5 13 12 8.5 16.5 13"/>',
+  dayClosing: '<path d="M5 20h14M12 4v11.5M7.5 11 12 15.5 16.5 11"/>',
+  pencil: '<path d="M17 3Q21 3 21 7L7.5 20.5 2 22l1.5-5.5z"/>',
+  trash: '<path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/>',
+  code: '<path d="M9 8 4 12l5 4M15 8l5 4-5 4M13.5 5l-3 14"/>',
+  document: '<path d="M14 3H6v18h12V7zM14 3v4h4M9 13h6M9 17h6"/>',
+  photo: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5.5-5.5L14 16l2.5-2.5L20 17"/>',
+  paperclip: '<path d="M21 12l-8.5 8.5Q7 22 5.5 13.5L14 5Q20.5 6.5 19 10l-8.5 8.5Q8.5 19.5 7.5 15.5L16 7"/>',
+  chevronRight: '<path d="M9 5l7 7-7 7"/>',
+};
+// 「·」在中日文的 cascade 裡是全形字（PingFang／Hiragino 畫的），SF 的是窄的那一個；「↔」「→」用 SF 的，但 UIKit 的漢字／西文自動間距
+// 把它當西文，兩邊各留一點——Chromium 的 text-autospace 不認符號，這裡補
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/·/g, '<span class="md">·</span>').replace(/[↔→]/g, c => `<span class="ar">${c}</span>`)
+  .replace(/(?<![A-Za-z0-9 ])[「『（【]|[」』）】]/g, c => `<span class="halt${c === '（' ? ' po' : ''}">${c}</span>`);
+const escD = s => esc(s).replace(/([\u3000-\u30ff\u3400-\u9fff\uff00-\uffef]+)/g, '<span class="cjk">$1</span>');
+const ic = (n, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+const FILE_ICON = { pdf: 'document', image: 'photo', link: 'code', other: 'paperclip' };
+
+const d = document.getElementById('d');
+const trip = await loadTrip();
+await loadCategories();
+const key = params.get('event') || 'jr-pass';
+const start = new Date((params.get('start') || '2026-10-10') + 'T00:00:00');
+const dateOf = n => new Date(start.getTime() + (n - 1) * 864e5);
+
+let ev = trip.allDayEvents.find(e => e.key === key), dayNo = null;
+if (!ev) for (const day of trip.days) { const e = day.events.find(x => x.key === key); if (e) { ev = e; dayNo = day.day; break; } }
+
+// TripTextFormatter.detailDateParts：「2026年10月10日 · 週六 –」「10月14日 · 週三」，片段內的空白換成不斷行空白
+const fullDate = (dt, year = true) => {
+  const day = new Intl.DateTimeFormat(L.locale, year ? { year: 'numeric', month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric' }).format(dt);
+  const wd = new Intl.DateTimeFormat(L.locale, { weekday: 'short' }).format(dt);
+  return `${day} · ${wd}`;
+};
+let parts, range;
+if (dayNo === null) {
+  const a = dateOf(ev.fromDay), b = dateOf(ev.toDay);
+  parts = ev.fromDay === ev.toDay ? [fullDate(a)] : [`${fullDate(a)} –`, fullDate(b, false)];
+  range = L.allDay(L.span(ev.fromDay, ev.toDay));
+} else {
+  parts = [fullDate(dateOf(dayNo))];
+  range = `${ev.start} – ${ev.end}`;
+}
+const dateLine = parts.map(p => p.replace(/ /g, ' ')).join(' ');
+const subtitle = [categoryName(ev.category), ev.place && ev.place.name].filter(Boolean).join(' · ');
+
+const todos = ev.todos || [];
+const files = (ev.links || []).map(l => ({ name: l.title || l.url, kind: 'link', meta: '' }));
+if (params.get('extra') === '1') EXTRA.forEach(([name, kind]) => files.push({ name, kind, meta: name.split('.').pop().toUpperCase() }));
+
+d.insertAdjacentHTML('beforeend', `
+<div class="sheet" id="sheet">
+  <div class="grabber"></div>
+  <div class="glass l">${ic('cancel')}</div>
+  <div class="glass r">
+    ${dayNo === null ? `<div class="slot" style="left:4px"><div class="pin">${ic('dayOpening')}</div></div>
+    <div class="slot" style="left:64px"><div class="pin">${ic('dayClosing')}</div></div>` : ''}
+    <div class="slot" style="left:121px">${ic('pencil')}</div>
+    <div class="slot" style="left:174.7px">${ic('trash')}</div>
+  </div>
+  <div class="facts" id="facts">
+    <div class="h1">${escD(ev.title)}</div>
+    <div class="date">${esc(dateLine)}</div>
+    <div class="range">${escD(range)}</div>
+    ${subtitle ? `<div class="sub">${esc(subtitle)}</div>` : ''}
+  </div>
+  <div class="body" id="body">
+    ${ev.notes ? `<div class="notes">${esc(ev.notes)}</div>` : ''}
+    <div class="sec-head"><b>${L.todos}</b>${todos.length ? `<span class="count due"><i></i>0/${todos.length}</span>` : ''}</div>
+    ${todos.map(t => `<div class="todo"><div class="box"><i></i></div><span>${esc(t)}</span></div>`).join('')}
+    <div class="todo composer"><div class="box"><svg viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.2" fill="none"
+      stroke="var(--border)" stroke-width="1.6" stroke-dasharray="3 3"/></svg></div><span>${L.addTodo}</span></div>
+    ${files.length ? `<div class="sec-head"><b>${L.files}</b><span class="count">${files.length}</span></div>
+    ${files.map(f => `<div class="file">${ic(FILE_ICON[f.kind])}<span class="nm">${esc(f.name)}</span>${f.meta ? `<span class="mt">${f.meta}</span>` : ''}${ic('chevronRight', 'chev')}</div>`).join('')}` : ''}
+  </div>
+</div>`);
+
+// 表接在事實列底下：事實列下緣 10，＋備註那一段上面那一塊（備註沒有段頭，UITableView 仍留了這一塊——照 ref 量）
+const facts = document.getElementById('facts');
+document.getElementById('body').style.top = (facts.offsetTop + facts.offsetHeight + 10 + 27.67) + 'px';
+
+// 附件名稱：UILabel 的 byTruncatingMiddle（CSS 只有尾端省略）
+document.querySelectorAll('.file .nm').forEach(el => {
+  const full = el.textContent;
+  el.style.textOverflow = 'clip';
+  if (el.scrollWidth <= el.clientWidth) return;
+  let lo = 1, hi = full.length;
+  while (lo < hi) {
+    const k = Math.ceil((lo + hi) / 2), a = Math.ceil(k / 2), b = k - a;
+    el.textContent = full.slice(0, a) + '…' + full.slice(full.length - b);
+    if (el.scrollWidth <= el.clientWidth) lo = k; else hi = k - 1;
+  }
+  const a = Math.ceil(lo / 2);
+  el.textContent = full.slice(0, a) + '…' + full.slice(full.length - (lo - a));
+});
+
+chrome(d);
+ready();
+</script>
+</body>
+</html>

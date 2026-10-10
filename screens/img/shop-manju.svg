@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<defs><radialGradient id="g" cx="35%" cy="25%" r="90%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<filter id="s" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+<rect width="400" height="400" fill="#f1e3d3"/><rect width="400" height="400" fill="url(#g)"/>
+<ellipse cx="200" cy="318" rx="150" ry="14" fill="#4a3f36" opacity=".12" filter="url(#s)"/><rect x="70" y="150" width="260" height="160" rx="14" fill="#c9785f"/><rect x="70" y="150" width="260" height="34" rx="14" fill="#b4664f"/><rect x="95" y="196" width="210" height="96" rx="8" fill="#f6eadb"/><ellipse cx="138" cy="244" rx="30" ry="24" fill="#d9a46a"/><path d="M138 232l5 9 10 1-8 6 3 10-10-5-10 5 3-10-8-6 10-1z" fill="#b8814a" opacity=".7"/><ellipse cx="200" cy="244" rx="30" ry="24" fill="#d9a46a"/><path d="M200 232l5 9 10 1-8 6 3 10-10-5-10 5 3-10-8-6 10-1z" fill="#b8814a" opacity=".7"/><ellipse cx="262" cy="244" rx="30" ry="24" fill="#d9a46a"/><path d="M262 232l5 9 10 1-8 6 3 10-10-5-10 5 3-10-8-6 10-1z" fill="#b8814a" opacity=".7"/>
+</svg>

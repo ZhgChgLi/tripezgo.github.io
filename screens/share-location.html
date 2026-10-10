@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>分享位置</title>
+<!--
+  地圖分頁・位置分享開著，旅伴的點畫在圖上，點開其中一位（App：Modules/UI/…/Components/TripMap/
+  LiveMateAnnotation.swift、LiveShareChip.swift、MapPlaceCard.configure(_ mate:)、ShopCardSection、
+  TripMapMetrics.swift；Map/…/MapViewController.mate(_:now:)）。
+  參數：?lang=zh-Hant-TW|en|ja &day=2（選的那一天，也當成今天）&start=2026-10-10
+  地圖底圖：img/share-map.jpg＝screens/ref/zh/map.png 從 y=128pt 往下切（＋那顆 FAB 抹掉，有卡片時它本來就藏起來）。
+  上面的日期籤、搜尋欄、分享膠囊、右側兩顆圓鈕、卡片、旅伴的點都是 HTML。旅伴與時間是樣本（SAMPLE）。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  :root { --on-accent: #fff; --success-ink: var(--green200); }
+  .map { position: absolute; left: 0; top: 128px; width: 402px; height: 746px;
+    background: url(img/share-map.jpg) 0 0 / 402px auto no-repeat; }
+
+  .head { position: absolute; left: 20px; top: 74px; width: 368px; }
+  .greet { font-size: var(--t-xs); line-height: 14px; color: var(--muted); letter-spacing: .24px; }
+  .title { margin-top: 2px; font: 600 var(--t-xxl)/34px var(--font); letter-spacing: -.59px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* 日期籤（同 calendar.html 的 DayChipCell）：TripMapMetrics chipHeight 44、chipSpacing 8 */
+  .chips { position: absolute; top: 138px; left: 20px; display: flex; gap: 8px; white-space: nowrap; z-index: 3; }
+  .chip { height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--sunken); display: flex; flex-direction: column; justify-content: center; gap: 1px; }
+  .chip b { font: 600 var(--t-sm)/16px var(--font); color: var(--muted-on-sunken); display: flex; align-items: center; gap: 6px; }
+  .chip span { font: 400 var(--t-xs)/14px var(--font); color: var(--muted-on-sunken); }
+  .chip.all b { font: 400 var(--t-sm)/16px var(--font); color: var(--ink); }
+  .chip.on { background: var(--ink); border-color: var(--ink); }
+  .chip.on b { color: var(--card); font-weight: 700; }
+  .chip.on span { color: color-mix(in srgb, var(--card) 28%, var(--ink)); }
+  .chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .chip.on i { background: var(--brand-teal); }
+
+  /* 搜尋欄：照截圖量（186–229） */
+  .search { position: absolute; left: 20px; right: 20px; top: 186px; height: 43px; border-radius: 8px; z-index: 3;
+    background: #fff; border: 1px solid var(--border); padding: 0 15px; display: flex; align-items: center;
+    font: 400 var(--t-base)/18px var(--font); color: var(--muted-faint); }
+
+  /* LiveShareChip：開著＝accentInk 底、白字、白點；左 10 右 12 上下 5、字 12 semibold、點與字間 7 */
+  .live { position: absolute; left: 20px; top: 234px; height: 32px; z-index: 3; border-radius: 16px;
+    padding: 0 12px 0 10px; display: flex; align-items: center; gap: 7px; background: var(--accent-ink);
+    font: 600 var(--t-xs)/14px var(--font); color: var(--on-accent); overflow: hidden; }
+  .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--on-accent); box-shadow: 0 0 0 3px rgba(255,255,255,.22); }
+
+  /* 右側圓鈕：fabSize 52、間距 12；有卡片時「新增標記」藏起來，其餘往上讓 */
+  .fab { position: absolute; left: 334px; width: 52px; height: 52px; border-radius: 14px; z-index: 3;
+    background: #fff url() center / 36px no-repeat; border: 1px solid var(--border);
+    box-shadow: 0 4px 14px rgba(31,25,20,.10); }
+  .fab.locate { background-image: url(img/share-locate.png); }
+  .fab.nav { background-image: url(img/share-nav.png); }
+
+  /* 旅伴的點：LiveMateAnnotationView — 白底 30、頭 26、2pt 環、字 12 bold；選中放大 1.28 ＋ 名字泡泡 */
+  .mate { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: var(--page);
+    box-shadow: 0 1px 5px rgba(31,25,20,.3); display: grid; place-items: center; z-index: 2; color: var(--sw-base); }
+  .mate .h { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--sw-base);
+    display: grid; place-items: center; font: 700 var(--t-xs)/1 var(--font); }
+  .mate.dashed .h { border: 0; position: relative; }
+  .mate.dashed .h::before { content: ""; position: absolute; inset: 0; border-radius: 50%;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Ccircle cx='13' cy='13' r='12' fill='none' stroke='black' stroke-width='2' stroke-dasharray='3 2'/%3E%3C/svg%3E") center / 100% 100%;
+    background: currentColor; }
+  .mate.sel { transform: scale(1.28); z-index: 4; }
+  .mate.sel::after { content: ""; position: absolute; inset: 1px; border-radius: 50%; border: 2px solid currentColor; }
+  .bubble { position: absolute; left: 50%; bottom: calc(100% + 7px - 2px); transform: translateX(-50%);
+    padding: 3px 9px; border-radius: 99px; background: var(--ink); color: #fff; white-space: nowrap;
+    font: 600 var(--t-xs)/14px var(--font); }
+
+  /* 我：系統的藍點，上面一顆「我」（MyNameBubbleView） */
+  .me { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.28), 0 0 0 14px rgba(0,122,255,.12); z-index: 2; }
+  .me::after { content: ""; position: absolute; inset: 3.5px; border-radius: 50%; background: #007aff; }
+  .me .bubble { bottom: calc(100% + 4px + 7px); }
+
+  /* 卡片：MapPlaceCard（夥伴那一種）— 左右 20、圓角 12、內距 16、離分頁列 16 */
+  .card { position: absolute; left: 20px; right: 20px; bottom: 100px; z-index: 5; background: var(--card);
+    border: 1px solid var(--border); border-radius: 12px; padding: 16px 16px 16px; box-shadow: 0 6px 24px rgba(31,25,20,.10); }
+  .card-top { display: flex; align-items: center; min-height: 44px; }
+  .card-ic { flex: none; width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center;
+    color: var(--sw-base); font: 700 var(--t-xs)/1 var(--font); position: relative; margin-right: 23.7px; }
+  .card-ic::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 23 23'%3E%3Ccircle cx='11.5' cy='11.5' r='10.5' fill='none' stroke='black' stroke-width='2' stroke-dasharray='3 2'/%3E%3C/svg%3E") center / 100% 100%; }
+  .card-ic span { color: var(--sw-base); }
+  .card-t { flex: 1 1 auto; min-width: 0; font: 600 var(--t-lg)/20px var(--font); color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-btn { flex: none; width: 44px; height: 44px; display: grid; place-items: center; color: var(--ink); }
+  .card-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .card-btn.x svg { stroke-width: 2; }
+  .status { margin-top: 8px; display: flex; align-items: center; gap: 8px; font: 600 var(--t-sm)/16px var(--font); color: var(--muted); }
+  .status i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted-on-sunken); }
+  .open { margin-top: 8px; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font: 600 var(--t-sm)/16px var(--font); color: var(--ink); }
+  .open svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .note { margin-top: 8px; font: 400 var(--t-xs)/17px var(--font); color: var(--muted); }
+  .deck-toggle { position: absolute; left: 190px; width: 22px; height: 22px; z-index: 5; color: var(--ink); }
+  .deck-toggle svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="device" id="d"><div class="map"></div></div>
+<script type="module">
+import { fmt, lang, params, t, loadTrip, chrome, svg, ready } from './chrome.js';
+
+const d = document.getElementById('d');
+const trip = await loadTrip();
+const dayNo = +(params.get('day') || 2);
+const start = new Date((params.get('start') || '2026-10-10') + 'T00:00:00');
+const dateOf = n => new Date(start.getTime() + (n - 1) * 864e5);
+const today = dateOf(dayNo);
+
+// App 字串（UI.json liveShareOn、filterAll、mapSearchPlaceholder、openInMaps；Map.json liveShareMyBubble、
+// liveShareUpdatedAt、liveShareWhenInUseBodyMate）。「3 分鐘前」是 RelativeDateTimeFormatter(.full) 的輸出。
+const S = {
+  'zh-Hant-TW': { all: '全部', search: '搜尋地標或地址', on: '正在分享位置', me: '我', open: '在地圖開啟',
+    updated: '更新於 3 分鐘前',
+    whenInUse: '對方的定位授權只到「使用 App 期間」。TripEZGo 被系統關掉之後，你看到的會停在最後一次更新的位置。' },
+  en: { all: 'All', search: 'Search a landmark or address', on: 'Sharing location', me: 'Me', open: 'Open in Maps',
+    updated: 'Updated 3 minutes ago',
+    whenInUse: 'They allowed location only while using the app. If iOS shuts TripEZGo down, you keep seeing their last known spot.' },
+  ja: { all: 'すべて', search: 'ランドマークや住所を検索', on: '位置を共有中', me: '私', open: 'マップで開く',
+    updated: '3 分前に更新',
+    whenInUse: '相手の位置情報の許可は「App の使用中」までです。iOS が TripEZGo を終了させると、最後に更新された位置が表示され続けます。' },
+}[lang];
+
+// 樣本：三位旅伴（名字、顏色同 members.html），座標是畫面上的點（底圖是截圖，不是真的地圖）
+const SAMPLE = {
+  'zh-Hant-TW': ['小雯', '凱文', '美琪'], en: ['Mia', 'Ken', 'Sara'], ja: ['美咲', '健太', 'さくら'],
+}[lang];
+const MATES = [
+  { name: SAMPLE[0], colour: 'eat', x: 247, y: 548, sel: true, dashed: true },
+  { name: SAMPLE[1], colour: 'stay', x: 326, y: 333 },
+  { name: SAMPLE[2], colour: 'shop', x: 120, y: 612 },
+];
+const ME = { x: 186, y: 470 };
+
+// 頁首
+d.insertAdjacentHTML('beforeend', `
+  <div class="head"><div class="greet">${t.monthDay(today.getMonth() + 1, today.getDate())} · ${t.weekday[today.getDay()]}</div>
+  <div class="title">${fmt(trip.title)}</div></div>`);
+
+// 日期籤：全部 ＋ 每一天
+const chips = [`<div class="chip all"><b>${S.all}</b></div>`].concat(Array.from({ length: trip.dayCount }, (_, i) => {
+  const n = i + 1, dt = dateOf(n), isToday = n === dayNo;
+  return `<div class="chip${n === dayNo ? ' on' : ''}"><b>${isToday ? '<i></i>' : ''}${isToday ? t.today : t.day(n)}</b>
+    <span>${t.shortDate(dt.getMonth() + 1, dt.getDate())} ${t.weekday[dt.getDay()]}</span></div>`;
+})).join('');
+d.insertAdjacentHTML('beforeend', `<div class="chips">${chips}</div>
+  <div class="search">${S.search}</div>
+  <div class="live"><i></i>${S.on}</div>`);
+
+// 旅伴與我
+const initial = n => [...n][0].toUpperCase();
+d.insertAdjacentHTML('beforeend', MATES.map(m => `
+  <div class="mate sw-${m.colour}${m.sel ? ' sel' : ''}${m.dashed ? ' dashed' : ''}" style="left:${m.x}px;top:${m.y}px">
+    <div class="h">${initial(m.name)}</div>${m.sel ? `<div class="bubble">${fmt(m.name)}</div>` : ''}</div>`).join('')
+  + `<div class="me" style="left:${ME.x}px;top:${ME.y}px"><div class="bubble">${S.me}</div></div>`);
+
+// 卡片：選中那一位
+const sel = MATES.find(m => m.sel);
+const walking = '<circle cx="13" cy="4" r="2" fill="currentColor" stroke="none"/><path d="M11.5 8.5 9 13l3 2 1 6M13.5 8.5l2 3.5 3 1M12 15l-3 6"/>';
+d.insertAdjacentHTML('beforeend', `<div class="card" id="card">
+  <div class="card-top"><div class="card-ic sw-${sel.colour}"><span>${initial(sel.name)}</span></div>
+    <div class="card-t">${fmt(sel.name)}</div>
+    <div class="card-btn"><svg viewBox="0 0 24 24">${walking}</svg></div>
+    <div class="card-btn x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div></div>
+  <div class="status"><i></i>${S.updated}</div>
+  <div class="open"><svg viewBox="0 0 24 24"><path d="M12 21C16.5 16.5 19 13 19 10A7 7 0 0 0 5 10C5 13 7.5 16.5 12 21Z"/><circle cx="12" cy="10" r="2.6"/></svg>${S.open}</div>
+  <div class="note">${fmt(S.whenInUse)}</div></div>`);
+
+// 右側圓鈕與收合箭頭跟著卡片頂端走（截圖量到：導航鈕底＝卡片頂 − 42，兩顆間距 12）
+const top = document.getElementById('card').getBoundingClientRect().top;
+const navTop = top - 42 - 52, locTop = navTop - 12 - 52;
+d.insertAdjacentHTML('beforeend', `<div class="fab locate" style="top:${locTop}px"></div>
+  <div class="fab nav" style="top:${navTop}px"></div>
+  <div class="deck-toggle" style="top:${top - 26}px"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>`);
+
+chrome(d, { tab: 2 });
+ready();
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>鎖定畫面・即時動態</title>
+<!--
+  iPhone 鎖定畫面＋TripEZGo 即時動態（App：TripEZGoWidget/Views/TripActivityCard.swift、ActivityPieces.swift、
+  ActivityTheme.swift、TripActivityWidget.swift；內容 Modules/LiveActivity/…/TripActivityContent.live；
+  字串 Scripts/i18n/maps/LiveActivity.json）。
+  參數：?lang=zh-Hant-TW|en|ja &day=2 &start=2026-10-10 &now=10:41（鎖定畫面的時鐘，也是「現在」）
+  卡片內容＝第 day 天裡 now 正在進行的那一則（「進行中」）。鎖定畫面的時鐘、日期、手電筒、相機是系統 UI，
+  照 iOS 26 的樣子畫；桌布是設計稿 assets/okinawa-wallpaper.jpg（img/share-wallpaper.jpg）。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  /* ActivityTheme：onDark＝tzOnDeep #fff、onDarkMuted 62%、onDarkSoft 86%、accentLift＝tzBrandTeal、scrim＝tzInkDeep */
+  :root { --on-dark: #fff; --on-dark-muted: rgba(255,255,255,.62); --on-dark-soft: rgba(255,255,255,.86);
+    --scrim: 31,25,20; --hairline: rgba(255,255,255,.14); }
+  .device { background: #6aa6d8 url(img/share-wallpaper.jpg) center / cover no-repeat; color: #fff; }
+  /* 系統在時鐘與底部那一排後面壓的一層淡暗，讓白字讀得到 */
+  .dim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.16) 0%, rgba(0,0,0,.04) 38%, rgba(0,0,0,0) 60%, rgba(0,0,0,.18) 100%); }
+  .sb-time { display: none; }
+
+  .clock { position: absolute; left: 0; right: 0; top: 92px; text-align: center; }
+  .date { font: 600 21px/26px -apple-system, "SF Pro Display", var(--font); letter-spacing: .2px; opacity: .92; }
+  .time { margin-top: 0; font: 600 112px/1 "SF Pro Rounded", -apple-system, "SF Pro Display", sans-serif;
+    letter-spacing: -2px; font-variant-numeric: tabular-nums; color: rgba(255,255,255,.88);
+    text-shadow: 0 1px 24px rgba(0,40,80,.18); }
+
+  /* 即時動態卡：系統給的外框（左右 20、圓角 22），activityBackgroundTint＝scrim 74% ＋ 系統材質 */
+  .la { position: absolute; left: 20px; right: 20px; bottom: 132px; border-radius: 22px; overflow: hidden;
+    background: rgba(var(--scrim), .74); -webkit-backdrop-filter: blur(24px) saturate(140%); backdrop-filter: blur(24px) saturate(140%);
+    padding: 14px 16px 15px; color: var(--on-dark); }
+  .la-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .la-icon { flex: none; width: 20px; height: 20px; border-radius: 5px; background: var(--accent); display: grid; place-items: center; }
+  .la-icon svg { width: 13px; height: 13px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .la-app { flex: 1 1 auto; min-width: 0; font-size: 12px; line-height: 18px; letter-spacing: .24px; color: var(--on-dark-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .la-day { flex: none; font-size: 11px; line-height: 16.5px; letter-spacing: .66px; color: var(--on-dark-muted); font-variant-numeric: tabular-nums; }
+  .la-refresh { flex: none; width: 28px; height: 28px; margin: -5px -6px -5px 0; display: grid; place-items: center; }
+  .la-refresh svg { width: 13px; height: 13px; fill: none; stroke: var(--on-dark-muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .la-main { display: flex; align-items: flex-end; gap: 12px; }
+  .la-l { flex: 1 1 auto; min-width: 0; }
+  .la-state { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; font: 700 11px/16.5px var(--font);
+    letter-spacing: .66px; color: var(--on-dark-muted); }
+  .la-state i { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+  .la-title { font: 700 20px/24px var(--font); letter-spacing: .1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .la-sub { margin-top: 3px; font-size: 12px; line-height: 18px; letter-spacing: .24px; color: var(--on-dark-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .la-count { flex: none; text-align: right; }
+  .la-n { font: 700 22px/26px var(--font); font-variant-numeric: tabular-nums; }
+  .la-u { margin-top: 3px; font-size: 11px; line-height: 16.5px; letter-spacing: .66px; color: var(--on-dark-muted); }
+  .la-bar { margin-top: 12px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.18); overflow: hidden; }
+  .la-bar span { display: block; height: 100%; border-radius: 2px; background: var(--brand-teal); }
+  .la-ends { margin-top: 6px; display: flex; justify-content: space-between; font-size: 11px; line-height: 16.5px;
+    letter-spacing: .44px; color: var(--on-dark-muted); font-variant-numeric: tabular-nums; }
+  .la-rule { margin-top: 11px; height: 1px; background: var(--hairline); }
+  .la-next { margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+  .la-next svg { flex: none; width: 13px; height: 13px; fill: none; stroke: var(--on-dark-muted); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .la-next .nm { flex: 1 1 auto; min-width: 0; font-size: 12px; line-height: 18px; letter-spacing: .24px; color: var(--on-dark-soft);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .la-next .tm { flex: none; font-size: 11px; line-height: 16.5px; letter-spacing: .44px; color: var(--on-dark-muted); font-variant-numeric: tabular-nums; }
+
+  /* 手電筒／相機（系統 UI） */
+  .qa { position: absolute; bottom: 52px; width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255,255,255,.2); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: inset 0 0 0 .5px rgba(255,255,255,.35); }
+  .qa svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="device" id="d"><div class="dim"></div></div>
+<script type="module">
+import { fmt, lang, params, loadTrip, chrome, toMin, ready } from './chrome.js';
+
+const d = document.getElementById('d');
+const trip = await loadTrip();
+const dayNo = +(params.get('day') || 2);
+const now = params.get('now') || '10:41';
+const start = new Date((params.get('start') || '2026-10-10') + 'T00:00:00');
+const date = new Date(start.getTime() + (dayNo - 1) * 864e5);
+
+// LiveActivity.json（逐字）；鎖定畫面日期是系統格式
+const S = {
+  'zh-Hant-TW': { day: n => `第 ${n} 天`, live: '進行中', remain: '還剩', next: x => `下一站 · ${x}`,
+    date: dt => `${dt.getMonth() + 1}月${dt.getDate()}日 ${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][dt.getDay()]}` },
+  en: { day: n => `Day ${n}`, live: 'Now', remain: 'Ends in', next: x => `Next · ${x}`,
+    date: dt => `${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dt.getDay()]}, ${['January','February','March','April','May','June','July','August','September','October','November','December'][dt.getMonth()]} ${dt.getDate()}` },
+  ja: { day: n => `${n}日目`, live: '進行中', remain: '残り', next: x => `次 · ${x}`,
+    date: dt => `${dt.getMonth() + 1}月${dt.getDate()}日 ${'日月火水木金土'[dt.getDay()]}曜日` },
+}[lang];
+
+// TripActivityContent.live：現在進行中的那一則、下一則
+const events = trip.days.find(x => x.day === dayNo).events.filter(e => e.start && e.end);
+const nowMin = toMin(now);
+const i = events.findIndex(e => toMin(e.start) <= nowMin && nowMin < toMin(e.end));
+const cur = events[i], next = events[i + 1];
+const left = (toMin(cur.end) - nowMin) * 60 - 12;              // Text(timerInterval:) 在跑：差 12 秒的那一幀
+const countdown = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+const fraction = (nowMin + 12 / 60 - toMin(cur.start)) / (toMin(cur.end) - toMin(cur.start));
+const [hh, mm] = now.split(':');
+
+const brand = '<circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M6 8.4v4.2a3.4 3.4 0 0 0 3.4 3.4h5.2"/>';
+const refresh = '<path d="M12 4.5A7.5 7.5 0 1 1 5.32 8.6M12 1.5v3M8.6 4.5H12V8"/>';
+const nextStop = '<path d="M5 12h11M12 8l4 4-4 4"/><circle cx="19.4" cy="12" r="1.6"/>';
+
+d.insertAdjacentHTML('beforeend', `
+  <div class="clock"><div class="date">${S.date(date)}</div><div class="time">${+hh}:${mm}</div></div>
+  <div class="la">
+    <div class="la-head"><span class="la-icon"><svg viewBox="0 0 24 24">${brand}</svg></span>
+      <span class="la-app">TripEZGo · ${fmt(trip.title)}</span><span class="la-day">${S.day(dayNo)}</span>
+      <span class="la-refresh"><svg viewBox="0 0 24 24">${refresh}</svg></span></div>
+    <div class="la-main">
+      <div class="la-l"><div class="la-state"><i></i>${S.live}</div>
+        <div class="la-title">${fmt(cur.title)}</div>
+        <div class="la-sub">${fmt(`${cur.start} – ${cur.end}`)}${cur.place ? ' · ' + fmt(cur.place.name) : ''}</div></div>
+      <div class="la-count"><div class="la-n">${countdown}</div><div class="la-u">${S.remain}</div></div>
+    </div>
+    <div class="la-bar"><span style="width:${(fraction * 100).toFixed(1)}%"></span></div>
+    <div class="la-ends"><span>${cur.start}</span><span>${cur.end}</span></div>
+    ${next ? `<div class="la-rule"></div><div class="la-next"><svg viewBox="0 0 24 24">${nextStop}</svg>
+      <span class="nm">${fmt(S.next(next.title))}</span><span class="tm">${next.start}</span></div>` : ''}
+  </div>
+  <div class="qa" style="left:46px"><svg viewBox="0 0 24 24"><path d="M9 3h6v4l-1.6 2.2v11.3h-2.8V9.2L9 7z"/><path d="M12 12.5v2"/></svg></div>
+  <div class="qa" style="right:46px"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.6"/><path d="M9 7l1.4-2.4h3.2L15 7"/></svg></div>`);
+
+chrome(d, { dark: true });
+ready();
+</script>
+</body>
+</html>

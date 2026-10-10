@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>地圖</title>
+<!--
+  地圖分頁（App：Modules/UI/…/Components/TripMap）。程式在 map.js，樣式在 map.css。
+  參數：?lang=zh-Hant-TW|en|ja &card=none|place|store（map-place.html／map-store.html 已經指定好）
+-->
+<link rel="stylesheet" href="screen.css">
+<link rel="stylesheet" href="map.css">
+</head>
+<body>
+<div class="device" id="d"></div>
+<script>window.MAP_CARD = 'place';</script>
+<script type="module" src="map.js"></script>
+</body>
+</html>

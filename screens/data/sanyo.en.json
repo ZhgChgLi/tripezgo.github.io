@@ -1,0 +1,1811 @@
+{
+  "formatVersion": 2,
+  "templateID": "jp-sanyo-hiroshima-okayama-6d",
+  "revision": 2,
+  "contentLocale": "en",
+  "title": "San'yō in 6 Days — Hiroshima, Miyajima, Onomichi, Kurashiki, Okayama",
+  "subtitle": "In and out of Okayama, based in Hiroshima, all of it on one JR pass",
+  "summary": "A solo trip in November: Tigerair in and out of Okayama, the first three nights near Hiroshima Station as a base. One day for Itsukushima Shrine on Miyajima, one for Senkōji and Tomonoura, one for the Yamato Museum in Kure and central Hiroshima, then two days over in Kurashiki and Okayama. Every leg is covered by the Okayama–Hiroshima–Yamaguchi Area Pass, ferry to Miyajima included. The original travel log records the order of the days but not the clock, so the times here are worked back from local timetables — they hold together, but check each connection again before you go.",
+  "destination": "Hiroshima & Okayama Prefectures, Japan",
+  "regionCodes": [
+    "JP"
+  ],
+  "dayCount": 6,
+  "coverColour": "red",
+  "defaultTimeZoneID": "Asia/Tokyo",
+  "sourceURL": "https://blog.zhgchg.li/31b9b3a63abc",
+  "sourceTitle": "Travel log: six days in San'yō — Hiroshima and Okayama, 2023",
+  "tags": [
+    "Solo",
+    "World Heritage",
+    "JR pass",
+    "Autumn",
+    "Seto Inland Sea"
+  ],
+  "todos": [
+    "Buy the Okayama–Hiroshima–Yamaguchi Area Pass — Okayama to Hiroshima alone is ¥6,460 one way, and Miyajima, Onomichi and Kure pay for the rest",
+    "At the ticket machine press the yellow 「QRコードの読取り」 button at the bottom left before scanning. The blue button the guides describe keeps reporting an invalid QR code on the newer machines",
+    "The pass itself is what opens the gate. A seat reservation is only a note of where and when — it will not let you through",
+    "Tigerair does not allow your own food on board (Peach has no such rule) — finish it before you board",
+    "Meat products cannot be brought into Japan. A whole bag of Taiwanese fried chicken was destroyed on the spot at Okayama Airport",
+    "Hiroshima drops to about 4°C at night in November. Pack a real coat",
+    "The ¥100 Miyajima visitor tax is separate and not covered by the pass. Staff at the pier will point you to it",
+    "Security at Okayama Airport makes you take boots off. Wear something easier",
+    "Hotel washing machines go fast. Check for a free one the moment you get back in the evening",
+    "Set up a Suica in Apple Wallet before you leave — it works on city buses and in every convenience store"
+  ],
+  "links": [
+    {
+      "url": "https://www.westjr.co.jp/global/tc/ticket/pass/okayama_hiroshima_yamaguchi/",
+      "title": "JR West — Okayama–Hiroshima–Yamaguchi Area Pass"
+    },
+    {
+      "url": "https://vjw-lp.digital.go.jp/zh-hant/",
+      "title": "Visit Japan Web — entry procedures"
+    },
+    {
+      "url": "https://www.jnto.go.jp/safety-tips/tchi/index.html",
+      "title": "Safety tips — Japan disaster information"
+    },
+    {
+      "url": "https://dive-hiroshima.com/",
+      "title": "Dive! Hiroshima — the prefecture's official tourism site"
+    }
+  ],
+  "allDayEvents": [
+    {
+      "key": "stay-toyoko",
+      "title": "Toyoko Inn Hiroshima-eki Stadium-mae (3 nights)",
+      "fromDay": 1,
+      "toDay": 4,
+      "category": "hotel",
+      "colour": "taupe",
+      "place": {
+        "name": "Toyoko Inn Hiroshima-eki Stadium-mae, Hiroshima, Hiroshima Pref.",
+        "latitude": 34.393721,
+        "longitude": 132.481499
+      },
+      "notes": "A single non-smoking room, and the best value of the three hotels on this trip at around NT$1,537 a night. It is further from Hiroshima Station than the map suggests — roadworks and a level crossing on the way, so allow 18 minutes if you are pulling a bag on your own. It sits just outside the MAZDA stadium, and on a day with no game the whole street is silent, which is worth knowing before you walk back late.",
+      "openingDays": [
+        2,
+        3,
+        4
+      ],
+      "closingDays": [
+        1,
+        2,
+        3
+      ],
+      "todos": [
+        "Keep the booking confirmation in the same pocket as the passport — you show it at check-in"
+      ],
+      "links": [
+        {
+          "url": "https://www.toyoko-inn.com/china/search/detail/00202/",
+          "title": "Toyoko Inn Hiroshima-eki Stadium-mae"
+        }
+      ]
+    },
+    {
+      "key": "stay-apa",
+      "title": "APA Hotel Hiroshima-Ekimae Ohashi (1 night)",
+      "fromDay": 4,
+      "toDay": 5,
+      "category": "hotel",
+      "colour": "taupe",
+      "place": {
+        "name": "APA Hotel Hiroshima-Ekimae Ohashi, Hiroshima, Hiroshima Pref.",
+        "latitude": 34.395364,
+        "longitude": 132.471991
+      },
+      "notes": "The Toyoko Inn had no single left for the fourth night, so this filled the gap. Closer to the station on paper, but you cross a main road and a bridge, so it is a real ten-minute walk. Fifteen minutes from the Toyoko Inn, which is manageable with your own luggage.",
+      "openingDays": [
+        5
+      ],
+      "closingDays": [
+        4
+      ]
+    },
+    {
+      "key": "stay-livemax",
+      "title": "Hotel Livemax Okayama Kurashiki-Ekimae (1 night)",
+      "fromDay": 5,
+      "toDay": 6,
+      "category": "hotel",
+      "colour": "taupe",
+      "place": {
+        "name": "Hotel Livemax Okayama Kurashiki-Ekimae, Kurashiki, Okayama Pref.",
+        "latitude": 34.602529,
+        "longitude": 133.768515
+      },
+      "notes": "Nothing left in Okayama at a price worth paying for one person, so the search moved down the JR line to Kurashiki. Five minutes from the station, and Kurashiki has its own coach to Okayama Airport — so making the flight alone the next day does not mean doubling back into Okayama.",
+      "openingDays": [
+        6
+      ],
+      "closingDays": [
+        5
+      ]
+    },
+    {
+      "key": "jr-pass",
+      "title": "Okayama–Hiroshima–Yamaguchi Area Pass (5 days)",
+      "fromDay": 1,
+      "toDay": 5,
+      "category": "train",
+      "colour": "green",
+      "notes": "¥17,000, covering the San'yō Shinkansen between Okayama and Hiroshima, the San'yō Line out to Miyajimaguchi and the JR Miyajima ferry. Travelling alone you change your mind constantly, and the pass means one more stop never costs another calculation — the Okayama–Hiroshima return alone is ¥12,920. Day 6 goes back by airport coach, so the pass is not needed then.",
+      "todos": [
+        "Reserve Shinkansen seats online before you leave — the unreserved cars mean standing at peak times",
+        "Collect the physical ticket at a JR ticket office or machine on the first day you use it"
+      ],
+      "links": [
+        {
+          "url": "https://www.westjr.co.jp/global/tc/ticket/pass/okayama_hiroshima_yamaguchi/",
+          "title": "JR West — Okayama–Hiroshima–Yamaguchi Area Pass"
+        }
+      ]
+    }
+  ],
+  "unscheduledEvents": [
+    {
+      "key": "u-okunoshima",
+      "title": "Okunoshima (Rabbit Island)",
+      "durationMinutes": 300,
+      "category": "sight",
+      "colour": "green",
+      "place": {
+        "name": "Okunoshima (Rabbit Island), Takehara, Hiroshima Pref.",
+        "latitude": 34.309121,
+        "longitude": 132.993759
+      },
+      "notes": "On the shortlist before the trip, but too far out of the way to fit. It means a ferry from Tadanoumi and half a day once you count the return. Your time is entirely your own out here, but half a day is still half a day. Next time it goes on the same day as Onomichi."
+    },
+    {
+      "key": "u-daishoin",
+      "title": "Daishō-in, Miyajima",
+      "durationMinutes": 45,
+      "category": "temple",
+      "colour": "none",
+      "place": {
+        "name": "Daishō-in, Hatsukaichi, Hiroshima Pref.",
+        "latitude": 34.291729,
+        "longitude": 132.318578
+      },
+      "notes": "Five minutes uphill from Itsukushima Shrine, the oldest temple on the island. The slope is gentle and the crowds thin, which makes it a good place to walk alone at your own pace. The ropeway took all of the time this trip, so this one waits."
+    },
+    {
+      "key": "u-onomichi-u2",
+      "title": "ONOMICHI U2 waterfront warehouse",
+      "durationMinutes": 90,
+      "category": "cafe",
+      "colour": "amber",
+      "place": {
+        "name": "ONOMICHI U2, Onomichi, Hiroshima Pref.",
+        "latitude": 34.401959,
+        "longitude": 133.189908
+      },
+      "notes": "A shipping warehouse turned into a complex with a bakery and a hotel built for cyclists. Ten minutes on foot from Onomichi Station, so it slots neatly into the wait for the train back when you have nobody else to keep entertained."
+    },
+    {
+      "key": "u-kibitsuhiko",
+      "title": "Kibitsuhiko Shrine",
+      "durationMinutes": 45,
+      "category": "temple",
+      "colour": "none",
+      "place": {
+        "name": "Kibitsuhiko Shrine, Okayama, Okayama Pref.",
+        "latitude": 34.676572,
+        "longitude": 133.863513
+      },
+      "notes": "One stop from Kibitsu Shrine and the other half of the Momotarō legend. There was no room for it on a day built around a flight — with nobody to watch your bag, a detour costs more than it looks."
+    }
+  ],
+  "markers": [
+    {
+      "key": "m-mazda-stadium",
+      "name": "MAZDA Zoom-Zoom Stadium Hiroshima, Hiroshima, Hiroshima Pref.",
+      "latitude": 34.391912,
+      "longitude": 132.48462,
+      "category": "sight",
+      "notes": "The hotel is right beside the ballpark. On a game day this whole area is a different place, and a single ticket is the easiest kind to get."
+    },
+    {
+      "key": "m-hondori",
+      "name": "Hondori shopping arcade, Hiroshima, Hiroshima Pref.",
+      "latitude": 34.39382,
+      "longitude": 132.456974,
+      "category": "shopping",
+      "notes": "The busiest covered arcade in central Hiroshima — pharmacies and souvenirs in one pass. Whatever you buy, you carry, so do the weight arithmetic yourself."
+    },
+    {
+      "key": "m-okonomimura",
+      "name": "Okonomi-mura, Hiroshima, Hiroshima Pref.",
+      "latitude": 34.391289,
+      "longitude": 132.461894,
+      "category": "dining",
+      "notes": "A whole building of okonomiyaki stalls, every one of them counter seating at the griddle — the easiest kind of place to sit down alone. Come here if the one by the station is full."
+    },
+    {
+      "key": "m-orizuru",
+      "name": "Orizuru Tower, Hiroshima, Hiroshima Pref.",
+      "latitude": 34.39567,
+      "longitude": 132.454686,
+      "category": "viewpoint",
+      "notes": "The rooftop looks over the Dome and the whole city, and on a clear day as far as Mount Misen on Miyajima. On your own you can stay with the view as long as you like, with nobody else's stamina to consider."
+    },
+    {
+      "key": "m-misen",
+      "name": "Mount Misen, Hatsukaichi, Hiroshima Pref.",
+      "latitude": 34.279592,
+      "longitude": 132.319611,
+      "category": "mountain",
+      "notes": "The highest point on Miyajima, another 30 minutes on foot above the Shishiiwa Observatory. It is a mountain path walked alone, so write down the last car down before you start."
+    },
+    {
+      "key": "m-senjokaku",
+      "name": "Senjōkaku, Hatsukaichi, Hiroshima Pref.",
+      "latitude": 34.297304,
+      "longitude": 132.320269,
+      "category": "temple",
+      "notes": "The great hall and five-storey pagoda beside Itsukushima Shrine. The bare wooden floor is cool underfoot, and sitting at the edge doing nothing when it is quiet is the sort of thing you only do when you are by yourself."
+    },
+    {
+      "key": "m-miyajima-aquarium",
+      "name": "Miyajima Aquarium, Hatsukaichi, Hiroshima Pref.",
+      "latitude": 34.295476,
+      "longitude": 132.315651,
+      "category": "aquarium",
+      "notes": "The only aquarium on Miyajima; about an hour on your own. The ropeway and the shrine took all the time this trip, so it was skipped."
+    },
+    {
+      "key": "m-tennei-ji",
+      "name": "Tennei-ji three-storey pagoda, Onomichi, Hiroshima Pref.",
+      "latitude": 34.409566,
+      "longitude": 133.200793,
+      "category": "temple",
+      "notes": "The famous shot down over the Onomichi Channel from Cat Alley is taken from here. There is nobody to hand the camera to, so a tripod or a stick earns its space."
+    },
+    {
+      "key": "m-senkoji-park",
+      "name": "Senkōji Park Observatory, Onomichi, Hiroshima Pref.",
+      "latitude": 34.409818,
+      "longitude": 133.196308,
+      "category": "viewpoint",
+      "notes": "The observatory beside the ropeway's upper station, looking straight down the channel to Mukaishima. Plenty of benches, and nobody waiting on you to move."
+    },
+    {
+      "key": "m-iou-ji",
+      "name": "Iō-ji, Fukuyama, Hiroshima Pref.",
+      "latitude": 34.383183,
+      "longitude": 133.37681,
+      "category": "temple",
+      "notes": "High above Tomonoura — a short climb up stone steps and the whole harbour is below you. Almost no visitors, so if you go up alone, keep your own eye on the light."
+    },
+    {
+      "key": "m-alley",
+      "name": "Alley Karasukojima submarine quay, Kure, Hiroshima Pref.",
+      "latitude": 34.225681,
+      "longitude": 132.549211,
+      "category": "harbor",
+      "notes": "The only park in Japan where you can watch submarines at their moorings. 25 minutes on foot from the Yamato Museum — half an hour each way, so decide before you set out whether it earns the slot."
+    },
+    {
+      "key": "m-ohara",
+      "name": "Ohara Museum of Art, Kurashiki, Okayama Pref.",
+      "latitude": 34.596032,
+      "longitude": 133.770439,
+      "category": "artgallery",
+      "notes": "Japan's first museum of Western art — El Greco and Monet are both inside. Alone you can stand in front of one canvas for as long as you want, and this is a collection worth doing that with."
+    },
+    {
+      "key": "m-mingeikan",
+      "name": "Kurashiki Folk Craft Museum, Kurashiki, Okayama Pref.",
+      "latitude": 34.595482,
+      "longitude": 133.771504,
+      "category": "museum",
+      "notes": "A converted rice warehouse where the white and namako walls are themselves the exhibit. Not a big museum — 40 minutes on your own covers it."
+    },
+    {
+      "key": "m-ivy-square",
+      "name": "Kurashiki Ivy Square, Kurashiki, Okayama Pref.",
+      "latitude": 34.594597,
+      "longitude": 133.773391,
+      "category": "sight",
+      "notes": "A Taishō-era spinning mill, red brick under ivy. Best photographed late in the afternoon. The grounds are large and rarely crowded, which makes a slow lap on your own very pleasant."
+    },
+    {
+      "key": "m-yumeji",
+      "name": "Yumeji Art Museum, Okayama, Okayama Pref.",
+      "latitude": 34.670712,
+      "longitude": 133.934643,
+      "category": "artgallery",
+      "notes": "Across from Korakuen, the home-town museum of the artist Takehisa Yumeji. Five minutes from the garden, so it is an easy extra stop to add for one."
+    },
+    {
+      "key": "m-pref-museum",
+      "name": "Okayama Prefectural Museum of Art, Okayama, Okayama Pref.",
+      "latitude": 34.667669,
+      "longitude": 133.929811,
+      "category": "artgallery",
+      "notes": "On the walk back from Korakuen into town — the nearest thing to duck into when the rain finds you alone."
+    },
+    {
+      "key": "m-omotecho",
+      "name": "Omotechō arcade, Okayama, Okayama Pref.",
+      "latitude": 34.658174,
+      "longitude": 133.930313,
+      "category": "shopping",
+      "notes": "Okayama's old arcade, about 15 minutes on foot from the castle. Plenty stays open into the evening, so there is still a choice when you are eating by yourself."
+    }
+  ],
+  "notes": [
+    {
+      "key": "n-example",
+      "title": "Example: the first two days",
+      "paragraphs": [
+        "Head to {@d1-jrpass} in the afternoon, then take the Shinkansen to Hiroshima.",
+        "Dinner at {@d1-okonomiyaki} — there's usually a queue, so go early.",
+        "Next morning, {@d2-itsukushima}: the torii looks best at high tide.",
+        "Type @ in a note to link an event or shopping item — tap it to open."
+      ]
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "title": "Land at Okayama, move on to Hiroshima",
+      "events": [
+        {
+          "key": "d1-airport",
+          "title": "Check in and clear departures at Taoyuan T1",
+          "start": "08:50",
+          "end": "11:10",
+          "timeZoneID": "Asia/Taipei",
+          "category": "airport",
+          "colour": "teal",
+          "place": {
+            "name": "Taoyuan International Airport Terminal 1, Taoyuan, Taiwan",
+            "latitude": 25.082083,
+            "longitude": 121.237757
+          },
+          "notes": "The Tigerair queue clears quickly once the desk opens, so two hours is more than enough for one person. There is little to eat airside and no bringing your own on board, so have a meal before security.",
+          "todos": [
+            "Screenshot the Visit Japan Web QR code — there may be no signal when you land",
+            "20 kg checked allowance; weigh the bag yourself on the scale beside the desk"
+          ],
+          "links": [
+            {
+              "url": "https://vjw-lp.digital.go.jp/zh-hant/",
+              "title": "Visit Japan Web — entry procedures"
+            }
+          ]
+        },
+        {
+          "key": "d1-flight-tpe-okj",
+          "title": "Tigerair IT250 Taoyuan → Okayama",
+          "start": "11:10",
+          "end": "14:11",
+          "startTimeZoneID": "Asia/Taipei",
+          "endTimeZoneID": "Asia/Tokyo",
+          "category": "flight",
+          "colour": "teal",
+          "place": {
+            "name": "Taoyuan International Airport Terminal 1, Taoyuan, Taiwan",
+            "latitude": 25.082083,
+            "longitude": 121.237757
+          },
+          "notes": "Out at 11:10, down at 14:11 — the best slot on this route, because it leaves the whole afternoon to travel. The flight itself is about two hours; the one-hour time difference is why the timetable makes it look like three. Seats are not assigned, and on your own an aisle is easier to get in and out of."
+        },
+        {
+          "key": "d1-immigration",
+          "title": "Immigration and baggage at Okayama Airport",
+          "start": "14:11",
+          "end": "14:40",
+          "category": "airport",
+          "colour": "none",
+          "place": {
+            "name": "Okayama Momotaro Airport, Okayama, Okayama Pref.",
+            "latitude": 34.756973,
+            "longitude": 133.853869
+          },
+          "notes": "The airport is small — 30 minutes is plenty from landing to the arrivals hall when it is just you. The coach ticket machine is immediately on the right as you come out, and it takes IC cards."
+        },
+        {
+          "key": "d1-jrpass",
+          "title": "Collect the JR pass at Okayama Station",
+          "start": "15:35",
+          "end": "15:55",
+          "category": "station",
+          "colour": "green",
+          "place": {
+            "name": "Okayama Station, Okayama, Okayama Pref.",
+            "latitude": 34.665409,
+            "longitude": 133.917825
+          },
+          "notes": "The collection machines are near the central exit; expect ten minutes of queue at busy times. A single seat is easy to get, so reserve tomorrow's Miyajima legs and the Onomichi run the day after while you are here.",
+          "leg": {
+            "fromKey": "d1-immigration",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 30,
+            "note": "Airport limousine bus to the west exit of Okayama Station — 30 minutes, no reservation. Okaden and Chutetsu run alternate departures",
+            "routeURL": "https://okayama-kido.co.jp/bus/kuukou.html",
+            "runs": [
+              {
+                "name": "Limousine bus (Okaden)",
+                "departure": "14:40",
+                "arrival": "15:10"
+              },
+              {
+                "name": "Limousine bus (Chutetsu)",
+                "departure": "15:00",
+                "arrival": "15:30"
+              },
+              {
+                "name": "Limousine bus (Okaden)",
+                "departure": "15:20",
+                "arrival": "15:50"
+              }
+            ],
+            "selectedRunIndex": 1,
+            "links": [
+              {
+                "url": "https://okayama-kido.co.jp/bus/kuukou.html",
+                "title": "Okayama Airport — coach timetable"
+              }
+            ]
+          },
+          "todos": [
+            "Pick up a paper San'yō Line timetable while you are at the counter — it still works offline"
+          ]
+        },
+        {
+          "key": "d1-checkin",
+          "title": "Check in at the Toyoko Inn and drop the bags",
+          "start": "17:10",
+          "end": "17:45",
+          "category": "hotel",
+          "colour": "taupe",
+          "place": {
+            "name": "Toyoko Inn Hiroshima-eki Stadium-mae, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.393721,
+            "longitude": 132.481499
+          },
+          "notes": "Check-in opens at 16:00. The single is not large but has everything it needs. Ask at the desk about the free laundry token — travelling alone you pack light, and one wash halfway through covers all six days.",
+          "leg": {
+            "fromKey": "d1-jrpass",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 53,
+            "note": "San'yō Shinkansen, Okayama to Hiroshima — 35 minutes on a Nozomi, 38 on a Sakura, 65 on a Kodama. Then 18 minutes on foot from the station to the hotel",
+            "routeURL": "https://www.jr-odekake.net/",
+            "runs": [
+              {
+                "name": "Nozomi",
+                "departure": "16:06",
+                "arrival": "16:41"
+              },
+              {
+                "name": "Sakura",
+                "departure": "16:11",
+                "arrival": "16:49"
+              },
+              {
+                "name": "Kodama",
+                "departure": "16:26",
+                "arrival": "17:31"
+              }
+            ],
+            "selectedRunIndex": 0
+          }
+        },
+        {
+          "key": "d1-okonomiyaki",
+          "title": "Dinner: Hiroshima Okonomi-Monogatari, Ekimae Hiroba",
+          "start": "18:20",
+          "end": "19:40",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Hiroshima Okonomi-Monogatari Ekimae Hiroba, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.396944,
+            "longitude": 132.473056
+          },
+          "notes": "A whole floor of okonomiyaki stalls, all of them counter seats at the griddle, so sitting down on your own is not awkward in the least. Choose soba or udon noodles inside; adding oysters is the Hiroshima answer.",
+          "leg": {
+            "fromKey": "d1-checkin",
+            "mode": "walking",
+            "durationMinutes": 15,
+            "note": "Back along the main road towards the station"
+          },
+          "todos": [
+            "Read the waiting board at the entrance first — the popular stalls queue up around seven"
+          ]
+        },
+        {
+          "key": "d1-ekie",
+          "title": "ekie: shopping and tomorrow's breakfast",
+          "start": "19:50",
+          "end": "20:40",
+          "category": "shopping",
+          "colour": "none",
+          "place": {
+            "name": "ekie mall, Hiroshima Station, Hiroshima Pref.",
+            "latitude": 34.397815,
+            "longitude": 132.476495
+          },
+          "notes": "The mall built into Hiroshima Station. The souvenir floor runs to 21:00 and the supermarket to 22:00. Tomorrow starts early and there is nobody else to fetch breakfast, so buy it tonight.",
+          "leg": {
+            "fromKey": "d1-okonomiyaki",
+            "mode": "walking",
+            "durationMinutes": 6
+          },
+          "closingLeg": {
+            "mode": "walking",
+            "durationMinutes": 18,
+            "note": "Walk back to the Toyoko Inn — it is 4°C out, so put the coat on"
+          }
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "A full day on Miyajima, the Dome at dusk",
+      "events": [
+        {
+          "key": "d2-breakfast",
+          "title": "Free hotel breakfast",
+          "start": "07:30",
+          "end": "08:05",
+          "category": "dining",
+          "colour": "taupe",
+          "place": {
+            "name": "Toyoko Inn Hiroshima-eki Stadium-mae, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.393721,
+            "longitude": 132.481499
+          },
+          "notes": "Breakfast at the Toyoko Inn starts at 07:00 — rice balls, miso soup and bread. At busy times you wait for a seat, though one person usually slips in quickly. Eat properly before heading out; there is nowhere convenient to top up mid-morning on Miyajima."
+        },
+        {
+          "key": "d2-ferry",
+          "title": "JR Miyajima ferry, Miyajimaguchi → Miyajima",
+          "start": "09:10",
+          "end": "09:20",
+          "category": "ferry",
+          "colour": "teal",
+          "place": {
+            "name": "Miyajima Pier, Hatsukaichi, Hiroshima Pref.",
+            "latitude": 34.302095,
+            "longitude": 132.322247
+          },
+          "notes": "A ten-minute crossing, covered by the pass. Sailings between 09:10 and 16:10 swing past the great torii, and the starboard deck has the view — on your own, walk straight to the right-hand rail and the spot is yours.",
+          "leg": {
+            "fromKey": "d2-breakfast",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 46,
+            "note": "Eighteen minutes on foot to Hiroshima Station, then 28 on the JR San'yō Line to Miyajimaguchi. The ferry terminal is across the road",
+            "runs": [
+              {
+                "name": "San'yō Line for Iwakuni",
+                "departure": "08:12",
+                "arrival": "08:40"
+              },
+              {
+                "name": "San'yō Line for Ōnoura",
+                "departure": "08:27",
+                "arrival": "08:55"
+              },
+              {
+                "name": "San'yō Line for Iwakuni",
+                "departure": "08:42",
+                "arrival": "09:10"
+              }
+            ],
+            "selectedRunIndex": 1
+          },
+          "todos": [
+            "The ¥100 visitor tax is paid separately at the pier — cash or IC card"
+          ]
+        },
+        {
+          "key": "d2-omotesando",
+          "title": "Eat your way along Omotesando",
+          "start": "09:30",
+          "end": "10:05",
+          "category": "market",
+          "colour": "amber",
+          "place": {
+            "name": "Miyajima Omotesando arcade, Hatsukaichi, Hiroshima Pref.",
+            "latitude": 34.299556,
+            "longitude": 132.321961
+          },
+          "notes": "The stretch from the pier to the shrine is all shops: grilled oysters, deep-fried momiji manjū, conger-eel buns. One person cannot get through many of them, so pick two or three. Buy souvenirs on the way back or you carry them all day.",
+          "leg": {
+            "fromKey": "d2-ferry",
+            "mode": "walking",
+            "durationMinutes": 5
+          }
+        },
+        {
+          "key": "d2-itsukushima",
+          "title": "Itsukushima Shrine",
+          "start": "10:15",
+          "end": "11:15",
+          "category": "temple",
+          "colour": "red",
+          "place": {
+            "name": "Itsukushima Shrine, Hatsukaichi, Hiroshima Pref.",
+            "latitude": 34.296534,
+            "longitude": 132.319005
+          },
+          "notes": "A World Heritage site. The great torii depends entirely on the tide — at high water it stands in the sea, at low water you can walk out to its feet. They are two completely different sights, so check the day's tide table before you go. The corridor is one-way; once you are in you cannot turn back, which alone is easier, not harder.",
+          "leg": {
+            "fromKey": "d2-omotesando",
+            "mode": "walking",
+            "durationMinutes": 6,
+            "note": "Along the shore, past Senjōkaku and the five-storey pagoda"
+          },
+          "links": [
+            {
+              "url": "https://www.itsukushimajinja.jp/",
+              "title": "Itsukushima Shrine (with tide tables)"
+            }
+          ]
+        },
+        {
+          "key": "d2-momijidani",
+          "title": "Momijidani Park",
+          "start": "11:30",
+          "end": "12:00",
+          "category": "park",
+          "colour": "green",
+          "place": {
+            "name": "Momijidani Park, Hatsukaichi, Hiroshima Pref.",
+            "latitude": 34.293809,
+            "longitude": 132.325038
+          },
+          "notes": "Mid-November is the peak of the colour and the whole valley is maple. Walk to the far end and you reach the ropeway's Momijidani station; a free shuttle also runs up from the entrance, which is there for exactly the moment your legs give out.",
+          "leg": {
+            "fromKey": "d2-itsukushima",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d2-ropeway",
+          "title": "Miyajima Ropeway to the Shishiiwa Observatory",
+          "start": "12:25",
+          "end": "13:25",
+          "category": "cablecar",
+          "colour": "green",
+          "place": {
+            "name": "Shishiiwa Observatory, Hatsukaichi, Hiroshima Pref.",
+            "latitude": 34.278782,
+            "longitude": 132.325421
+          },
+          "notes": "Two sections with a change halfway. From the observatory the Seto Inland Sea and its scattered islands open out; the summit of Misen is another 30 minutes on foot, which this trip skipped. The last car down is early — if you are up there alone, fix 17:00 in your head before you start.",
+          "leg": {
+            "fromKey": "d2-momijidani",
+            "mode": "other",
+            "durationMinutes": 20,
+            "note": "Circulating gondola from Momijidani to Kayatani, then the aerial tramway up to Shishiiwa",
+            "routeURL": "https://miyajima-ropeway.info/"
+          }
+        },
+        {
+          "key": "d2-oyster",
+          "title": "Lunch at Kakiya",
+          "start": "14:00",
+          "end": "15:00",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Kakiya oyster house, Hatsukaichi, Hiroshima Pref.",
+            "latitude": 34.298559,
+            "longitude": 132.321705
+          },
+          "notes": "The best-known oyster house on Omotesando — grilled, fried and over rice, all on the menu. There is always a queue at lunch, so write your name down, walk the shops and come back; alone, that timing usually lands you at the front.",
+          "leg": {
+            "fromKey": "d2-ropeway",
+            "mode": "walking",
+            "durationMinutes": 30,
+            "note": "Down on the ropeway and back the same way to Omotesando"
+          }
+        },
+        {
+          "key": "d2-genbaku-dome",
+          "title": "The Atomic Bomb Dome",
+          "start": "16:40",
+          "end": "17:20",
+          "category": "sight",
+          "colour": "red",
+          "place": {
+            "name": "Atomic Bomb Dome, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.395466,
+            "longitude": 132.453524
+          },
+          "notes": "The interior is closed, so you walk a circle around it. Late light on the ruin reads very differently from midday. Volunteer guides in Japanese and English are usually there, free — and on your own you end up asking far more questions.",
+          "leg": {
+            "fromKey": "d2-oyster",
+            "mode": "transit",
+            "transitKind": "ferry",
+            "durationMinutes": 85,
+            "note": "Ferry back to Miyajimaguchi, JR into Hiroshima, then the tram to Genbaku Dome-mae",
+            "runs": [
+              {
+                "name": "JR Miyajima ferry",
+                "departure": "15:10",
+                "arrival": "15:20"
+              },
+              {
+                "name": "Miyajima Matsudai ferry",
+                "departure": "15:25",
+                "arrival": "15:35"
+              },
+              {
+                "name": "JR Miyajima ferry",
+                "departure": "15:40",
+                "arrival": "15:50"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d2-peace-park",
+          "title": "Peace Memorial Park and the Flame of Peace",
+          "start": "17:30",
+          "end": "18:05",
+          "category": "park",
+          "colour": "green",
+          "place": {
+            "name": "Hiroshima Peace Memorial Park, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.393171,
+            "longitude": 132.452301
+          },
+          "notes": "Cross Aioi Bridge from the Dome and you are in the park. The cenotaph, the flame and the Children's Peace Monument stand on one axis, and from in front of the cenotaph the Dome sits exactly in the centre of the arch. This is a stretch to walk slowly and alone.",
+          "leg": {
+            "fromKey": "d2-genbaku-dome",
+            "mode": "walking",
+            "durationMinutes": 5
+          }
+        },
+        {
+          "key": "d2-orizuru",
+          "title": "Orizuru Tower observation deck",
+          "start": "18:15",
+          "end": "18:55",
+          "category": "viewpoint",
+          "colour": "none",
+          "place": {
+            "name": "Orizuru Tower, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.39567,
+            "longitude": 132.454686
+          },
+          "notes": "Planned for the evening view, dropped because a full day on Miyajima had used up every last step. Travelling alone there is nobody to talk it over with — when you are done, you are done. Admission is ¥2,200; next time.",
+          "isCancelled": true,
+          "leg": {
+            "fromKey": "d2-peace-park",
+            "mode": "walking",
+            "durationMinutes": 8
+          },
+          "links": [
+            {
+              "url": "https://www.orizurutower.jp/",
+              "title": "Orizuru Tower"
+            }
+          ]
+        },
+        {
+          "key": "d2-yakiniku",
+          "title": "Dinner: Yakiniku Bin (takeaway bento)",
+          "start": "19:00",
+          "end": "20:00",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Sumibi Yakiniku Bin, Enkobashi, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.395374,
+            "longitude": 132.478677
+          },
+          "notes": "An old shop in Enkobashi-chō doing takeaway yakiniku bento in the evening, about half the price of eating in. A grill restaurant is the hardest kind of place to sit in on your own, so back to the hotel with a beer turned out to be the right answer.",
+          "leg": {
+            "fromKey": "d2-peace-park",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 30,
+            "note": "Tram back to Hiroshima Station, then out towards Enkobashi-chō"
+          },
+          "closingLeg": {
+            "mode": "walking",
+            "durationMinutes": 14,
+            "note": "Carry the bento back to the hotel"
+          }
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "title": "Senkōji in Onomichi, Fukuyama, Tomonoura",
+      "events": [
+        {
+          "key": "d3-ropeway",
+          "title": "Up the Senkōji Ropeway",
+          "start": "10:05",
+          "end": "10:25",
+          "category": "cablecar",
+          "colour": "teal",
+          "place": {
+            "name": "Senkōji Ropeway, Onomichi, Hiroshima Pref.",
+            "latitude": 34.410631,
+            "longitude": 133.199562
+          },
+          "notes": "Three minutes to the top, ¥500 one way. Ride up and walk down: the descent passes Senkō-ji, Cat Alley and a string of viewpoints, and doing it the other way turns all of that into a climb. Nobody else's pace to match, so take the descent slowly.",
+          "leg": {
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 95,
+            "note": "Kodama from Hiroshima to Mihara in 25 minutes, change to the San'yō Line for 20 more to Onomichi, then 15 on foot to the ropeway's lower station. The connection at Mihara is sometimes only five minutes",
+            "runs": [
+              {
+                "name": "Kodama for Okayama",
+                "departure": "08:14",
+                "arrival": "08:39"
+              },
+              {
+                "name": "Kodama for Shin-Ōsaka",
+                "departure": "08:44",
+                "arrival": "09:09"
+              },
+              {
+                "name": "Kodama for Okayama",
+                "departure": "09:14",
+                "arrival": "09:39"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d3-senkoji",
+          "title": "Senkō-ji and the summit viewpoint",
+          "start": "10:40",
+          "end": "11:35",
+          "category": "temple",
+          "colour": "red",
+          "place": {
+            "name": "Senkō-ji, Onomichi, Hiroshima Pref.",
+            "latitude": 34.410365,
+            "longitude": 133.198685
+          },
+          "notes": "Founded in 806, with its red main hall clinging to the cliff. This is the best place to look down the Onomichi Channel — Mukaishima opposite and the ferries crossing between are all in plain sight.",
+          "leg": {
+            "fromKey": "d3-ropeway",
+            "mode": "walking",
+            "durationMinutes": 10,
+            "note": "Down the path from the upper station, past the observatory on the way"
+          }
+        },
+        {
+          "key": "d3-cat-alley",
+          "title": "Cat Alley",
+          "start": "11:50",
+          "end": "12:25",
+          "category": "sight",
+          "colour": "green",
+          "place": {
+            "name": "Cat Alley, Onomichi, Hiroshima Pref.",
+            "latitude": 34.410557,
+            "longitude": 133.200455
+          },
+          "notes": "More than a hundred hand-painted 'lucky cat stones' are hidden along the lane, so you spend more time hunting than looking. The steps are narrow and steep — you cannot drag a bag up here on your own, so leave it at the station first.",
+          "leg": {
+            "fromKey": "d3-senkoji",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d3-cafe",
+          "title": "Bouquet d'arbre",
+          "start": "12:35",
+          "end": "13:00",
+          "category": "cafe",
+          "colour": "amber",
+          "place": {
+            "name": "Bouquet d'arbre café, Onomichi, Hiroshima Pref.",
+            "latitude": 34.410267,
+            "longitude": 133.199893
+          },
+          "notes": "An old house turned café halfway along Cat Alley, its terrace square on to the channel. There is counter seating and tables for one, and a drink here after the climb was the most comfortable 40 minutes of the day.",
+          "leg": {
+            "fromKey": "d3-cat-alley",
+            "mode": "walking",
+            "durationMinutes": 3
+          }
+        },
+        {
+          "key": "d3-ramen",
+          "title": "Lunch: Onomichi ramen",
+          "start": "13:20",
+          "end": "13:50",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Onomichi Hondori arcade, Onomichi, Hiroshima Pref.",
+            "latitude": 34.406467,
+            "longitude": 133.197693
+          },
+          "notes": "Soy broth built on Inland Sea dried fish, a layer of back fat on top and flat straight noodles. The old shops in the arcade are mostly counters, so one person sits down straight away. The quiet one is rarely a mistake.",
+          "leg": {
+            "fromKey": "d3-cafe",
+            "mode": "walking",
+            "durationMinutes": 15,
+            "note": "Down out of Cat Alley and onto the Hondori arcade"
+          }
+        },
+        {
+          "key": "d3-fukuyama-castle",
+          "title": "Fukuyama Castle, seen from the north exit",
+          "start": "14:30",
+          "end": "15:05",
+          "category": "castle",
+          "colour": "none",
+          "place": {
+            "name": "Fukuyama Castle, Fukuyama, Hiroshima Pref.",
+            "latitude": 34.490996,
+            "longitude": 133.361146
+          },
+          "notes": "There was time in hand on the way back from Onomichi and nobody to consult, so the stop happened on the spot. The keep sits right against the station's north exit and photographs fine from outside — which is exactly what happened, one shot and onwards. Admission is ¥500 if you go in.\n\n**This is the one connection that does not have enough time in it**: the 14:20 train gets in at 14:40, ten minutes after the 14:30 you planned, so the leg turns amber. The 14:00 before it would make it, but only if you walk straight back to the station from the ramen shop.",
+          "leg": {
+            "fromKey": "d3-ramen",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 35,
+            "note": "San'yō Line, Onomichi to Fukuyama in 20 minutes. Services are thinner than you expect — miss one and it is 20 minutes or more. The original trip misjudged it too and spent 30 minutes on the platform",
+            "runs": [
+              {
+                "name": "San'yō Line for Fukuyama",
+                "departure": "14:00",
+                "arrival": "14:20"
+              },
+              {
+                "name": "San'yō Line for Okayama",
+                "departure": "14:20",
+                "arrival": "14:40"
+              },
+              {
+                "name": "San'yō Line for Fukuyama",
+                "departure": "14:47",
+                "arrival": "15:07"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d3-tomonoura",
+          "title": "Walking the harbour at Tomonoura",
+          "start": "16:00",
+          "end": "16:30",
+          "category": "sight",
+          "colour": "green",
+          "place": {
+            "name": "Tomonoura, Fukuyama, Hiroshima Pref.",
+            "latitude": 34.380877,
+            "longitude": 133.380327
+          },
+          "notes": "The setting for Ponyo, and also Japan's first modern port and the town where Sakamoto Ryōma negotiated. The bus for Tomonoura is signposted so clearly at the south exit of Fukuyama Station that there is nothing to get wrong on your own — stay on to the last stop.",
+          "leg": {
+            "fromKey": "d3-fukuyama-castle",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 32,
+            "note": "Tomotetsu bus from Fukuyama station forecourt to the last stop at Tomo harbour, 32 minutes, every 20–30",
+            "routeURL": "https://tomotetsu.co.jp/bus/",
+            "runs": [
+              {
+                "name": "Tomotetsu bus, Tomo line",
+                "departure": "15:00",
+                "arrival": "15:32"
+              },
+              {
+                "name": "Tomotetsu bus, Tomo line",
+                "departure": "15:20",
+                "arrival": "15:52"
+              },
+              {
+                "name": "Tomotetsu bus, Tomo line",
+                "departure": "15:50",
+                "arrival": "16:22"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d3-sensuijima",
+          "title": "Sensuijima",
+          "start": "16:45",
+          "end": "17:35",
+          "category": "sight",
+          "colour": "green",
+          "place": {
+            "name": "Sensuijima, Fukuyama, Hiroshima Pref.",
+            "latitude": 34.383117,
+            "longitude": 133.397853
+          },
+          "notes": "Five minutes on the Heisei Iroha-maru from the municipal jetty — the boat itself is a replica of Ryōma's. The island is a coast of five-coloured rock and takes about 40 minutes to walk round. The last sailing is early, so alone, check the return before you cross: miss it and there is nobody to work it out with.",
+          "leg": {
+            "fromKey": "d3-tomonoura",
+            "mode": "transit",
+            "transitKind": "ferry",
+            "durationMinutes": 10,
+            "note": "Back to the Fukuyama municipal jetty and five minutes on the Heisei Iroha-maru. The last sailing is early — check the return before you cross",
+            "runs": [
+              {
+                "name": "Heisei Iroha-maru",
+                "departure": "16:30",
+                "arrival": "16:35"
+              },
+              {
+                "name": "Heisei Iroha-maru",
+                "departure": "16:50",
+                "arrival": "16:55"
+              },
+              {
+                "name": "Heisei Iroha-maru",
+                "departure": "17:10",
+                "arrival": "17:15"
+              }
+            ],
+            "selectedRunIndex": 0,
+            "links": [
+              {
+                "url": "https://www.tomonoura.co.jp/",
+                "title": "Tomonoura tourism (with ferry times)"
+              }
+            ]
+          }
+        },
+        {
+          "key": "d3-joyato",
+          "title": "The Jōyatō lantern at Tomonoura",
+          "start": "17:45",
+          "end": "18:25",
+          "category": "sight",
+          "colour": "red",
+          "place": {
+            "name": "Tomonoura Jōyatō lantern, Fukuyama, Hiroshima Pref.",
+            "latitude": 34.382436,
+            "longitude": 133.380783
+          },
+          "notes": "The 1859 stone lantern on the quay is the town's emblem. Lit at dusk against the water, this unplanned detour turned out to be the best part of the day.",
+          "leg": {
+            "fromKey": "d3-sensuijima",
+            "mode": "walking",
+            "durationMinutes": 8
+          }
+        },
+        {
+          "key": "d3-dinner",
+          "title": "Dinner: Yakiniku Bin (takeaway again)",
+          "start": "20:30",
+          "end": "21:20",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Sumibi Yakiniku Bin, Enkobashi, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.395374,
+            "longitude": 132.478677
+          },
+          "notes": "Back in Hiroshima after eight, and another takeaway bento. Tomonoura to Hiroshima takes two hours and the return buses are thinner than the outbound ones — alone in a seaside town, missing the last one leaves you with no options at all. Check it before you settle in.",
+          "leg": {
+            "fromKey": "d3-joyato",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 120,
+            "note": "Tomotetsu bus back to Fukuyama in 32 minutes, then JR to Hiroshima. The return buses are thinner than the outbound — check the last one before you settle in",
+            "routeURL": "https://tomotetsu.co.jp/bus/",
+            "runs": [
+              {
+                "name": "Tomotetsu bus for Fukuyama Station",
+                "departure": "18:30",
+                "arrival": "19:02"
+              },
+              {
+                "name": "Tomotetsu bus for Fukuyama Station",
+                "departure": "19:00",
+                "arrival": "19:32"
+              },
+              {
+                "name": "Tomotetsu bus for Fukuyama Station",
+                "departure": "19:30",
+                "arrival": "20:02"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "closingLeg": {
+            "mode": "walking",
+            "durationMinutes": 14,
+            "note": "Walk back to the hotel"
+          }
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "title": "The Yamato Museum in Kure, then central Hiroshima",
+      "events": [
+        {
+          "key": "d4-move-hotel",
+          "title": "Check out of the Toyoko Inn, leave the bags at the APA",
+          "start": "08:30",
+          "end": "09:10",
+          "category": "hotel",
+          "colour": "taupe",
+          "place": {
+            "name": "APA Hotel Hiroshima-Ekimae Ohashi, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.395364,
+            "longitude": 132.471991
+          },
+          "notes": "Tonight is at the APA, fifteen minutes away on foot. Carrying it all yourself, the easiest move is to take the bag over first: the desk takes it happily rather than making you wait for afternoon check-in.",
+          "todos": [
+            "Check the drawers and the sockets before you leave — chargers are what stay behind"
+          ]
+        },
+        {
+          "key": "d4-yamato",
+          "title": "The Yamato Museum",
+          "start": "10:05",
+          "end": "12:00",
+          "category": "museum",
+          "colour": "red",
+          "place": {
+            "name": "Yamato Museum, Kure, Hiroshima Pref.",
+            "latitude": 34.241185,
+            "longitude": 132.55588
+          },
+          "notes": "The 1:10 model of the battleship Yamato is 26 metres long, and one lap of it justifies the ticket. Admission ¥500. The Zero fighter and a Kaiten human torpedo are on the same upper floor. Alone, you stop for as long as you want at each of them.",
+          "leg": {
+            "fromKey": "d4-move-hotel",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 45,
+            "note": "JR Kure Line — 33 minutes on the Akiji Liner rapid, 43 on a local. A pedestrian deck runs straight from Kure Station, so there is no road to cross",
+            "runs": [
+              {
+                "name": "Akiji Liner rapid",
+                "departure": "09:22",
+                "arrival": "09:55"
+              },
+              {
+                "name": "Kure Line local",
+                "departure": "09:40",
+                "arrival": "10:23"
+              },
+              {
+                "name": "Akiji Liner rapid",
+                "departure": "09:52",
+                "arrival": "10:25"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "links": [
+            {
+              "url": "https://yamato-museum.com/",
+              "title": "Yamato Museum"
+            }
+          ]
+        },
+        {
+          "key": "d4-jmsdf",
+          "title": "The Iron Whale (JMSDF Kure Museum)",
+          "start": "12:05",
+          "end": "13:00",
+          "category": "museum",
+          "colour": "green",
+          "place": {
+            "name": "JMSDF Kure Museum, Kure, Hiroshima Pref.",
+            "latitude": 34.242162,
+            "longitude": 132.555321
+          },
+          "notes": "Free, and you can walk inside a real submarine — the Akishio is beached in front of the entrance. The compartments are tight, which is easier on your own than in a group. Minesweeping is on the ground floor, the submarine at the top.",
+          "leg": {
+            "fromKey": "d4-yamato",
+            "mode": "walking",
+            "durationMinutes": 3
+          }
+        },
+        {
+          "key": "d4-kure-lunch",
+          "title": "Lunch: Kure reimen",
+          "start": "13:15",
+          "end": "14:05",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Rengadōri arcade, Kure, Kure, Hiroshima Pref.",
+            "latitude": 34.246508,
+            "longitude": 132.566174
+          },
+          "notes": "Kure's speciality is a cold noodle dish with a sweetish sauce and flat noodles — nothing like Korean naengmyeon. Several old shops along the Rengadōri arcade serve it, and at lunch a single diner walks in with almost no wait.",
+          "leg": {
+            "fromKey": "d4-jmsdf",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d4-shukkeien",
+          "title": "Shukkeien Garden",
+          "start": "15:30",
+          "end": "16:30",
+          "category": "park",
+          "colour": "green",
+          "place": {
+            "name": "Shukkeien Garden, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.400338,
+            "longitude": 132.467449
+          },
+          "notes": "A stroll garden laid out in 1620, with ten islands large and small in the central pond; a full circuit takes about 40 minutes. Admission ¥260, and the combined ticket with the prefectural museum next door is better value. Mid-November is peak colour and the pace suits walking it alone.",
+          "leg": {
+            "fromKey": "d4-kure-lunch",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 70,
+            "note": "Kure Line back to Hiroshima in 33 minutes, then two tram stops from the station",
+            "runs": [
+              {
+                "name": "Akiji Liner rapid",
+                "departure": "14:19",
+                "arrival": "14:52"
+              },
+              {
+                "name": "Kure Line local",
+                "departure": "14:36",
+                "arrival": "15:19"
+              },
+              {
+                "name": "Akiji Liner rapid",
+                "departure": "14:49",
+                "arrival": "15:22"
+              }
+            ],
+            "selectedRunIndex": 0
+          }
+        },
+        {
+          "key": "d4-hiroshima-castle",
+          "title": "Hiroshima Castle",
+          "start": "16:45",
+          "end": "17:35",
+          "category": "castle",
+          "colour": "green",
+          "place": {
+            "name": "Hiroshima Castle, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.402146,
+            "longitude": 132.45954
+          },
+          "notes": "A reconstructed keep housing a history museum, ¥370. Twelve minutes on foot from Shukkeien, and the moat is a good early-evening walk. The keep closes at 18:00, so even planning for one this order cannot be reversed.",
+          "leg": {
+            "fromKey": "d4-shukkeien",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d4-peace-museum",
+          "title": "Hiroshima Peace Memorial Museum",
+          "start": "18:00",
+          "end": "19:30",
+          "category": "museum",
+          "colour": "red",
+          "place": {
+            "name": "Hiroshima Peace Memorial Museum, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.391812,
+            "longitude": 132.452105
+          },
+          "notes": "Admission ¥200, with the main and east buildings joined. August runs to 19:00, but most months close at 18:00 — check the current month before you go. It deserves a full 90 minutes, and coming out of it alone usually takes a quiet walk before you are back in the day.",
+          "leg": {
+            "fromKey": "d4-hiroshima-castle",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 20,
+            "note": "Tram to Genbaku Dome-mae, then across the Peace Memorial Park"
+          },
+          "todos": [
+            "Check the closing time and the last admission for the day on the museum's site"
+          ],
+          "links": [
+            {
+              "url": "https://hpmmuseum.jp/",
+              "title": "Hiroshima Peace Memorial Museum"
+            }
+          ]
+        },
+        {
+          "key": "d4-station-bento",
+          "title": "Souvenirs and a bento at ekie",
+          "start": "20:10",
+          "end": "21:00",
+          "category": "souvenir",
+          "colour": "amber",
+          "place": {
+            "name": "ekie mall, Hiroshima Station, Hiroshima Pref.",
+            "latitude": 34.397815,
+            "longitude": 132.476495
+          },
+          "notes": "Momiji manjū, oyster soy sauce and Kumano brushes are all on this floor. Tomorrow is a day of moving, so pick up an anago bento too. Buying souvenirs alone comes with one rule: every one of them ends up on the plane in your own hands.",
+          "leg": {
+            "fromKey": "d4-peace-museum",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 30,
+            "note": "Tram back to Hiroshima Station"
+          },
+          "todos": [
+            "Most souvenir shops shut at 21:00 — do not leave it to the end of the evening"
+          ]
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "title": "Kurashiki's old quarter, Korakuen lit up after dark",
+      "events": [
+        {
+          "key": "d5-checkout",
+          "title": "Check out of the APA and collect the bags",
+          "start": "08:40",
+          "end": "09:10",
+          "category": "hotel",
+          "colour": "taupe",
+          "place": {
+            "name": "APA Hotel Hiroshima-Ekimae Ohashi, Hiroshima, Hiroshima Pref.",
+            "latitude": 34.395364,
+            "longitude": 132.471991
+          },
+          "notes": "Check-out is 11:00, so there is no rush. With nobody to watch the bag, wheeling it straight to the station is simplest — today is spent moving."
+        },
+        {
+          "key": "d5-luggage",
+          "title": "Leave the luggage at Kurashiki Station",
+          "start": "10:30",
+          "end": "10:50",
+          "category": "station",
+          "colour": "none",
+          "place": {
+            "name": "Kurashiki Station, Kurashiki, Okayama Pref.",
+            "latitude": 34.601086,
+            "longitude": 133.766219
+          },
+          "notes": "There are coin lockers at the station, but the large ones fill quickly. Tonight's hotel is five minutes away, so on your own, wheeling the bag to its desk is the safer bet.",
+          "leg": {
+            "fromKey": "d5-checkout",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 75,
+            "note": "San'yō Shinkansen from Hiroshima to Okayama in 35 minutes, then the San'yō Line 16 more to Kurashiki. Kurashiki is a local stop, so do not board a rapid that runs past it",
+            "runs": [
+              {
+                "name": "Nozomi",
+                "departure": "09:23",
+                "arrival": "09:58"
+              },
+              {
+                "name": "Sakura",
+                "departure": "09:40",
+                "arrival": "10:19"
+              },
+              {
+                "name": "Nozomi",
+                "departure": "10:23",
+                "arrival": "10:58"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "todos": [
+            "The lockers take ¥100 coins only — break a note at a convenience store first"
+          ]
+        },
+        {
+          "key": "d5-achi",
+          "title": "Achi Shrine",
+          "start": "11:20",
+          "end": "11:55",
+          "category": "temple",
+          "colour": "green",
+          "place": {
+            "name": "Achi Shrine, Kurashiki, Okayama Pref.",
+            "latitude": 34.597529,
+            "longitude": 133.773443
+          },
+          "notes": "A shrine on the low hill beside the old quarter. The steps are steep enough to notice, but the top looks out over the whole run of white-walled houses. The wisteria in the grounds is said to be 500 years old. Few visitors, and very quiet if you climb it alone.",
+          "leg": {
+            "fromKey": "d5-luggage",
+            "mode": "walking",
+            "durationMinutes": 15,
+            "note": "From Kurashiki Station down Chūō-dōri, past the arcade on the way"
+          }
+        },
+        {
+          "key": "d5-bikan",
+          "title": "Kurashiki Bikan Historical Quarter",
+          "start": "12:05",
+          "end": "12:50",
+          "category": "sight",
+          "colour": "red",
+          "place": {
+            "name": "Kurashiki Bikan Historical Quarter, Kurashiki, Okayama Pref.",
+            "latitude": 34.596525,
+            "longitude": 133.772586
+          },
+          "notes": "White-walled storehouses, namako tiling and willows along the Kurashiki river — an Edo-period rice-warehouse district kept whole. The river-boat ride is 20 minutes for ¥500 and takes single passengers; tickets at the tourist information office.",
+          "leg": {
+            "fromKey": "d5-achi",
+            "mode": "walking",
+            "durationMinutes": 6
+          }
+        },
+        {
+          "key": "d5-miyake",
+          "title": "Lunch: curry at Miyake Shōten",
+          "start": "13:00",
+          "end": "13:50",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Miyake Shōten, Kurashiki, Okayama Pref.",
+            "latitude": 34.596325,
+            "longitude": 133.772286
+          },
+          "notes": "A café in a converted machiya townhouse, known for its curry and its seasonal fruit parfaits. There is always a lunchtime queue, so alone, put your name down, go to the museum and come back to your turn.",
+          "leg": {
+            "fromKey": "d5-bikan",
+            "mode": "walking",
+            "durationMinutes": 3
+          }
+        },
+        {
+          "key": "d5-ohara",
+          "title": "Ohara Museum of Art",
+          "start": "14:00",
+          "end": "15:00",
+          "category": "artgallery",
+          "colour": "green",
+          "place": {
+            "name": "Ohara Museum of Art, Kurashiki, Okayama Pref.",
+            "latitude": 34.596032,
+            "longitude": 133.770439
+          },
+          "notes": "Opened in 1930 as Japan's first museum of Western art. The main hall holds El Greco's Annunciation and a Monet water lily. Admission ¥2,000, closed Mondays — check before you build the day around it. Nobody is hurrying you, but an hour is only one circuit.",
+          "leg": {
+            "fromKey": "d5-miyake",
+            "mode": "walking",
+            "durationMinutes": 5
+          },
+          "links": [
+            {
+              "url": "https://www.ohara.or.jp/",
+              "title": "Ohara Museum of Art"
+            }
+          ]
+        },
+        {
+          "key": "d5-parfait",
+          "title": "Fruit parfait at Parlour Kudamono Komachi",
+          "start": "15:10",
+          "end": "15:50",
+          "category": "dessert",
+          "colour": "amber",
+          "place": {
+            "name": "Parlour Kudamono Komachi, Kurashiki, Okayama Pref.",
+            "latitude": 34.594943,
+            "longitude": 133.771231
+          },
+          "notes": "Okayama is fruit country, and a white peach or muscat parfait is the standard order here. Not cheap, but generous — one of them is exactly right as an afternoon break for one.",
+          "leg": {
+            "fromKey": "d5-ohara",
+            "mode": "walking",
+            "durationMinutes": 5
+          }
+        },
+        {
+          "key": "d5-outlet",
+          "title": "Mitsui Outlet Park Kurashiki",
+          "start": "16:15",
+          "end": "17:00",
+          "category": "shopping",
+          "colour": "none",
+          "place": {
+            "name": "Mitsui Outlet Park Kurashiki, Kurashiki, Okayama Pref.",
+            "latitude": 34.60371,
+            "longitude": 133.762007
+          },
+          "notes": "Planned for after the old quarter, dropped because walking the quarter took until four and there was no time left — stopping and starting alone eats more of the day than you expect. It is right by the north exit of Kurashiki Station, so next time it belongs on the arrival day.",
+          "isCancelled": true,
+          "leg": {
+            "fromKey": "d5-parfait",
+            "mode": "walking",
+            "durationMinutes": 20
+          }
+        },
+        {
+          "key": "d5-korakuen",
+          "title": "Korakuen lit up for autumn",
+          "start": "17:40",
+          "end": "18:45",
+          "category": "park",
+          "colour": "red",
+          "place": {
+            "name": "Korakuen Garden, Okayama, Okayama Pref.",
+            "latitude": 34.66633,
+            "longitude": 133.937395
+          },
+          "notes": "One of the three great gardens of Japan. During the autumn 'Fantasy Garden' season it stays open to 21:30 under lights, and it is a completely different place from the daytime garden. Admission is charged separately during the season, so check this year's dates first. Even after dark it is quiet enough to walk alone.",
+          "leg": {
+            "fromKey": "d5-parfait",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 60,
+            "note": "San'yō Line, Kurashiki to Okayama in 16 minutes, then the tram to Shiroshita and ten minutes on foot",
+            "runs": [
+              {
+                "name": "San'yō Line local for Okayama",
+                "departure": "16:04",
+                "arrival": "16:20"
+              },
+              {
+                "name": "Sunliner rapid",
+                "departure": "16:23",
+                "arrival": "16:38"
+              },
+              {
+                "name": "San'yō Line local for Okayama",
+                "departure": "16:44",
+                "arrival": "17:00"
+              }
+            ],
+            "selectedRunIndex": 1
+          },
+          "links": [
+            {
+              "url": "https://okayama-korakuen.jp/",
+              "title": "Korakuen Garden"
+            }
+          ]
+        },
+        {
+          "key": "d5-okayama-castle",
+          "title": "Okayama Castle after dark",
+          "start": "18:55",
+          "end": "19:45",
+          "category": "castle",
+          "colour": "green",
+          "place": {
+            "name": "Okayama Castle, Okayama, Okayama Pref.",
+            "latitude": 34.665176,
+            "longitude": 133.936045
+          },
+          "notes": "The black-walled keep, known as the Crow Castle, faces Korakuen across the Asahi river. While the lights are on, the view from the Tsukimibashi side is the one to take — the bridge is empty enough that setting up a phone blocks nobody.",
+          "leg": {
+            "fromKey": "d5-korakuen",
+            "mode": "walking",
+            "durationMinutes": 8,
+            "note": "Out of Korakuen and over the Asahi on Tsukimibashi"
+          }
+        },
+        {
+          "key": "d5-dinner",
+          "title": "Dinner: ramen at Ippudo, then the walk to the station",
+          "start": "20:15",
+          "end": "21:15",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "Ippudo Okayama, Okayama, Okayama Pref.",
+            "latitude": 34.665336,
+            "longitude": 133.92547
+          },
+          "notes": "After a day on foot, something hot to finish — a ramen counter is the friendliest seat there is for one. It is about 25 minutes from the castle back through town to the station, past the Omotechō arcade on the way.",
+          "leg": {
+            "fromKey": "d5-okayama-castle",
+            "mode": "walking",
+            "durationMinutes": 25,
+            "note": "Along the Asahi back into town and through the Omotechō arcade"
+          },
+          "closingLeg": {
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 40,
+            "note": "San'yō Line from Okayama back to Kurashiki, 16 minutes. The last train is late enough that there is nothing to rush for, and the hotel is five minutes from the station",
+            "runs": [
+              {
+                "name": "San'yō Line for Kurashiki",
+                "departure": "21:24",
+                "arrival": "21:40"
+              },
+              {
+                "name": "San'yō Line for Kurashiki",
+                "departure": "21:47",
+                "arrival": "22:03"
+              },
+              {
+                "name": "San'yō Line for Kurashiki",
+                "departure": "22:07",
+                "arrival": "22:23"
+              }
+            ],
+            "selectedRunIndex": 0
+          }
+        }
+      ]
+    },
+    {
+      "day": 6,
+      "title": "Kibitsu Shrine, then the flight home",
+      "events": [
+        {
+          "key": "d6-checkout",
+          "title": "Check out, luggage into a locker at Okayama",
+          "start": "07:40",
+          "end": "08:25",
+          "category": "train",
+          "colour": "teal",
+          "place": {
+            "name": "Kurashiki Station, Kurashiki, Okayama Pref.",
+            "latitude": 34.601086,
+            "longitude": 133.766219
+          },
+          "notes": "There is an afternoon flight to make and nobody to leave the bag with, so take the San'yō Line into Okayama, put it in a locker, and head out to Kibitsu from there. The Momotaro Line is single-track with two trains an hour — miss one and it is a 30-minute wait."
+        },
+        {
+          "key": "d6-kibitsu",
+          "title": "Kibitsu Shrine",
+          "start": "09:05",
+          "end": "10:30",
+          "category": "temple",
+          "colour": "red",
+          "place": {
+            "name": "Kibitsu Shrine, Okayama, Okayama Pref.",
+            "latitude": 34.670682,
+            "longitude": 133.850611
+          },
+          "notes": "Where the Momotarō legend begins, and the main hall is a National Treasure. The famous part is the 360-metre corridor running away down the slope of the hill — early in the morning it is empty and entirely yours, which is the best thing this trip offers a solo traveller.",
+          "leg": {
+            "fromKey": "d6-checkout",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 40,
+            "note": "Change at Okayama for the JR Momotaro Line (Kibi Line), 18 minutes to Kibitsu and ten more on foot. Two trains an hour",
+            "runs": [
+              {
+                "name": "Momotaro Line local for Sōja",
+                "departure": "08:11",
+                "arrival": "08:27"
+              },
+              {
+                "name": "Momotaro Line local for Sōja",
+                "departure": "08:36",
+                "arrival": "08:54"
+              },
+              {
+                "name": "Momotaro Line local for Sōja",
+                "departure": "09:29",
+                "arrival": "09:47"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d6-aeon",
+          "title": "Souvenirs and lunch at AEON Mall Okayama",
+          "start": "11:15",
+          "end": "12:35",
+          "category": "shopping",
+          "colour": "amber",
+          "place": {
+            "name": "AEON Mall Okayama, Okayama, Okayama Pref.",
+            "latitude": 34.66202,
+            "longitude": 133.917354
+          },
+          "notes": "Connected to Okayama Station by a deck, so rain never comes into it. Souvenirs, pharmacy and food court in one place — a good way to spend the last of the coins. Whatever you buy you carry, so keep it in proportion.",
+          "leg": {
+            "fromKey": "d6-kibitsu",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 30,
+            "note": "Momotaro Line back to Okayama in 18 minutes, then over the deck straight into the mall",
+            "runs": [
+              {
+                "name": "Momotaro Line local for Okayama",
+                "departure": "10:42",
+                "arrival": "11:00"
+              },
+              {
+                "name": "Momotaro Line local for Okayama",
+                "departure": "11:12",
+                "arrival": "11:30"
+              },
+              {
+                "name": "Momotaro Line local for Okayama",
+                "departure": "11:42",
+                "arrival": "12:00"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "todos": [
+            "Meat products cannot go back to Taiwan — no pork buns or braised meat as gifts"
+          ]
+        },
+        {
+          "key": "d6-airport",
+          "title": "Check in and clear departures at Okayama Airport",
+          "start": "13:25",
+          "end": "15:25",
+          "category": "airport",
+          "colour": "none",
+          "place": {
+            "name": "Okayama Momotaro Airport, Okayama, Okayama Pref.",
+            "latitude": 34.756973,
+            "longitude": 133.853869
+          },
+          "notes": "A small airport, so alone, check-in and security are quick. Duty free is limited, so buy anything you want in town first. There is a viewing deck on the floor above, which keeps the wait from dragging.",
+          "leg": {
+            "fromKey": "d6-aeon",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 30,
+            "note": "Limousine bus from the west exit of Okayama Station to Okayama Momotaro Airport — 30 minutes, ¥780. The departure two hours before the flight is the safe one",
+            "routeURL": "https://okayama-kido.co.jp/bus/kuukou.html",
+            "runs": [
+              {
+                "name": "Limousine bus (Okaden)",
+                "departure": "12:50",
+                "arrival": "13:20"
+              },
+              {
+                "name": "Limousine bus (Chutetsu)",
+                "departure": "13:10",
+                "arrival": "13:40"
+              },
+              {
+                "name": "Limousine bus (Okaden)",
+                "departure": "13:30",
+                "arrival": "14:00"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "todos": [
+            "Boots come off at security — change into something easier beforehand",
+            "Sort the tax-refund paperwork and receipts before departures"
+          ]
+        },
+        {
+          "key": "d6-flight-okj-tpe",
+          "title": "Tigerair IT251 Okayama → Taoyuan",
+          "start": "15:25",
+          "end": "17:35",
+          "startTimeZoneID": "Asia/Tokyo",
+          "endTimeZoneID": "Asia/Taipei",
+          "category": "flight",
+          "colour": "teal",
+          "place": {
+            "name": "Okayama Momotaro Airport, Okayama, Okayama Pref.",
+            "latitude": 34.756973,
+            "longitude": 133.853869
+          },
+          "notes": "Off at 15:25, down at 17:35 — back in Taipei while it is still light, with a day spare before work. A solo trip ends cleanly: there is no one left to compare plans with."
+        }
+      ]
+    }
+  ]
+}

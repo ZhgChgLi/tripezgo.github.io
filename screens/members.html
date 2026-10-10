@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>旅程共編</title>
+<!--
+  設定 → 旅程共編，分享開著（App：Modules/UI/…/Components/SharedTrip/SettingsMembersEditor.swift、
+  InviteQR/InviteQRCard.swift；字串 Scripts/i18n/maps/UI.json、Settings.json 的 members*）。
+  參數：?lang=zh-Hant-TW|en|ja
+  版面數字照 SettingsMembersEditor.Metrics／SwitchRow／InviteQRCard.Metrics；導覽列與開關照
+  screens/ref/zh/members.png（沒開分享的那一張）量。旅伴名字與連結是樣本，寫在下面的 SAMPLE。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  :root { --danger-ink: var(--red200); --code-tile-border: #e3ddd5; }
+
+  /* ── 導覽列（iOS 26 系統元件，照截圖量）：返回鈕是一顆 44 高的玻璃膠囊 ── */
+  .nav-back { position: absolute; left: 16px; top: 62px; height: 44px; padding: 0 18px 0 11px; border-radius: 22px;
+    background: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.03), 0 6px 24px rgba(0,0,0,.08);
+    display: flex; align-items: center; gap: 4px; font: 600 17px/22px var(--font); color: #1a1a1a; z-index: 5; }
+  .nav-back svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.4;
+    stroke-linecap: round; stroke-linejoin: round; }
+  .nav-title { position: absolute; left: 110px; right: 110px; top: 74px; text-align: center;
+    font: 600 17px/22px var(--font); color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ── 欄：SettingsMembersEditor.column — 左右 20、段距 22（Metrics.sectionGap） ── */
+  .col { position: absolute; left: 20px; right: 20px; top: 132px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* SwitchGroup ＋ SwitchRow — 列內距 10/16、字 15＋12、行距 2、分隔線從字的起點開始 */
+  .group { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--card); }
+  .sw-row { position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 16px; }
+  .sw-row + .sw-row::before { content: ""; position: absolute; left: 16px; right: 0; top: 0; border-top: 1px solid var(--border-soft); }
+  .sw-body { flex: 1 1 auto; min-width: 0; }
+  .sw-name { font-size: var(--t-base); line-height: 16.5px; color: var(--ink); }
+  .sw-sub { margin-top: 2px; font-size: var(--t-xs); line-height: 13.8px; color: var(--muted); }
+  /* UISwitch（iOS 26）：63×28，量自截圖；開的顏色是 SwitchRow 的 onTintColor＝tzSuccess */
+  .switch { flex: none; position: relative; width: 63px; height: 28px; border-radius: 14px; background: #c5c5c7; }
+  .switch::after { content: ""; position: absolute; left: 2px; top: 2px; width: 37px; height: 24px; border-radius: 12px;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .switch.on { background: var(--success); }
+  .switch.on::after { left: 24px; }
+
+  .sec-title { font-size: var(--t-sm); line-height: 16px; color: var(--muted); }
+  .sec-title.xs { font: 600 var(--t-xs)/14px var(--font); margin-bottom: -14px; } /* 標題與表之間是 8，不是 22 */
+
+  /* linkCard — 網址框、QR、兩顆鈕、重新產生；彼此 8（Metrics.linkCardGap） */
+  .link-card { display: flex; flex-direction: column; gap: 8px; }
+  .url { padding: 11px 12px; background: var(--sunken); border: 1px solid var(--border); border-radius: 8px;
+    font: 400 var(--t-sm)/16px var(--font); color: var(--muted-on-sunken); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .qr { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--card);
+    border: 1px solid var(--border); border-radius: 8px; }
+  .qr-tile { flex: none; padding: 4px; background: #fff; border: 1px solid var(--code-tile-border); border-radius: 8px; }
+  .qr-tile svg { display: block; width: 100px; height: 100px; shape-rendering: crispEdges; }
+  .qr-words { flex: 1 1 auto; min-width: 0; }
+  .qr-t { font: 600 var(--t-sm)/16px var(--font); color: var(--ink); }
+  .qr-d { margin-top: 4px; font: 400 var(--t-xs)/15px var(--font); color: var(--muted); }
+  .qr-z { margin-top: 8px; display: flex; align-items: center; gap: 4px; font: 600 var(--t-xs)/14px var(--font); color: var(--accent-ink); }
+  .qr-z svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .acts { display: flex; gap: 8px; }
+  .btn { flex: 1 1 0; min-height: 44px; padding: 0 8px; display: grid; place-items: center; background: var(--card);
+    border: 1px solid var(--border); border-radius: 8px; font: 600 var(--t-sm)/16px var(--font); color: var(--accent-ink); }
+  .btn.off { color: var(--danger-ink); }
+
+  /* MemberRowView — 內距 8/16、頭像 34、間距 12、名字 15＋副標 12 */
+  .list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--page); }
+  .mb { position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 16px; }
+  .mb + .mb { border-top: 1px solid var(--border-soft); }
+  .av { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--sw-base); color: var(--page); font: 700 var(--t-sm)/1 var(--font); }
+  .mb-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .mb-name { font-size: var(--t-base); line-height: 18px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mb-sub { font-size: var(--t-xs); line-height: 14px; color: var(--muted); }
+  .mb-tag { flex: none; font-size: var(--t-xs); color: var(--muted); }
+  .mb-del { flex: none; min-height: 44px; padding: 0 4px; display: grid; place-items: center;
+    font: 600 var(--t-sm)/16px var(--font); color: var(--danger-ink); }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { fmt, lang, t, chrome, swatchClass, ready } from './chrome.js';
+
+const d = document.getElementById('d');
+
+// App 字串（UI.json／Settings.json 的 members*、liveShare*；逐字抄）
+const S = {
+  'zh-Hant-TW': {
+    back: '設定', title: '旅程共編',
+    share: '分享這趟旅程', shareDetail: '邀請其他旅伴一起共編行程',
+    readOnly: '唯讀旅程', readOnlyOff: '旅伴可以一起改行程、路程、標記、筆記與購物清單',
+    invite: '邀請', qrTitle: '用 TripEZGo 掃描加入',
+    qrDetail: '在對方的「小工具 › 掃描」或旅程選擇頁的「加入共編 › 掃描加入」掃這個碼。iPhone 的相機也掃得到。',
+    qrZoom: '點一下放大', linkShare: '分享連結', linkOff: '停用連結', linkNew: '重新產生連結',
+    members: '旅伴', owner: '作者', thisDevice: '這台裝置', viaLink: '透過連結', collaborator: '共編', remove: '移除',
+  },
+  en: {
+    back: 'Settings', title: 'Trip Sharing',
+    share: 'Share this trip', shareDetail: "Invite the people you're travelling with to plan this trip together",
+    readOnly: 'Read-only trip', readOnlyOff: 'Travel companions can edit events, legs, markers, notes and the shopping list.',
+    invite: 'Invite', qrTitle: 'Scan with TripEZGo to Join',
+    qrDetail: 'They can scan it from Tools › Scan, or Join a Trip › Scan to Join on the trip picker. The iPhone Camera reads it too.',
+    qrZoom: 'Tap to Enlarge', linkShare: 'Share link', linkOff: 'Turn Off Link', linkNew: 'Generate a New Link',
+    members: 'Companions', owner: 'Owner', thisDevice: 'This device', viaLink: 'Joined by link', collaborator: 'Co-editing', remove: 'Remove',
+  },
+  ja: {
+    back: '設定', title: '旅程の共同編集',
+    share: 'この旅程を共有', shareDetail: '一緒に行く人を招いて、この旅程を共同で作る',
+    readOnly: '閲覧のみの旅行', readOnlyOff: '旅の仲間が予定・移動・マーカー・メモ・買い物リストを編集できます。',
+    invite: '招待', qrTitle: 'TripEZGo でスキャンして参加',
+    qrDetail: '相手の「ツール › スキャン」か、旅行選択画面の「共同編集に参加 › スキャンして参加」でこのコードを読み取ってもらいます。',
+    qrZoom: 'タップで拡大', linkShare: 'リンクを共有', linkOff: 'リンクを停止', linkNew: 'リンクを再生成',
+    members: '旅の仲間', owner: '作成者', thisDevice: 'このデバイス', viaLink: 'リンクから参加', collaborator: '共同編集', remove: '削除',
+  },
+}[lang] || null;
+const s = S || {};
+
+// 樣本：旅伴（名字由作者設定，顏色是行程類型色票之一——SharedTripMemberDefaults.colours）
+const SAMPLE = {
+  'zh-Hant-TW': [['阿哲', 'seeNature'], ['小雯', 'eat'], ['凱文', 'stay'], ['美琪', 'shop']],
+  en: [['Alex', 'seeNature'], ['Mia', 'eat'], ['Ken', 'stay'], ['Sara', 'shop']],
+  ja: [['拓海', 'seeNature'], ['美咲', 'eat'], ['健太', 'stay'], ['さくら', 'shop']],
+}[lang];
+// 邀請連結：https://www.tripezgo.com/join/#<base64url(iCloud share URL)>（Domain/TripInviteLink）
+const URL_TEXT = 'https://www.tripezgo.com/join/#aHR0cHM6Ly93d3cuaWNsb3VkLmNvbS9zaGFyZS8wYjdYcTJtTmNSNHRZdko4a1B6M2FMdzllI3R6PUs3TTJROVhBNEZIVDhXUE4';
+
+const swRow = (name, sub, on) => `<div class="sw-row"><div class="sw-body"><div class="sw-name">${fmt(name)}</div>
+  <div class="sw-sub">${fmt(sub)}</div></div><div class="switch${on ? ' on' : ''}"></div></div>`;
+
+const rows = SAMPLE.map(([name, colour], i) => {
+  const sw = `sw-${colour}`;
+  const right = i === 0 ? `<span class="mb-tag">${s.owner}</span>` : `<span class="mb-del">${s.remove}</span>`;
+  const sub = i === 0 ? s.thisDevice : (i === 2 ? s.collaborator : s.viaLink);
+  return `<div class="mb"><div class="av ${sw}">${[...name][0].toUpperCase()}</div>
+    <div class="mb-main"><div class="mb-name">${fmt(name)}</div><div class="mb-sub">${sub}</div></div>${right}</div>`;
+}).join('');
+
+const qr = await (await fetch('./img/members-qr.svg')).text();
+
+d.insertAdjacentHTML('beforeend', `
+  <div class="nav-back"><svg viewBox="0 0 24 24"><path d="M15 4.5 7.5 12l7.5 7.5"/></svg>${s.back}</div>
+  <div class="nav-title">${s.title}</div>
+  <div class="col">
+    <div class="group">${swRow(s.share, s.shareDetail, true)}${swRow(s.readOnly, s.readOnlyOff, false)}</div>
+    <div class="sec-title">${s.invite}</div>
+    <div class="link-card">
+      <div class="url">${URL_TEXT}</div>
+      <div class="qr"><div class="qr-tile">${qr}</div>
+        <div class="qr-words"><div class="qr-t">${s.qrTitle}</div><div class="qr-d">${fmt(s.qrDetail)}</div>
+        <div class="qr-z"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8.5v5M8.5 11h5"/></svg>${s.qrZoom}</div></div></div>
+      <div class="acts"><div class="btn">${s.linkShare}</div><div class="btn off">${s.linkOff}</div></div>
+      <div class="btn">${s.linkNew}</div>
+    </div>
+    <div class="sec-title xs">${s.members}</div>
+    <div class="list">${rows}</div>
+  </div>`);
+
+chrome(d);
+ready();
+</script>
+</body>
+</html>

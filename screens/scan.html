@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>小工具・掃描</title>
+<!--
+  小工具分頁・掃描（App：Modules/Widgets/…/Scan/ScanHistoryViewController.swift）。
+  參數：?lang=zh-Hant-TW|en|ja &shared=1（共編中：標題旁的籌碼＋每一列的「誰」；0＝自己一個人）
+  抬頭與四格切換照 SubTabContainer.swift ＋ screens/ref/zh/scan.png 量；卡片與列照 ScanHistoryViewController.Metrics。
+  基準圖是空的（還沒掃過東西），這一頁畫的是有四筆紀錄的樣子——紀錄內容是範例，寫在底下的 SAMPLE。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  /* ── 抬頭＋四格切換（SubTabContainer：上 12+2、左右 20、標題 xxl semibold -0.02em、切換列上 4+6、下 6）── */
+  /* 抬頭的中日文字：UIKit 畫出來比 Chromium 的 PingFang 小一號（量 ref：字高 24 對 25.7、寬 76 對 80）——只縮 CJK 那一段 */
+  @font-face { font-family: "TZTitleCJK"; src: local("PingFangTC-Semibold"), local("PingFang TC Semibold"); font-weight: 600;
+    unicode-range: U+3000-30FF, U+3400-9FFF, U+FF00-FFEF; size-adjust: 95%; }
+  .wg-title { position: absolute; left: 20px; top: 75.4px; font: 600 var(--t-xxl)/34px var(--font); letter-spacing: -.56px; }
+  html[lang^="zh"] .wg-title { font-family: "TZTitleCJK", var(--font); }
+  .seg { position: absolute; left: 20px; width: 362px; top: 119.67px; height: 45px; border-radius: 22.5px; background: #eeeeef; }
+  .seg-pill { position: absolute; top: 2.33px; height: 40.33px; width: 86.7px; border-radius: 20.2px; background: #fff;
+    box-shadow: 0 0 0 .5px rgba(0,0,0,.03), 0 2px 6px rgba(0,0,0,.04); }
+  .seg-t { position: absolute; top: 0; height: 45px; width: 86.7px; display: grid; place-items: center;
+    font: 400 var(--t-sm)/16px var(--font); color: #73675b; white-space: nowrap; }
+  .seg-t.on { font-weight: 700; color: var(--ink); }
+  .ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── 掃描卡（ScanCard：上 12、內距 16、圓角 12、圖示格 44／圓角 12、間距 12） ── */
+  .page { position: absolute; left: 20px; right: 20px; top: 170px; }
+  .card { margin-top: 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 15px; }
+  .card-top { display: flex; align-items: center; gap: 12px; }
+  .card-ico { width: 44px; height: 44px; border-radius: 12px; background: #e2f0ef; display: grid; place-items: center; color: var(--accent-ink); flex: none; }
+  .card-ico svg { width: 24px; height: 24px; stroke-width: 1.8; }
+  .card-t { font: 600 var(--t-lg)/19px var(--font); letter-spacing: -.32px; }
+  .card-s { margin-top: 1px; font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted); }
+  .btn { margin-top: 12px; height: 48px; border-radius: 8px; background: var(--accent-ink); color: #fff;
+    display: flex; align-items: center; justify-content: center; gap: 8px; font: 600 var(--t-base)/18px var(--font); letter-spacing: -.24px; }
+  .btn svg { width: 18px; height: 18px; stroke-width: 2; }
+
+  /* ── 紀錄抬頭（HeadCell：上 20、下 2、高 44、間距 8；籌碼上下 2 左右 8、圓角滿） ── */
+  .head { display: flex; align-items: center; gap: 8px; margin-top: 20px; height: 44px; margin-bottom: 2px; }
+  .head-t { font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted); white-space: nowrap; }
+  .tag { display: flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; background: #e2f0ef;
+    color: var(--accent-ink); font: 600 var(--t-xs)/14.3px var(--font); white-space: nowrap; min-width: 0; overflow: hidden; }
+  .tag svg { width: 13px; height: 13px; stroke-width: 2; flex: none; }
+  .tag span { overflow: hidden; text-overflow: ellipsis; }
+  .words { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .head.stacked { height: auto; padding: 4px 0; }
+  .head.stacked .words { flex-direction: column; align-items: flex-start; }
+  .head.stacked .tag { white-space: normal; }
+  .clear { margin-left: auto; font: 600 var(--t-xs)/14.3px var(--font); color: var(--muted-on-sunken); flex: none; }
+
+  /* ── 一列（ScanHistoryRowCell：最矮 52、上下 8、左右 3、間距 12；類型格 34／圓角 8；頭像 17） ── */
+  .row { position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 3px; min-height: 52px; }
+  .row + .row::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; border-top: 1px solid var(--border-soft); }
+  .ty { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; flex: none; }
+  .ty svg { width: 18px; height: 18px; stroke-width: 1.8; }
+  .ty.url { background: #e2f0ef; color: var(--accent-ink); }
+  .ty.url svg { stroke-width: 1.9; }
+  .ty.text { background: var(--sunken); color: var(--muted-on-sunken); }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .ct { font: 400 var(--t-base)/17.9px var(--font); letter-spacing: -.24px; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden; }
+  .ct .lat { word-break: break-all; }
+  .ct b { font-weight: 600; }
+  /* 中日文頁的 -apple-system 會拿 PingFang 畫「-」，寬了一倍；system-ui 才是 SF（同 chrome.js fmt() 的「–」問題） */
+  .lat, .lat code { font-family: system-ui, -apple-system, sans-serif; }
+  .ct code { font: 400 var(--t-xs)/17.9px var(--font); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .meta { display: flex; align-items: center; gap: 4px; height: 17px; font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted); white-space: nowrap; }
+  .av { width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+    font: 700 var(--t-xs)/1 var(--font); flex: none; background: var(--sw-base); }
+  .chev { width: 12px; height: 12px; color: var(--muted); stroke-width: 2.2; flex: none; }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { lang, params, chrome, ready, fmt } from './chrome.js';
+
+const d = document.getElementById('d');
+const shared = params.get('shared') !== '0';
+
+// App 的字（Scripts/i18n/maps/Widgets.json）
+const S = {
+  'zh-Hant-TW': { title: '小工具', subs: ['筆記', '掃描', '匯率換算', '購物清單'],
+    cardT: '掃描 QR Code', cardS: '網址、文字，或旅程的共編邀請', start: '開始掃描',
+    history: '掃描紀錄', clear: '清除', tag: '共編中・旅伴都看得到', me: '我', yesterday: t => `昨天 ${t}` },
+  en: { title: 'Tools', subs: ['Notes', 'Scan', 'Currency', 'Shopping'],
+    cardT: 'Scan a QR Code', cardS: 'Links, text, or a trip invite', start: 'Start Scanning',
+    history: 'Scan History', clear: 'Clear', tag: 'Co-editing · all companions can see', me: 'Me', yesterday: t => `Yesterday ${t}` },
+  ja: { title: 'ツール', subs: ['メモ', 'スキャン', '為替', '買い物'],
+    cardT: 'QR コードをスキャン', cardS: 'URL、テキスト、旅行の共同編集の招待', start: 'スキャンを開始',
+    history: 'スキャン履歴', clear: '消去', tag: '共同編集中・旅の仲間全員に表示', me: '自分', yesterday: t => `昨日 ${t}` },
+}[lang] || null;
+const s = S || { };
+
+// 範例紀錄（範本裡沒有掃描紀錄）。網址那一種：網域粗、後面那一截等寬灰（ScanHistoryRow.Content.url）。
+const MATE = { 'zh-Hant-TW': ['小美', '小'], en: ['Mia', 'M'], ja: ['美咲', '美'] }[lang] || ['小美', '小'];
+const SAMPLE = {
+  'zh-Hant-TW': [
+    { url: ['www.jr-odekake.net', '/railroad/eticket/'], who: 'me', time: '10:12' },
+    { text: 'Wi-Fi：MIYAJIMA-FREE　密碼 torii2026（宮島口渡輪站二樓）', who: 'mate', time: '09:47' },
+    { url: ['hiroshima-okonomimura.jp', '/menu/zh/'], who: 'mate', time: S && S.yesterday('21:40') },
+    { url: ['www.miyajima-matsudai.co.jp', '/timetable/'], who: 'me', time: S && S.yesterday('19:05') },
+  ],
+  en: [
+    { url: ['www.jr-odekake.net', '/railroad/eticket/'], who: 'me', time: '10:12' },
+    { text: 'Wi-Fi: MIYAJIMA-FREE  password torii2026 (2F, Miyajimaguchi ferry terminal)', who: 'mate', time: '09:47' },
+    { url: ['hiroshima-okonomimura.jp', '/menu/?lang=en'], who: 'mate', time: 'Yesterday 21:40' },
+    { url: ['www.miyajima-matsudai.co.jp', '/timetable/'], who: 'me', time: 'Yesterday 19:05' },
+  ],
+  ja: [
+    { url: ['www.jr-odekake.net', '/railroad/eticket/'], who: 'me', time: '10:12' },
+    { text: 'Wi-Fi：MIYAJIMA-FREE　パスワード torii2026（宮島口桟橋 2 階）', who: 'mate', time: '09:47' },
+    { url: ['hiroshima-okonomimura.jp', '/menu/?lang=ja'], who: 'mate', time: '昨日 21:40' },
+    { url: ['www.miyajima-matsudai.co.jp', '/timetable/'], who: 'me', time: '昨日 19:05' },
+  ],
+}[lang];
+
+// DesignIcon.swift 的路徑（scan、camera、link、text、members、chevronRight）
+const IC = {
+  scan: '<path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><rect x="7.5" y="7.5" width="3.5" height="3.5" rx=".6"/><rect x="13" y="7.5" width="3.5" height="3.5" rx=".6"/><rect x="7.5" y="13" width="3.5" height="3.5" rx=".6"/><path d="M13 13h1.5v1.5M16.5 16.5H15"/>',
+  camera: '<path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  text: '<path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M8.5 12.5h7M8.5 16.5h5"/>',
+  members: '<circle cx="9" cy="8" r="3.4"/><path d="M3.4 19.6a5.8 5.8 0 0 1 11.2 0"/><path d="M16.4 5.4a3.4 3.4 0 0 1 0 5.2"/><path d="M17.6 14.4a5.8 5.8 0 0 1 3 5.2"/>',
+  chevronRight: '<path d="m9 5 7 7-7 7"/>',
+};
+const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+
+// 抬頭＋四格切換
+const TAB = 1;
+d.insertAdjacentHTML('beforeend', `<div class="wg-title">${s.title}</div>
+  <div class="seg"><div class="seg-pill" style="left:${2 + TAB * 90.3}px"></div>
+  ${s.subs.map((x, i) => `<div class="seg-t${i === TAB ? ' on' : ''}" style="left:${2 + i * 90.3}px">${x}</div>`).join('')}</div>`);
+
+const who = r => r.who === 'me' ? { name: s.me, initial: [...s.me][0], sw: 'sw-see' }
+  : { name: MATE[0], initial: MATE[1], sw: 'sw-eat' };
+const rows = SAMPLE.map(r => {
+  const w = who(r);
+  const content = r.url ? `<span class="lat"><b>${r.url[0]}</b><code>${r.url[1]}</code></span>` : fmt(r.text).replace(/-/g, '<span class="lat">-</span>');
+  return `<div class="row"><div class="ty ${r.url ? 'url' : 'text'}">${ic(r.url ? 'link' : 'text')}</div>
+    <div class="main"><div class="ct">${content}</div>
+      <div class="meta">${shared ? `<span class="av ${w.sw}">${w.initial}</span>${w.name} · ` : ''}${r.time}</div></div>
+    ${ic('chevronRight', 'chev')}</div>`;
+}).join('');
+
+d.insertAdjacentHTML('beforeend', `<div class="page">
+  <div class="card"><div class="card-top"><div class="card-ico">${ic('scan')}</div>
+    <div><div class="card-t">${s.cardT}</div><div class="card-s">${s.cardS}</div></div></div>
+    <div class="btn">${ic('camera')}<span>${s.start}</span></div></div>
+  <div class="head" id="head"><div class="words" id="words"><span class="head-t">${s.history}</span>${shared ? `<span class="tag">${ic('members')}<span>${s.tag}</span></span>` : ''}</div><span class="clear">${s.clear}</span></div>
+  ${rows}</div>`);
+
+// HeadCell.shouldStack：標題＋籌碼＋清除一行放不下就改上下兩行
+const words = document.getElementById('words');
+if (words.scrollWidth > words.clientWidth + .5) document.getElementById('head').classList.add('stacked');
+
+chrome(d, { tab: 3 });
+ready();
+</script>
+</body>
+</html>

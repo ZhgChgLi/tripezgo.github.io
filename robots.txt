@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# App 畫面的 HTML 複刻與模擬器基準圖：做截圖用的工具，不是網站內容
+Disallow: /screens/
 
 Sitemap: https://tripezgo.com/sitemap.xml

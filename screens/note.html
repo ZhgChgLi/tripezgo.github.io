@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>筆記內頁</title>
+<!--
+  小工具 › 筆記 › 一則筆記的閱讀頁（App：Modules/Notes/…/NoteReaderViewController.swift ＋ UI/…/NoteEditor/）。
+  參數：?lang=zh-Hant-TW|en|ja
+  導覽列（系統玻璃鈕）與浮動分享鈕照 screens/ref/zh/note.png 量；內文照 NoteEditorMetrics.swift。
+  內容：範本 data/sanyo.<lang>.json 的 notes[0]（標題＋四段＋三個 @提及），再多兩樣範本裡沒有的——
+  一段帶「發音標記」的句子（R14i：點喇叭朗讀）與一張滿版圖片（R14b）。這兩樣是範例，寫在底下的 EXTRA；
+  圖片是 screens/img/note-photo.svg 的插畫，不是實景照片。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  .ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── 導覽列：iOS 26 玻璃圓鈕 44、中心 y 84；標題 17 semibold（系統元件，照 ref 量） ── */
+  .nav-btn { position: absolute; top: 62px; width: 44px; height: 44px; border-radius: 50%; background: #fff; z-index: 40;
+    box-shadow: 0 0 0 .5px rgba(0,0,0,.02), 0 2px 22px rgba(0,0,0,.07); display: grid; place-items: center; color: #191919; }
+  .nav-btn.back { left: 16px; } .nav-btn.edit { left: 342px; }
+  .nav-btn.back svg { width: 26px; height: 26px; stroke-width: 2.3; margin-left: -1px; }
+  .nav-btn.edit svg { width: 22px; height: 22px; stroke-width: 1.8; }
+  .nav-title { position: absolute; left: 80px; right: 80px; top: 74px; text-align: center; font: 600 17px/20px var(--font); color: #191919; z-index: 40; }
+
+  /* ── 內文（NoteEditorMetrics）：左右 20；標題 xl heavy、-0.02em、之後 4；內文 base、段後 12；提及 semibold accentInk ── */
+  .doc { position: absolute; left: 20px; right: 20px; top: 127.4px; }
+  /* 標題的中日文：UIKit 畫得比 Chromium 的 PingFang 小一號（同小工具抬頭；量 ref：寬 182.7 對 192） */
+  @font-face { font-family: "TZNoteTitleCJK"; src: local("PingFangTC-Semibold"), local("PingFang TC Semibold"); font-weight: 600;
+    unicode-range: U+3000-30FF, U+3400-9FFF, U+FF00-FFEF; size-adjust: 95%; }
+  .n-title { font: 800 var(--t-xl)/28px var(--font); letter-spacing: -.44px; margin-bottom: 8px; }
+  html[lang^="zh"] .n-title { font-family: "TZNoteTitleCJK", var(--font); }
+  .p { font: 400 var(--t-base)/27.7px var(--font); letter-spacing: -.24px; margin-bottom: 12px; }
+  .m { font-weight: 600; color: var(--accent-ink); }
+  /* 發音標記（NoteDecorationView）：accent 11% 底、圓角 5、上 1 下 2、尾 5、前面留 1.5em 給喇叭（0.95em、離左 4）、
+     底線 1.5pt accent 45%；喇叭是 accent 與 ink 的 OKLCH 78% 混色（#3d765d，照 OKLCh.mix 算） */
+  .pr { position: relative; background: rgba(47,145,142,.11); border-radius: 5px; padding: 1px 5px 2px 1.5em;
+    box-shadow: inset 0 -1.5px 0 rgba(47,145,142,.45); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .pr svg { position: absolute; left: 4px; top: 50%; width: .95em; height: .95em; transform: translateY(-50%); color: #3d765d; stroke-width: 1.8; }
+  /* 圖片（R14b）：寬＝內文欄、高照原圖比例；上下 16、圓角 8、1px border */
+  .fig { margin: 16px 0 16px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--sunken); }
+  .fig img { display: block; width: 100%; height: auto; }
+
+  /* ── 浮動分享鈕：52 圓、右 16、離安全區底 16（無分頁列）；白底＋border＋elev-raised ── */
+  .fab { position: absolute; left: 334px; top: 772px; width: 52px; height: 52px; border-radius: 50%; background: var(--card); z-index: 30;
+    border: 1px solid var(--border); box-shadow: 0 6px 18px -8px rgba(31,25,20,.22), 0 4px 14px rgba(31,25,20,.06); display: grid; place-items: center; color: var(--ink); }
+  .fab svg { width: 22px; height: 22px; stroke-width: 1.8; }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { lang, loadTrip, chrome, ready, fmt } from './chrome.js';
+
+const d = document.getElementById('d');
+const trip = await loadTrip();
+const note = trip.notes[0];
+
+// 提及 {@key} 解成那一則行程的標題
+const titles = {};
+(function walk(o) {
+  if (Array.isArray(o)) return o.forEach(walk);
+  if (o && typeof o === 'object') { if (o.key && o.title) titles[o.key] = o.title; Object.values(o).forEach(walk); }
+})(trip);
+const para = s => fmt(s).replace(/\{@([^}]+)\}/g, (_, k) => `<span class="m">@${fmt(titles[k] || k)}</span>`);
+
+const IC = {
+  chevronLeft: '<path d="m15 5-7 7 7 7"/>',
+  pencil: '<path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+  share: '<path d="M12 16V4M8 7.5 12 3.5l4 4M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/>',
+  speaker: '<path d="M4 9h3.2l5.3-4.2v14.4L7.2 15H4z"/><path d="M16.6 8.8a4.6 4.6 0 0 1 0 6.4M19.4 5.8a8.6 8.6 0 0 1 0 12.4"/>',
+};
+const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+
+// 範本沒有的兩樣：一句發音標記、一張圖。插在第 2 段之後與第 3 段之後。
+const EXTRA = {
+  'zh-Hant-TW': { navTitle: '筆記', phrase: ['點餐時說：', 'お好み焼きを一つください', '。'] },
+  en: { navTitle: 'Note', phrase: ['To order, say ', 'お好み焼きを一つください', '.'] },
+  ja: { navTitle: 'メモ', phrase: ['広島弁で「とてもおいしい」は ', 'ぶち うまい', '。'] },
+}[lang];
+
+const ps = note.paragraphs.map(p => `<p class="p">${para(p)}</p>`);
+const phrase = `<p class="p">${fmt(EXTRA.phrase[0])}<span class="pr" lang="ja">${ic('speaker')}${EXTRA.phrase[1]}</span>${fmt(EXTRA.phrase[2])}</p>`;
+const fig = `<div class="fig"><img src="img/note-photo.svg" alt=""></div>`;
+const body = [ps[0], ps[1], phrase, ps[2], fig, ...ps.slice(3)].join('');
+
+d.insertAdjacentHTML('beforeend', `
+  <div class="nav-btn back">${ic('chevronLeft')}</div>
+  <div class="nav-title">${EXTRA.navTitle}</div>
+  <div class="nav-btn edit">${ic('pencil')}</div>
+  <div class="doc"><div class="n-title">${fmt(note.title)}</div>${body}</div>
+  <div class="fab">${ic('share')}</div>`);
+
+chrome(d, { tab: null });
+await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+ready();
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>小工具・匯率換算</title>
+<!--
+  小工具分頁・匯率換算（App：Modules/Widgets/…/Exchange/ExchangeViewController.swift）。
+  參數：?lang=zh-Hant-TW|en|ja
+  抬頭與四格切換照 SubTabContainer.swift ＋ screens/ref/zh/fx.png 量；換算格、對調鈕、匯率行、最近換算照 ExchangeViewController.Metrics。
+  基準圖沒有「最近換算」（還沒算過），這一頁多畫五筆——金額是範例，寫在底下的 RECENT，匯率 4.96 照基準圖。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  /* ── 抬頭＋四格切換（SubTabContainer：上 12+2、左右 20、標題 xxl semibold -0.02em、切換列上 4+6、下 6）── */
+  /* 抬頭的中日文字：UIKit 畫出來比 Chromium 的 PingFang 小一號（量 ref：字高 24 對 25.7、寬 76 對 80）——只縮 CJK 那一段 */
+  @font-face { font-family: "TZTitleCJK"; src: local("PingFangTC-Semibold"), local("PingFang TC Semibold"); font-weight: 600;
+    unicode-range: U+3000-30FF, U+3400-9FFF, U+FF00-FFEF; size-adjust: 95%; }
+  .wg-title { position: absolute; left: 20px; top: 75.4px; font: 600 var(--t-xxl)/34px var(--font); letter-spacing: -.56px; }
+  html[lang^="zh"] .wg-title { font-family: "TZTitleCJK", var(--font); }
+  .seg { position: absolute; left: 20px; width: 362px; top: 119.67px; height: 45px; border-radius: 22.5px; background: #eeeeef; }
+  .seg-pill { position: absolute; top: 2.33px; height: 40.33px; width: 86.7px; border-radius: 20.2px; background: #fff;
+    box-shadow: 0 0 0 .5px rgba(0,0,0,.03), 0 2px 6px rgba(0,0,0,.04); }
+  .seg-t { position: absolute; top: 0; height: 45px; width: 86.7px; display: grid; place-items: center;
+    font: 400 var(--t-sm)/16px var(--font); color: #73675b; white-space: nowrap; }
+  .seg-t.on { font-weight: 700; color: var(--ink); }
+  .ic { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 釘住那一段：上 14、左右 20 */
+  .head { position: absolute; left: 20px; right: 20px; top: 184px; }
+  /* 換算格：surface 底、圓角 8、上下 10 左右 12、間距 2；金額 xl semibold 等寬數字、最矮 34；對調鈕 36 圓、間距 8 */
+  .pair { display: flex; align-items: center; gap: 8px; }
+  .cell { flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; }
+  .cur { display: flex; align-items: center; gap: 4px; height: 14.3px; font: 700 var(--t-xs)/14.3px var(--font); letter-spacing: .72px; color: var(--muted); }
+  .cur svg { width: 10px; height: 10px; stroke-width: 1.8; }
+  .amt { margin-top: 2px; height: 34px; display: flex; align-items: center; font: 600 var(--t-xl)/26px var(--font); color: var(--ink); white-space: nowrap; overflow: hidden; }
+  .swap { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); display: grid; place-items: center; flex: none; color: var(--ink); }
+  .swap svg { width: 17px; height: 17px; stroke-width: 2; }
+  /* 匯率行：上 12、xs 等寬數字 muted */
+  .rate { margin-top: 12px; font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted); white-space: pre-wrap; }
+  /* 最近換算：抬頭上 22、高 44（清除鈕的觸控區）；捲動區上 4；一列最矮 44、上下 6、sm 等寬數字、間距 10 */
+  .hist-head { margin-top: 22px; height: 44px; display: flex; align-items: center; justify-content: space-between;
+    font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted); }
+  .hist-head b { font-weight: 600; color: var(--muted-on-sunken); }
+  .hist { margin-top: 4px; }
+  .hr { position: relative; min-height: 44px; padding: 6px 0; display: flex; align-items: baseline; gap: 10px;
+    font: 400 var(--t-sm)/15.5px var(--font); }
+  .hr { align-items: center; }
+  .hr span:first-child { flex: 1; color: var(--ink); }
+  .hr span:last-child { color: var(--muted); }
+  .hr + .hr::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; border-top: 1px solid var(--border-soft); }
+  /* 等寬數字（tzMonoDigits）：中日文頁的 -apple-system 會拿 PingFang 畫數字，tnum 就不見了——指名 system-ui（SF） */
+  .mono { font-family: system-ui, -apple-system, sans-serif; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { lang, chrome, ready } from './chrome.js';
+
+const d = document.getElementById('d');
+
+// App 的字（Scripts/i18n/maps/Widgets.json）
+const s = {
+  'zh-Hant-TW': { title: '小工具', subs: ['筆記', '掃描', '匯率換算', '購物清單'], recent: '最近換算', clear: '清除',
+    sep: '　·　', date: '2026年10月9日', locale: 'zh-TW' },
+  en: { title: 'Tools', subs: ['Notes', 'Scan', 'Currency', 'Shopping'], recent: 'Recent', clear: 'Clear',
+    sep: ' · ', date: 'Oct 9, 2026', locale: 'en-US' },
+  ja: { title: 'ツール', subs: ['メモ', 'スキャン', '為替', '買い物'], recent: '最近の換算', clear: '消去',
+    sep: '　·　', date: '2026年10月9日', locale: 'ja-JP' },
+}[lang];
+
+const IC = {
+  chevronDown: '<path d="m6 9 6 6 6-6"/>',
+  swapArrows: '<path d="M7 4v16l-3-3M17 20V4l3 3"/>',
+};
+const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+
+// 抬頭＋四格切換
+const TAB = 2;
+d.insertAdjacentHTML('beforeend', `<div class="wg-title">${s.title}</div>
+  <div class="seg"><div class="seg-pill" style="left:${2 + TAB * 90.3}px"></div>
+  ${s.subs.map((x, i) => `<div class="seg-t${i === TAB ? ' on' : ''}" style="left:${2 + i * 90.3}px">${x}</div>`).join('')}</div>`);
+
+// 數字照 ExchangeViewModel.format：≥1000 不留小數、≥1 兩位
+const RATE = 4.96;
+const num = v => v.toLocaleString(s.locale, { maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 });
+const money = (v, c) => `${num(v)} ${c}`;
+const RECENT = [[1000, 'TWD'], [12800, 'JPY'], [3300, 'JPY'], [500, 'TWD'], [1980, 'JPY']]
+  .map(([v, c]) => [money(v, c), c === 'TWD' ? money(v * RATE, 'JPY') : money(v / RATE, 'TWD')]);
+
+d.insertAdjacentHTML('beforeend', `<div class="head">
+  <div class="pair">
+    <div class="cell"><div class="cur mono">TWD${ic('chevronDown')}</div><div class="amt mono">1000</div></div>
+    <div class="swap">${ic('swapArrows')}</div>
+    <div class="cell"><div class="cur mono">JPY${ic('chevronDown')}</div><div class="amt mono">${num(1000 * RATE)}</div></div>
+  </div>
+  <div class="rate mono">1 TWD = ${RATE} JPY${s.sep}${s.date}</div>
+  <div class="hist-head"><span>${s.recent}</span><b>${s.clear}</b></div>
+  <div class="hist">${RECENT.map(([a, b]) => `<div class="hr mono"><span>${a}</span><span>${b}</span></div>`).join('')}</div>
+</div>`);
+
+chrome(d, { tab: 3 });
+ready();
+</script>
+</body>
+</html>

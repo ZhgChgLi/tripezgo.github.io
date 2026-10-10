@@ -1,0 +1,1811 @@
+{
+  "formatVersion": 2,
+  "templateID": "jp-sanyo-hiroshima-okayama-6d",
+  "revision": 2,
+  "contentLocale": "ja",
+  "title": "山陽 6 日間｜広島・宮島・尾道・倉敷・岡山",
+  "subtitle": "岡山イン／アウト、広島を拠点に JR パスで巡る",
+  "summary": "11 月のひとり旅。タイガーエア台湾で岡山イン／アウト、最初の 3 泊は広島駅周辺を拠点に、1 日は宮島の厳島神社、1 日は尾道の千光寺と鞆の浦、1 日は呉の大和ミュージアムと広島市内。最後の 2 日は倉敷と岡山へ移動します。移動はすべて「岡山・広島・山口エリアパス」でカバー（JR 宮島フェリーも込み）。元の旅行記は順番しか書かれていないため、ここの時刻は現地の時刻表から起こした目安です。このままでも歩けますが、各区間は出発前にもう一度確認してください。",
+  "destination": "日本 広島県・岡山県",
+  "regionCodes": [
+    "JP"
+  ],
+  "dayCount": 6,
+  "coverColour": "red",
+  "defaultTimeZoneID": "Asia/Tokyo",
+  "sourceURL": "https://blog.zhgchg.li/31b9b3a63abc",
+  "sourceTitle": "[旅行記] 2023 山陽地方 広島・岡山 6 日間の個人旅行",
+  "tags": [
+    "ひとり旅",
+    "世界遺産",
+    "JR パス",
+    "秋",
+    "瀬戸内海"
+  ],
+  "todos": [
+    "「岡山・広島・山口エリアパス」を買う——岡山↔広島の片道だけで ¥6,460。宮島・尾道・呉を足せばすぐ元が取れる",
+    "受取機は左下の黄色い「QRコードの読取り」を押してから QR をかざす。解説記事にある青いボタンだと新型機では QR が無効と言われ続ける",
+    "改札を通るのはパス本体。指定券は座席と時刻の控えで、改札は通れない",
+    "タイガーエアは機内への持ち込み食品が不可（ピーチには規定なし）——搭乗前に食べ切る",
+    "肉製品は日本に持ち込めない。台湾のフライドチキンは岡山空港でその場で廃棄になった",
+    "11 月の広島は夜 4 度前後。厚手のアウターを忘れずに",
+    "宮島訪問税 ¥100 は別払い（JR パス対象外）。桟橋に係員の案内あり",
+    "岡山空港の保安検査ではブーツは脱ぐ。脱ぎやすい靴に替えておく",
+    "ホテルの洗濯機は取り合いになる。夜に戻ったらまず空きを見に行く",
+    "iPhone のウォレットに Suica を用意。市内のバスもコンビニもタッチで済む"
+  ],
+  "links": [
+    {
+      "url": "https://www.westjr.co.jp/global/tc/ticket/pass/okayama_hiroshima_yamaguchi/",
+      "title": "JR 西日本 岡山・広島・山口エリアパス"
+    },
+    {
+      "url": "https://vjw-lp.digital.go.jp/zh-hant/",
+      "title": "Visit Japan Web 入国手続"
+    },
+    {
+      "url": "https://www.jnto.go.jp/safety-tips/tchi/index.html",
+      "title": "Safety tips 日本の防災情報"
+    },
+    {
+      "url": "https://dive-hiroshima.com/",
+      "title": "広島県公式観光サイト Dive! Hiroshima"
+    }
+  ],
+  "allDayEvents": [
+    {
+      "key": "stay-toyoko",
+      "title": "東横INN 広島駅スタジアム前（3 泊）",
+      "fromDay": 1,
+      "toDay": 4,
+      "category": "hotel",
+      "colour": "taupe",
+      "place": {
+        "name": "東横INN 広島駅スタジアム前（広島県広島市）",
+        "latitude": 34.393721,
+        "longitude": 132.481499
+      },
+      "notes": "シングルの禁煙室で、今回の 3 軒でいちばんコスパが良い一軒（1 泊 約 NT$1,537）。広島駅からは地図で見るより遠く、工事中で踏切も渡るので、ひとりで荷物を引くなら 18 分は見ておくこと。MAZDA スタジアムの外側にあり、試合のない日は通りがとても静かなので、夜遅く戻るならそのつもりで。",
+      "openingDays": [
+        2,
+        3,
+        4
+      ],
+      "closingDays": [
+        1,
+        2,
+        3
+      ],
+      "todos": [
+        "予約確認メールはパスポートと同じポケットに。チェックインで提示する"
+      ],
+      "links": [
+        {
+          "url": "https://www.toyoko-inn.com/china/search/detail/00202/",
+          "title": "東横INN 広島駅スタジアム前 公式サイト"
+        }
+      ]
+    },
+    {
+      "key": "stay-apa",
+      "title": "アパホテル 広島駅前大橋（1 泊）",
+      "fromDay": 4,
+      "toDay": 5,
+      "category": "hotel",
+      "colour": "taupe",
+      "place": {
+        "name": "アパホテル 広島駅前大橋（広島県広島市）",
+        "latitude": 34.395364,
+        "longitude": 132.471991
+      },
+      "notes": "東横INN が 4 泊目だけ取れず、シングルでこちらに。広島駅には近いものの、大通りを渡って橋も渡るので実際は徒歩 10 分ほど。東横INN からは徒歩 15 分で、ひとりで荷物を運んでもさほど苦になりません。",
+      "openingDays": [
+        5
+      ],
+      "closingDays": [
+        4
+      ]
+    },
+    {
+      "key": "stay-livemax",
+      "title": "ホテルリブマックス 岡山倉敷駅前（1 泊）",
+      "fromDay": 5,
+      "toDay": 6,
+      "category": "hotel",
+      "colour": "taupe",
+      "place": {
+        "name": "ホテルリブマックス 岡山倉敷駅前（岡山県倉敷市）",
+        "latitude": 34.602529,
+        "longitude": 133.768515
+      },
+      "notes": "岡山市内はひとりで泊まって納得できる価格の部屋が残っておらず、JR 沿線を探して倉敷に。倉敷駅から徒歩 5 分で、倉敷からも岡山空港行きのバスが出ているので、翌日ひとりで飛行機に間に合わせるのに岡山へ戻る必要がありません。",
+      "openingDays": [
+        6
+      ],
+      "closingDays": [
+        5
+      ]
+    },
+    {
+      "key": "jr-pass",
+      "title": "岡山・広島・山口エリアパス（5 日間）",
+      "fromDay": 1,
+      "toDay": 5,
+      "category": "train",
+      "colour": "green",
+      "notes": "¥17,000。山陽新幹線の岡山↔広島、宮島口までの JR 山陽本線、JR 宮島フェリーまで対象。ひとり旅は思いつきで予定を変えられるので、「もう一駅寄る」たびに運賃を計算し直さずに済むのが大きい——岡山↔広島の往復だけで ¥12,920 です。6 日目の帰路はリムジンバスなので出番なし。",
+      "todos": [
+        "新幹線の指定席は事前にネットで確保。ピーク時の自由席は立つことになる",
+        "利用開始日にみどりの窓口か受取機で実券を受け取る"
+      ],
+      "links": [
+        {
+          "url": "https://www.westjr.co.jp/global/tc/ticket/pass/okayama_hiroshima_yamaguchi/",
+          "title": "JR 西日本 岡山・広島・山口エリアパス"
+        }
+      ]
+    }
+  ],
+  "unscheduledEvents": [
+    {
+      "key": "u-okunoshima",
+      "title": "大久野島（うさぎの島）",
+      "durationMinutes": 300,
+      "category": "sight",
+      "colour": "green",
+      "place": {
+        "name": "大久野島・うさぎの島（広島県竹原市）",
+        "latitude": 34.309121,
+        "longitude": 132.993759
+      },
+      "notes": "出発前から候補には入れていたものの、移動が遠すぎて組み込めず。忠海港からのフェリーで、往復と滞在で半日はかかります。ひとりなら時間はすべて自分のものですが、半日は半日。次は尾道と同じ行程にまとめたい。"
+    },
+    {
+      "key": "u-daishoin",
+      "title": "宮島 大聖院",
+      "durationMinutes": 45,
+      "category": "temple",
+      "colour": "none",
+      "place": {
+        "name": "大聖院（広島県廿日市市）",
+        "latitude": 34.291729,
+        "longitude": 132.318578
+      },
+      "notes": "厳島神社から山側へ徒歩 5 分、宮島でいちばん古いお寺。坂は緩く人も少ないので、ひとりでゆっくり歩くのにちょうどいい。今回はロープウェイに時間を使い切ったので次回に。"
+    },
+    {
+      "key": "u-onomichi-u2",
+      "title": "ONOMICHI U2（海運倉庫）",
+      "durationMinutes": 90,
+      "category": "cafe",
+      "colour": "amber",
+      "place": {
+        "name": "ONOMICHI U2（広島県尾道市）",
+        "latitude": 34.401959,
+        "longitude": 133.189908
+      },
+      "notes": "海運倉庫をリノベーションした複合施設。ベーカリーやサイクリスト向けのホテルが入っています。尾道駅から徒歩 10 分なので、ひとりで帰りの列車を待つ時間に挟むのにちょうどいい。"
+    },
+    {
+      "key": "u-kibitsuhiko",
+      "title": "吉備津彦神社",
+      "durationMinutes": 45,
+      "category": "temple",
+      "colour": "none",
+      "place": {
+        "name": "吉備津彦神社（岡山県岡山市）",
+        "latitude": 34.676572,
+        "longitude": 133.863513
+      },
+      "notes": "吉備津神社から一駅。桃太郎伝説のもう半分です。飛行機に間に合わせる日だったので入れられませんでした——ひとりだと荷物を見てくれる人がいない分、寄り道のコストが思ったより高くつきます。"
+    }
+  ],
+  "markers": [
+    {
+      "key": "m-mazda-stadium",
+      "name": "MAZDA Zoom-Zoom スタジアム広島（広島県広島市）",
+      "latitude": 34.391912,
+      "longitude": 132.48462,
+      "category": "sight",
+      "notes": "ホテルのすぐ隣が球場。試合のある日はこの一帯の雰囲気がまったく変わりますし、ひとりならむしろ 1 枚だけのチケットが取りやすい。"
+    },
+    {
+      "key": "m-hondori",
+      "name": "本通商店街（広島県広島市）",
+      "latitude": 34.39382,
+      "longitude": 132.456974,
+      "category": "shopping",
+      "notes": "広島市内でいちばん賑わうアーケード。ドラッグストアも土産もここで揃います。買った分は自分で持つので、荷物の重さは自分で勘定を。"
+    },
+    {
+      "key": "m-okonomimura",
+      "name": "お好み村（広島県広島市）",
+      "latitude": 34.391289,
+      "longitude": 132.461894,
+      "category": "dining",
+      "notes": "ビル一棟まるごとお好み焼きの店で、どこも鉄板前のカウンター席——ひとりがいちばん座りやすい。駅前ひろばが混んでいるならこちらへ。"
+    },
+    {
+      "key": "m-orizuru",
+      "name": "おりづるタワー（広島県広島市）",
+      "latitude": 34.39567,
+      "longitude": 132.454686,
+      "category": "viewpoint",
+      "notes": "屋上展望台から原爆ドームと市街地が一望でき、晴れた日は宮島の弥山まで見えます。ひとりなら誰の体力にも合わせず、好きなだけ夜景を見ていられます。"
+    },
+    {
+      "key": "m-misen",
+      "name": "弥山（広島県廿日市市）",
+      "latitude": 34.279592,
+      "longitude": 132.319611,
+      "category": "mountain",
+      "notes": "宮島の最高峰。獅子岩展望台からさらに徒歩 30 分。山道をひとりで歩くので、下りのロープウェイの最終だけは先に控えておくこと。"
+    },
+    {
+      "key": "m-senjokaku",
+      "name": "千畳閣・豊国神社（広島県廿日市市）",
+      "latitude": 34.297304,
+      "longitude": 132.320269,
+      "category": "temple",
+      "notes": "厳島神社のとなりの大伽藍と五重塔。板張りの床は裸足で歩くと涼しく、人の少ない時間に端に座ってぼんやりするのは、ひとりだからできること。"
+    },
+    {
+      "key": "m-miyajima-aquarium",
+      "name": "宮島水族館（広島県廿日市市）",
+      "latitude": 34.295476,
+      "longitude": 132.315651,
+      "category": "aquarium",
+      "notes": "宮島唯一の水族館で、ひとりなら 1 時間ほどで回れます。今回はロープウェイと神社に時間を使い切り、見送りました。"
+    },
+    {
+      "key": "m-tennei-ji",
+      "name": "天寧寺 三重塔（広島県尾道市）",
+      "latitude": 34.409566,
+      "longitude": 133.200793,
+      "category": "temple",
+      "notes": "猫の細道から尾道水道を見下ろす、いちばん有名な構図はここ。ひとりだとシャッターを頼める相手がいないので、三脚か自撮り棒があると確実です。"
+    },
+    {
+      "key": "m-senkoji-park",
+      "name": "千光寺公園展望台（広島県尾道市）",
+      "latitude": 34.409818,
+      "longitude": 133.196308,
+      "category": "viewpoint",
+      "notes": "ロープウェイ山頂駅のそばの展望台。尾道水道と対岸の向島が一望できます。ベンチが多く、ひとりで何分いても誰にも急かされません。"
+    },
+    {
+      "key": "m-iou-ji",
+      "name": "医王寺（広島県福山市）",
+      "latitude": 34.383183,
+      "longitude": 133.37681,
+      "category": "temple",
+      "notes": "鞆の浦の高台。石段を少し登れば港全体を見下ろせます。観光客はほとんどおらず、ひとりで登るなら日没の時間は自分で気にかけること。"
+    },
+    {
+      "key": "m-alley",
+      "name": "アレイからすこじま（広島県呉市）",
+      "latitude": 34.225681,
+      "longitude": 132.549211,
+      "category": "harbor",
+      "notes": "潜水艦が停泊しているのを間近で見られる日本唯一の公園。大和ミュージアムから徒歩 25 分——片道 30 分なので、ひとりの行程に入れるかどうかは先に決めておくのが賢明。"
+    },
+    {
+      "key": "m-ohara",
+      "name": "大原美術館（岡山県倉敷市）",
+      "latitude": 34.596032,
+      "longitude": 133.770439,
+      "category": "artgallery",
+      "notes": "日本初の西洋美術館。エル・グレコもモネもここにあります。ひとりなら同じ一枚の前にいくらでも立っていられるので、その価値がある館です。"
+    },
+    {
+      "key": "m-mingeikan",
+      "name": "倉敷民藝館（岡山県倉敷市）",
+      "latitude": 34.595482,
+      "longitude": 133.771504,
+      "category": "museum",
+      "notes": "米蔵を改装した館。白壁となまこ壁そのものが展示品です。規模は大きくなく、ひとりなら 40 分で回れます。"
+    },
+    {
+      "key": "m-ivy-square",
+      "name": "倉敷アイビースクエア（岡山県倉敷市）",
+      "latitude": 34.594597,
+      "longitude": 133.773391,
+      "category": "sight",
+      "notes": "大正時代の紡績工場をリノベーション。赤レンガと蔦、夕方の写真がきれいです。敷地が広く人も多くないので、ひとりでぐるりと歩くと気持ちがいい。"
+    },
+    {
+      "key": "m-yumeji",
+      "name": "夢二郷土美術館（岡山県岡山市）",
+      "latitude": 34.670712,
+      "longitude": 133.934643,
+      "category": "artgallery",
+      "notes": "後楽園の向かい、竹久夢二の郷土美術館です。後楽園から徒歩 5 分なので、ひとりでもう一館足すのにちょうどいい。"
+    },
+    {
+      "key": "m-pref-museum",
+      "name": "岡山県立美術館（岡山県岡山市）",
+      "latitude": 34.667669,
+      "longitude": 133.929811,
+      "category": "artgallery",
+      "notes": "後楽園から市街へ戻る途中。ひとりで雨に降られたときの、いちばん近い代案です。"
+    },
+    {
+      "key": "m-omotecho",
+      "name": "表町商店街（岡山県岡山市）",
+      "latitude": 34.658174,
+      "longitude": 133.930313,
+      "category": "shopping",
+      "notes": "岡山市内の古い商店街。岡山城から徒歩 15 分ほどで、夜まで開いている店も多く、ひとりの食事でも選択肢があります。"
+    }
+  ],
+  "notes": [
+    {
+      "key": "n-example",
+      "title": "例：最初の 2 日間の回り方",
+      "paragraphs": [
+        "午後は {@d1-jrpass}、そのあと新幹線で広島へ。",
+        "夕食は {@d1-okonomiyaki}。混むので早めに。",
+        "翌朝は {@d2-itsukushima}。満潮の大鳥居がいちばんきれい。",
+        "メモで @ を入力すると予定や買い物にリンクでき、タップで開けます。"
+      ]
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "title": "岡山に着いて広島へ移動",
+      "events": [
+        {
+          "key": "d1-airport",
+          "title": "桃園空港 T1 チェックイン・出国",
+          "start": "08:50",
+          "end": "11:10",
+          "timeZoneID": "Asia/Taipei",
+          "category": "airport",
+          "colour": "teal",
+          "place": {
+            "name": "台湾桃園国際空港 第 1 ターミナル（台湾・桃園市）",
+            "latitude": 25.082083,
+            "longitude": 121.237757
+          },
+          "notes": "タイガーエアはカウンターが開くと列が一気に捌けるので、ひとりなら 2 時間で十分すぎるほど。制限エリア内は食事の選択肢が少なく、機内への持ち込みも不可なので、保安検査の前に済ませておくこと。",
+          "todos": [
+            "Visit Japan Web の QR はスクリーンショットで保存。着陸時にネットが繋がるとは限らない",
+            "受託手荷物は 20 KG。カウンター横の計量器で自分で一度量る"
+          ],
+          "links": [
+            {
+              "url": "https://vjw-lp.digital.go.jp/zh-hant/",
+              "title": "Visit Japan Web 入国手続"
+            }
+          ]
+        },
+        {
+          "key": "d1-flight-tpe-okj",
+          "title": "タイガーエア IT250 桃園 → 岡山",
+          "start": "11:10",
+          "end": "14:11",
+          "startTimeZoneID": "Asia/Taipei",
+          "endTimeZoneID": "Asia/Tokyo",
+          "category": "flight",
+          "colour": "teal",
+          "place": {
+            "name": "台湾桃園国際空港 第 1 ターミナル（台湾・桃園市）",
+            "latitude": 25.082083,
+            "longitude": 121.237757
+          },
+          "notes": "往路は 11:10 発 14:11 着。この路線でいちばん良い時間帯で、着いてから午後がまるごと使えます。実際の飛行は約 2 時間、時差 1 時間なので時刻表では 3 時間差に見えるだけ。座席指定がないので、ひとりなら通路側のほうが出入りが楽です。"
+        },
+        {
+          "key": "d1-immigration",
+          "title": "岡山空港 入国・荷物受取",
+          "start": "14:11",
+          "end": "14:40",
+          "category": "airport",
+          "colour": "none",
+          "place": {
+            "name": "岡山桃太郎空港（岡山県岡山市）",
+            "latitude": 34.756973,
+            "longitude": 133.853869
+          },
+          "notes": "空港は小さく、ひとりなら入国から到着ロビーまで 30 分あれば十分。出たすぐ右手にリムジンバスの券売機があり、IC カードも使えます。"
+        },
+        {
+          "key": "d1-jrpass",
+          "title": "岡山駅で JR パスを受け取る",
+          "start": "15:35",
+          "end": "15:55",
+          "category": "station",
+          "colour": "green",
+          "place": {
+            "name": "岡山駅（岡山県岡山市）",
+            "latitude": 34.665409,
+            "longitude": 133.917825
+          },
+          "notes": "受取機は中央口の近く。混む時間帯は 10 分ほど並びます。ひとり分の指定席は取りやすいので、翌日の宮島と翌々日の尾道の 2 区間もこのときに押さえてしまいましょう。",
+          "leg": {
+            "fromKey": "d1-immigration",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 30,
+            "note": "岡山空港リムジンバスで岡山駅西口へ。所要 30 分、予約不要。岡電バスと中鉄バスが交互に出ます",
+            "routeURL": "https://okayama-kido.co.jp/bus/kuukou.html",
+            "runs": [
+              {
+                "name": "リムジンバス（岡電）",
+                "departure": "14:40",
+                "arrival": "15:10"
+              },
+              {
+                "name": "リムジンバス（中鉄）",
+                "departure": "15:00",
+                "arrival": "15:30"
+              },
+              {
+                "name": "リムジンバス（岡電）",
+                "departure": "15:20",
+                "arrival": "15:50"
+              }
+            ],
+            "selectedRunIndex": 1,
+            "links": [
+              {
+                "url": "https://okayama-kido.co.jp/bus/kuukou.html",
+                "title": "岡山空港 リムジンバス時刻表"
+              }
+            ]
+          },
+          "todos": [
+            "受け取りのときに山陽本線の紙の時刻表をもらう。オフラインでも見られる"
+          ]
+        },
+        {
+          "key": "d1-checkin",
+          "title": "東横INN にチェックイン、荷物を置く",
+          "start": "17:10",
+          "end": "17:45",
+          "category": "hotel",
+          "colour": "taupe",
+          "place": {
+            "name": "東横INN 広島駅スタジアム前（広島県広島市）",
+            "latitude": 34.393721,
+            "longitude": 132.481499
+          },
+          "notes": "チェックインは 16:00 から。シングルは広くありませんが必要なものは揃っています。フロントで無料の洗濯券をもらえることがあり、ひとり旅は服が少ないので、途中で一度洗えば 6 日間もちます。",
+          "leg": {
+            "fromKey": "d1-jrpass",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 53,
+            "note": "山陽新幹線で岡山から広島へ。のぞみ 35 分、さくら 38 分、こだま 65 分。駅からホテルまでさらに徒歩 18 分",
+            "routeURL": "https://www.jr-odekake.net/",
+            "runs": [
+              {
+                "name": "のぞみ",
+                "departure": "16:06",
+                "arrival": "16:41"
+              },
+              {
+                "name": "さくら",
+                "departure": "16:11",
+                "arrival": "16:49"
+              },
+              {
+                "name": "こだま",
+                "departure": "16:26",
+                "arrival": "17:31"
+              }
+            ],
+            "selectedRunIndex": 0
+          }
+        },
+        {
+          "key": "d1-okonomiyaki",
+          "title": "夕食：広島お好み物語 駅前ひろば",
+          "start": "18:20",
+          "end": "19:40",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "広島お好み物語 駅前ひろば（広島県広島市）",
+            "latitude": 34.396944,
+            "longitude": 132.473056
+          },
+          "notes": "ワンフロアに十数軒のお好み焼き店が並び、どこも鉄板前のカウンター席なので、ひとりで座っても気まずさはありません。麺はそばかうどんを選べて、牡蠣入りが広島らしい正解。",
+          "leg": {
+            "fromKey": "d1-checkin",
+            "mode": "walking",
+            "durationMinutes": 15,
+            "note": "大通り沿いに駅方向へ戻る"
+          },
+          "todos": [
+            "入口の待ち状況ボードをまず確認。人気店は 19 時台に並ぶ"
+          ]
+        },
+        {
+          "key": "d1-ekie",
+          "title": "ekie で買い物、翌朝のごはんを調達",
+          "start": "19:50",
+          "end": "20:40",
+          "category": "shopping",
+          "colour": "none",
+          "place": {
+            "name": "ekie 広島駅ビル（広島県広島市）",
+            "latitude": 34.397815,
+            "longitude": 132.476495
+          },
+          "notes": "広島駅直結の駅ビル。土産物フロアは 21:00、スーパーは 22:00 まで。翌朝は早く、ひとりだと朝食を買っておいてくれる人もいないので、夜のうちに用意しておきます。",
+          "leg": {
+            "fromKey": "d1-okonomiyaki",
+            "mode": "walking",
+            "durationMinutes": 6
+          },
+          "closingLeg": {
+            "mode": "walking",
+            "durationMinutes": 18,
+            "note": "東横INN へ歩いて戻る。夜は 4 度なので上着をしっかり"
+          }
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "宮島まる一日、夕方に原爆ドーム",
+      "events": [
+        {
+          "key": "d2-breakfast",
+          "title": "ホテルの無料朝食",
+          "start": "07:30",
+          "end": "08:05",
+          "category": "dining",
+          "colour": "taupe",
+          "place": {
+            "name": "東横INN 広島駅スタジアム前（広島県広島市）",
+            "latitude": 34.393721,
+            "longitude": 132.481499
+          },
+          "notes": "東横INN の朝食は 07:00 から。おにぎり、味噌汁、パン。混雑時は席待ちが出ますが、ひとりならたいてい早く空きに入れます。しっかり食べてから出発を——宮島の日は途中で補給しにくい。"
+        },
+        {
+          "key": "d2-ferry",
+          "title": "JR 宮島フェリー 宮島口 → 宮島",
+          "start": "09:10",
+          "end": "09:20",
+          "category": "ferry",
+          "colour": "teal",
+          "place": {
+            "name": "宮島桟橋（広島県廿日市市）",
+            "latitude": 34.302095,
+            "longitude": 132.322247
+          },
+          "notes": "10 分の航路でパス対象。09:10–16:10 の便は大鳥居のそばを回るコースになり、デッキの右舷がいちばんよく見えます。ひとりなら乗ったらそのまま右舷へ、場所は取りやすい。",
+          "leg": {
+            "fromKey": "d2-breakfast",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 46,
+            "note": "ホテルから広島駅まで徒歩 18 分、JR 山陽本線で宮島口まで 28 分。道路を渡ればフェリー乗り場",
+            "runs": [
+              {
+                "name": "山陽本線 岩国行",
+                "departure": "08:12",
+                "arrival": "08:40"
+              },
+              {
+                "name": "山陽本線 大野浦行",
+                "departure": "08:27",
+                "arrival": "08:55"
+              },
+              {
+                "name": "山陽本線 岩国行",
+                "departure": "08:42",
+                "arrival": "09:10"
+              }
+            ],
+            "selectedRunIndex": 1
+          },
+          "todos": [
+            "宮島訪問税 ¥100 は桟橋で別払い。現金でも IC カードでも可"
+          ]
+        },
+        {
+          "key": "d2-omotesando",
+          "title": "表参道商店街で食べ歩き",
+          "start": "09:30",
+          "end": "10:05",
+          "category": "market",
+          "colour": "amber",
+          "place": {
+            "name": "宮島表参道商店街（広島県廿日市市）",
+            "latitude": 34.299556,
+            "longitude": 132.321961
+          },
+          "notes": "桟橋から神社までの一帯は店ばかり。焼き牡蠣、揚げもみじ饅頭、あなごまん。ひとりだと何種類も食べ切れないので、2〜3 軒に絞るのが正解。土産は帰りに買わないと、ずっと提げて歩くことになります。",
+          "leg": {
+            "fromKey": "d2-ferry",
+            "mode": "walking",
+            "durationMinutes": 5
+          }
+        },
+        {
+          "key": "d2-itsukushima",
+          "title": "厳島神社",
+          "start": "10:15",
+          "end": "11:15",
+          "category": "temple",
+          "colour": "red",
+          "place": {
+            "name": "厳島神社（広島県廿日市市）",
+            "latitude": 34.296534,
+            "longitude": 132.319005
+          },
+          "notes": "世界遺産。大鳥居は潮位次第で、満潮なら海に浮かび、干潮なら足元まで歩けます。まったく別の光景なので、出発前に当日の潮汐表を確認しておくこと。回廊は一方通行で、入ったら引き返せません——ひとりならむしろ自分のペースで進めます。",
+          "leg": {
+            "fromKey": "d2-omotesando",
+            "mode": "walking",
+            "durationMinutes": 6,
+            "note": "海沿いを歩く。途中に千畳閣と五重塔がある"
+          },
+          "links": [
+            {
+              "url": "https://www.itsukushimajinja.jp/",
+              "title": "厳島神社 公式サイト（潮汐表あり）"
+            }
+          ]
+        },
+        {
+          "key": "d2-momijidani",
+          "title": "紅葉谷公園",
+          "start": "11:30",
+          "end": "12:00",
+          "category": "park",
+          "colour": "green",
+          "place": {
+            "name": "紅葉谷公園（広島県廿日市市）",
+            "latitude": 34.293809,
+            "longitude": 132.325038
+          },
+          "notes": "11 月中旬が紅葉の見頃で、渓谷ぜんぶがもみじ。奥まで歩けばロープウェイの紅葉谷駅で、入口からの無料送迎バスもあるので、ひとりで歩き疲れたら乗ってしまえばいい。",
+          "leg": {
+            "fromKey": "d2-itsukushima",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d2-ropeway",
+          "title": "宮島ロープウエー → 獅子岩展望台",
+          "start": "12:25",
+          "end": "13:25",
+          "category": "cablecar",
+          "colour": "green",
+          "place": {
+            "name": "獅子岩展望台（広島県廿日市市）",
+            "latitude": 34.278782,
+            "longitude": 132.325421
+          },
+          "notes": "2 区間あり、途中で乗り換えます。展望台からは瀬戸内海と点在する島々が一望。さらに徒歩 30 分で弥山の山頂ですが、今回は行っていません。下りの最終が早いので、ひとりで登るなら 17:00 という数字を先に覚えておくこと。",
+          "leg": {
+            "fromKey": "d2-momijidani",
+            "mode": "other",
+            "durationMinutes": 20,
+            "note": "紅葉谷駅から循環式で榧谷へ、交走式に乗り換えて獅子岩へ",
+            "routeURL": "https://miyajima-ropeway.info/"
+          }
+        },
+        {
+          "key": "d2-oyster",
+          "title": "昼食：牡蠣屋",
+          "start": "14:00",
+          "end": "15:00",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "牡蠣屋（広島県廿日市市）",
+            "latitude": 34.298559,
+            "longitude": 132.321705
+          },
+          "notes": "表参道でいちばん有名な牡蠣専門店。焼き牡蠣、牡蠣フライ、牡蠣飯まで揃います。昼は必ず並ぶので、ひとりなら先に記名して周りを歩き、戻ってくるとちょうど順番、という流れが効きます。",
+          "leg": {
+            "fromKey": "d2-ropeway",
+            "mode": "walking",
+            "durationMinutes": 30,
+            "note": "ロープウェイで下りて、来た道を表参道へ戻る"
+          }
+        },
+        {
+          "key": "d2-genbaku-dome",
+          "title": "原爆ドーム",
+          "start": "16:40",
+          "end": "17:20",
+          "category": "sight",
+          "colour": "red",
+          "place": {
+            "name": "原爆ドーム（広島県広島市）",
+            "latitude": 34.395466,
+            "longitude": 132.453524
+          },
+          "notes": "内部は非公開なので外から一周します。夕方の光が残骸に当たると、昼間とはまったく違う印象に。すぐ横に日英のボランティアガイドがいて、ひとりで聞くほうがかえって多く質問できます。",
+          "leg": {
+            "fromKey": "d2-oyster",
+            "mode": "transit",
+            "transitKind": "ferry",
+            "durationMinutes": 85,
+            "note": "フェリーで宮島口へ、JR で広島へ、路面電車で原爆ドーム前まで",
+            "runs": [
+              {
+                "name": "JR 宮島フェリー",
+                "departure": "15:10",
+                "arrival": "15:20"
+              },
+              {
+                "name": "宮島松大汽船",
+                "departure": "15:25",
+                "arrival": "15:35"
+              },
+              {
+                "name": "JR 宮島フェリー",
+                "departure": "15:40",
+                "arrival": "15:50"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d2-peace-park",
+          "title": "平和記念公園、平和の灯",
+          "start": "17:30",
+          "end": "18:05",
+          "category": "park",
+          "colour": "green",
+          "place": {
+            "name": "広島平和記念公園（広島県広島市）",
+            "latitude": 34.393171,
+            "longitude": 132.452301
+          },
+          "notes": "ドームから相生橋を渡ればすぐ公園です。慰霊碑・平和の灯・原爆の子の像が一直線に並び、慰霊碑の前に立つとドームがちょうどその中央に収まって見えます——この一帯はひとりでゆっくり歩くのがいちばん。",
+          "leg": {
+            "fromKey": "d2-genbaku-dome",
+            "mode": "walking",
+            "durationMinutes": 5
+          }
+        },
+        {
+          "key": "d2-orizuru",
+          "title": "おりづるタワー 展望台",
+          "start": "18:15",
+          "end": "18:55",
+          "category": "viewpoint",
+          "colour": "none",
+          "place": {
+            "name": "おりづるタワー（広島県広島市）",
+            "latitude": 34.39567,
+            "longitude": 132.454686
+          },
+          "notes": "夕方に夜景を見るつもりでしたが、宮島を歩き通した後で体力が尽き、取りやめ。ひとり旅は相談する相手がいない分、やめるときも自分で決めるだけです。入館料 ¥2,200、次は必ず。",
+          "isCancelled": true,
+          "leg": {
+            "fromKey": "d2-peace-park",
+            "mode": "walking",
+            "durationMinutes": 8
+          },
+          "links": [
+            {
+              "url": "https://www.orizurutower.jp/",
+              "title": "おりづるタワー 公式サイト"
+            }
+          ]
+        },
+        {
+          "key": "d2-yakiniku",
+          "title": "夕食：炭火焼肉 敏（焼肉弁当のテイクアウト）",
+          "start": "19:00",
+          "end": "20:00",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "炭火焼肉 敏 猿猴橋店（広島県広島市）",
+            "latitude": 34.395374,
+            "longitude": 132.478677
+          },
+          "notes": "猿猴橋町の老舗。夜はテイクアウトの焼肉弁当があり、店内の半額ほど。ひとりで焼肉屋に入るのはもともと気を使うので、ホテルに持ち帰ってビールと、が正解でした。",
+          "leg": {
+            "fromKey": "d2-peace-park",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 30,
+            "note": "路面電車で広島駅へ戻り、駅を出て猿猴橋町へ"
+          },
+          "closingLeg": {
+            "mode": "walking",
+            "durationMinutes": 14,
+            "note": "弁当を提げてホテルへ歩く"
+          }
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "title": "尾道の千光寺、福山、鞆の浦",
+      "events": [
+        {
+          "key": "d3-ropeway",
+          "title": "千光寺山ロープウェイで山頂へ",
+          "start": "10:05",
+          "end": "10:25",
+          "category": "cablecar",
+          "colour": "teal",
+          "place": {
+            "name": "千光寺山ロープウェイ（広島県尾道市）",
+            "latitude": 34.410631,
+            "longitude": 133.199562
+          },
+          "notes": "片道 3 分で山頂、¥500。上りはロープウェイ、下りは徒歩がおすすめです。下り道に千光寺・猫の細道・展望スポットが並んでいて、逆にするとすべて登りになります。ひとりなら誰の歩調にも合わせず、ゆっくり下れます。",
+          "leg": {
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 95,
+            "note": "新幹線こだまで広島から三原へ 25 分、山陽本線に乗り換えて尾道まで 20 分、そこからロープウェイ山麓駅まで徒歩 15 分。三原の乗り継ぎは 5 分しかないことも",
+            "runs": [
+              {
+                "name": "こだま 岡山行",
+                "departure": "08:14",
+                "arrival": "08:39"
+              },
+              {
+                "name": "こだま 新大阪行",
+                "departure": "08:44",
+                "arrival": "09:09"
+              },
+              {
+                "name": "こだま 岡山行",
+                "departure": "09:14",
+                "arrival": "09:39"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d3-senkoji",
+          "title": "千光寺、山頂展望台",
+          "start": "10:40",
+          "end": "11:35",
+          "category": "temple",
+          "colour": "red",
+          "place": {
+            "name": "千光寺（広島県尾道市）",
+            "latitude": 34.410365,
+            "longitude": 133.198685
+          },
+          "notes": "大同元年（806 年）創建。赤い本堂が崖に張り付いています。尾道水道を見下ろすならここがいちばんで、対岸の向島も行き交うフェリーもよく見えます。",
+          "leg": {
+            "fromKey": "d3-ropeway",
+            "mode": "walking",
+            "durationMinutes": 10,
+            "note": "ロープウェイ山頂駅から遊歩道を下る。途中に展望台"
+          }
+        },
+        {
+          "key": "d3-cat-alley",
+          "title": "猫の細道",
+          "start": "11:50",
+          "end": "12:25",
+          "category": "sight",
+          "colour": "green",
+          "place": {
+            "name": "猫の細道（広島県尾道市）",
+            "latitude": 34.410557,
+            "longitude": 133.200455
+          },
+          "notes": "道沿いに 100 個以上の手描き「福石猫」が隠れていて、猫を見るより探すほうが忙しい。石段は狭く急で、ひとりで荷物を引いて登るのは無理——駅に預けてから上がること。",
+          "leg": {
+            "fromKey": "d3-senkoji",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d3-cafe",
+          "title": "ブーケ ダルブル",
+          "start": "12:35",
+          "end": "13:00",
+          "category": "cafe",
+          "colour": "amber",
+          "place": {
+            "name": "ブーケ ダルブル（広島県尾道市）",
+            "latitude": 34.410267,
+            "longitude": 133.199893
+          },
+          "notes": "猫の細道の途中にある古民家カフェ。テラスが尾道水道に正対しています。カウンターも一人席もあり、坂を登りきってからの一杯は、この日いちばん心地よい 40 分でした。",
+          "leg": {
+            "fromKey": "d3-cat-alley",
+            "mode": "walking",
+            "durationMinutes": 3
+          }
+        },
+        {
+          "key": "d3-ramen",
+          "title": "昼食：尾道ラーメン",
+          "start": "13:20",
+          "end": "13:50",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "尾道本通り商店街（広島県尾道市）",
+            "latitude": 34.406467,
+            "longitude": 133.197693
+          },
+          "notes": "瀬戸内の小魚の出汁に醤油、表面に背脂、麺は平打ちのストレート。商店街の老舗はどこもカウンター中心で、ひとりなら待たずに座れます。空いている店でもだいたい外れません。",
+          "leg": {
+            "fromKey": "d3-cafe",
+            "mode": "walking",
+            "durationMinutes": 15,
+            "note": "猫の細道を下って本通り商店街へ"
+          }
+        },
+        {
+          "key": "d3-fukuyama-castle",
+          "title": "福山城（駅北口から遠望）",
+          "start": "14:30",
+          "end": "15:05",
+          "category": "castle",
+          "colour": "none",
+          "place": {
+            "name": "福山城（広島県福山市）",
+            "latitude": 34.490996,
+            "longitude": 133.361146
+          },
+          "notes": "尾道からの帰りに時間が余り、ひとりなので思い立ってそのまま福山で下車。天守は駅の北口に張り付いていて、入らなくても写真は撮れます——実際、遠くから一枚撮っただけで移動しました。入館するなら ¥500。\n\n**この区間だけは間隔が足りません**：選んだ 14:20 発は 14:40 着で、予定していた 14:30 より 10 分遅い。だから路程の欄が琥珀色になります。ひとつ前の 14:00 発なら間に合いますが、ラーメンを食べ終えてから駅まで歩き通しになります。",
+          "leg": {
+            "fromKey": "d3-ramen",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 35,
+            "note": "山陽本線で尾道から福山へ 20 分。本数は思ったより少なく、1 本逃すと 20 分以上待ちます。元の旅行記でも読みを外して、ホームで 30 分待つことに",
+            "runs": [
+              {
+                "name": "山陽本線 福山行",
+                "departure": "14:00",
+                "arrival": "14:20"
+              },
+              {
+                "name": "山陽本線 岡山行",
+                "departure": "14:20",
+                "arrival": "14:40"
+              },
+              {
+                "name": "山陽本線 福山行",
+                "departure": "14:47",
+                "arrival": "15:07"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d3-tomonoura",
+          "title": "鞆の浦 港の散策",
+          "start": "16:00",
+          "end": "16:30",
+          "category": "sight",
+          "colour": "green",
+          "place": {
+            "name": "鞆の浦（広島県福山市）",
+            "latitude": 34.380877,
+            "longitude": 133.380327
+          },
+          "notes": "『崖の上のポニョ』の舞台であり、日本最初の近代港湾、坂本龍馬が談判した町でもあります。福山駅南口に鞆の浦行きバスの案内がはっきり出ていて、ひとりでも迷いようがありません。終点まで乗れば着きます。",
+          "leg": {
+            "fromKey": "d3-fukuyama-castle",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 32,
+            "note": "鞆鉄バスで福山駅前から終点の鞆港まで 32 分。20〜30 分間隔",
+            "routeURL": "https://tomotetsu.co.jp/bus/",
+            "runs": [
+              {
+                "name": "鞆鉄バス 鞆港線",
+                "departure": "15:00",
+                "arrival": "15:32"
+              },
+              {
+                "name": "鞆鉄バス 鞆港線",
+                "departure": "15:20",
+                "arrival": "15:52"
+              },
+              {
+                "name": "鞆鉄バス 鞆港線",
+                "departure": "15:50",
+                "arrival": "16:22"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d3-sensuijima",
+          "title": "仙酔島",
+          "start": "16:45",
+          "end": "17:35",
+          "category": "sight",
+          "colour": "green",
+          "place": {
+            "name": "仙酔島（広島県福山市）",
+            "latitude": 34.383117,
+            "longitude": 133.397853
+          },
+          "notes": "市営渡船場から「平成いろは丸」で 5 分。船そのものが坂本龍馬のいろは丸を模しています。島は五色岩の海岸で、一周 40 分ほど。最終便が早いので、ひとりなら渡る前に帰りの時刻を必ず確認——逃したら相談する相手もいません。",
+          "leg": {
+            "fromKey": "d3-tomonoura",
+            "mode": "transit",
+            "transitKind": "ferry",
+            "durationMinutes": 10,
+            "note": "福山市営渡船場まで戻り、「平成いろは丸」で 5 分。最終便が早いので、渡る前に帰りの時刻を確認",
+            "runs": [
+              {
+                "name": "平成いろは丸",
+                "departure": "16:30",
+                "arrival": "16:35"
+              },
+              {
+                "name": "平成いろは丸",
+                "departure": "16:50",
+                "arrival": "16:55"
+              },
+              {
+                "name": "平成いろは丸",
+                "departure": "17:10",
+                "arrival": "17:15"
+              }
+            ],
+            "selectedRunIndex": 0,
+            "links": [
+              {
+                "url": "https://www.tomonoura.co.jp/",
+                "title": "鞆の浦 観光情報（渡船時刻あり）"
+              }
+            ]
+          }
+        },
+        {
+          "key": "d3-joyato",
+          "title": "鞆の浦 常夜燈",
+          "start": "17:45",
+          "end": "18:25",
+          "category": "sight",
+          "colour": "red",
+          "place": {
+            "name": "鞆の浦 常夜燈（広島県福山市）",
+            "latitude": 34.382436,
+            "longitude": 133.380783
+          },
+          "notes": "港に立つ 1859 年の石灯籠が鞆の浦の象徴です。夕方に灯が入ってからの海面との組み合わせは、急に決めた行程なのにこの日いちばんの時間になりました。",
+          "leg": {
+            "fromKey": "d3-sensuijima",
+            "mode": "walking",
+            "durationMinutes": 8
+          }
+        },
+        {
+          "key": "d3-dinner",
+          "title": "夕食：炭火焼肉 敏（テイクアウト）",
+          "start": "20:30",
+          "end": "21:20",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "炭火焼肉 敏 猿猴橋店（広島県広島市）",
+            "latitude": 34.395374,
+            "longitude": 132.478677
+          },
+          "notes": "広島に戻ったら 20 時過ぎ。またテイクアウト弁当を買いました。鞆の浦から広島までは 2 時間、帰りのバスは行きより本数が少なく、ひとりで海辺の町で最終を逃すと本当に打つ手がありません。離れる前に確認を。",
+          "leg": {
+            "fromKey": "d3-joyato",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 120,
+            "note": "鞆鉄バスで福山駅へ 32 分、そこから JR で広島へ。帰りは行きより本数が少ないので、離れる前に最終を確認",
+            "routeURL": "https://tomotetsu.co.jp/bus/",
+            "runs": [
+              {
+                "name": "鞆鉄バス 福山駅前行",
+                "departure": "18:30",
+                "arrival": "19:02"
+              },
+              {
+                "name": "鞆鉄バス 福山駅前行",
+                "departure": "19:00",
+                "arrival": "19:32"
+              },
+              {
+                "name": "鞆鉄バス 福山駅前行",
+                "departure": "19:30",
+                "arrival": "20:02"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "closingLeg": {
+            "mode": "walking",
+            "durationMinutes": 14,
+            "note": "ホテルへ歩いて戻る"
+          }
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "title": "呉の大和ミュージアムと広島市内めぐり",
+      "events": [
+        {
+          "key": "d4-move-hotel",
+          "title": "東横INN をチェックアウト、アパに荷物を預ける",
+          "start": "08:30",
+          "end": "09:10",
+          "category": "hotel",
+          "colour": "taupe",
+          "place": {
+            "name": "アパホテル 広島駅前大橋（広島県広島市）",
+            "latitude": 34.395364,
+            "longitude": 132.471991
+          },
+          "notes": "今夜からアパへ。2 軒は徒歩 15 分です。ひとりで荷物を運ぶので、先に持って行って預けてしまうのがいちばん楽。フロントは午後のチェックインを待たずに受け取ってくれます。",
+          "todos": [
+            "チェックアウト前に引き出しとコンセントを確認。充電器は壁に残しやすい"
+          ]
+        },
+        {
+          "key": "d4-yamato",
+          "title": "大和ミュージアム",
+          "start": "10:05",
+          "end": "12:00",
+          "category": "museum",
+          "colour": "red",
+          "place": {
+            "name": "大和ミュージアム・呉市海事歴史科学館（広島県呉市）",
+            "latitude": 34.241185,
+            "longitude": 132.55588
+          },
+          "notes": "館内の 1/10 戦艦大和は全長 26 メートル。一周するだけで入館料の元が取れます。入館料 ¥500。2 階には零式艦上戦闘機と人間魚雷「回天」も同じフロアに。ひとりなら好きなだけ立ち止まっていられます。",
+          "leg": {
+            "fromKey": "d4-move-hotel",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 45,
+            "note": "JR 呉線。快速「安芸路ライナー」33 分、普通 43 分。呉駅から歩行者デッキで直結、道路を渡る必要なし",
+            "runs": [
+              {
+                "name": "快速 安芸路ライナー",
+                "departure": "09:22",
+                "arrival": "09:55"
+              },
+              {
+                "name": "呉線 普通",
+                "departure": "09:40",
+                "arrival": "10:23"
+              },
+              {
+                "name": "快速 安芸路ライナー",
+                "departure": "09:52",
+                "arrival": "10:25"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "links": [
+            {
+              "url": "https://yamato-museum.com/",
+              "title": "大和ミュージアム 公式サイト"
+            }
+          ]
+        },
+        {
+          "key": "d4-jmsdf",
+          "title": "てつのくじら館（海上自衛隊呉史料館）",
+          "start": "12:05",
+          "end": "13:00",
+          "category": "museum",
+          "colour": "green",
+          "place": {
+            "name": "てつのくじら館・海上自衛隊呉史料館（広島県呉市）",
+            "latitude": 34.242162,
+            "longitude": 132.555321
+          },
+          "notes": "入館無料。しかも本物の潜水艦「あきしお」の中に入れます——あの艦がそのまま陸に置いてあります。艦内は狭く、ひとりのほうがかえってすんなり抜けられます。掃海艇の展示は 1 階、潜水艦の艦内は最上階。",
+          "leg": {
+            "fromKey": "d4-yamato",
+            "mode": "walking",
+            "durationMinutes": 3
+          }
+        },
+        {
+          "key": "d4-kure-lunch",
+          "title": "昼食：呉冷麺",
+          "start": "13:15",
+          "end": "14:05",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "呉 れんがどおり商店街（広島県呉市）",
+            "latitude": 34.246508,
+            "longitude": 132.566174
+          },
+          "notes": "呉の名物は冷麺。タレは甘めで麺は平打ち、韓国式の冷麺とはまったくの別物です。れんがどおりの老舗が何軒もこれを出していて、昼でもひとりならほぼ待たずに入れます。",
+          "leg": {
+            "fromKey": "d4-jmsdf",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d4-shukkeien",
+          "title": "縮景園",
+          "start": "15:30",
+          "end": "16:30",
+          "category": "park",
+          "colour": "green",
+          "place": {
+            "name": "縮景園（広島県広島市）",
+            "latitude": 34.400338,
+            "longitude": 132.467449
+          },
+          "notes": "1620 年に築かれた回遊式庭園。園の中央に大小 10 の島があり、一周 40 分ほど。入園料 ¥260、隣の県立美術館との共通券のほうがお得です。11 月中旬は紅葉が見頃で、ひとりでゆっくり回るのにちょうどいい。",
+          "leg": {
+            "fromKey": "d4-kure-lunch",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 70,
+            "note": "呉線で広島まで 33 分、駅から路面電車で 2 駅",
+            "runs": [
+              {
+                "name": "快速 安芸路ライナー",
+                "departure": "14:19",
+                "arrival": "14:52"
+              },
+              {
+                "name": "呉線 普通",
+                "departure": "14:36",
+                "arrival": "15:19"
+              },
+              {
+                "name": "快速 安芸路ライナー",
+                "departure": "14:49",
+                "arrival": "15:22"
+              }
+            ],
+            "selectedRunIndex": 0
+          }
+        },
+        {
+          "key": "d4-hiroshima-castle",
+          "title": "広島城",
+          "start": "16:45",
+          "end": "17:35",
+          "category": "castle",
+          "colour": "green",
+          "place": {
+            "name": "広島城（広島県広島市）",
+            "latitude": 34.402146,
+            "longitude": 132.45954
+          },
+          "notes": "再建された天守で、内部は歴史博物館。入館料 ¥370。縮景園から徒歩 12 分、堀沿いは夕方の散歩に向いています。天守は 18:00 に閉まるので、ひとりで組むときも順番を逆にはできません。",
+          "leg": {
+            "fromKey": "d4-shukkeien",
+            "mode": "walking",
+            "durationMinutes": 12
+          }
+        },
+        {
+          "key": "d4-peace-museum",
+          "title": "広島平和記念資料館",
+          "start": "18:00",
+          "end": "19:30",
+          "category": "museum",
+          "colour": "red",
+          "place": {
+            "name": "広島平和記念資料館（広島県広島市）",
+            "latitude": 34.391812,
+            "longitude": 132.452105
+          },
+          "notes": "観覧料 ¥200、本館と東館がつながっています。8 月は 19:00 まで延長ですが、それ以外の月は 18:00 に閉館することが多いので、出発前に必ずその月の時間を確認すること。90 分は取る価値があり、ひとりで見終えたあとは、たいてい静かな道を少し歩かないと戻ってこられません。",
+          "leg": {
+            "fromKey": "d4-hiroshima-castle",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 20,
+            "note": "路面電車で原爆ドーム前へ、平和記念公園を抜ける"
+          },
+          "todos": [
+            "当日の閉館時刻と最終入館時刻を公式サイトで確認しておく"
+          ],
+          "links": [
+            {
+              "url": "https://hpmmuseum.jp/",
+              "title": "広島平和記念資料館 公式サイト"
+            }
+          ]
+        },
+        {
+          "key": "d4-station-bento",
+          "title": "ekie でお土産と駅弁",
+          "start": "20:10",
+          "end": "21:00",
+          "category": "souvenir",
+          "colour": "amber",
+          "place": {
+            "name": "ekie 広島駅ビル（広島県広島市）",
+            "latitude": 34.397815,
+            "longitude": 132.476495
+          },
+          "notes": "もみじ饅頭、牡蠣醤油、熊野筆はこのフロアに揃います。明日は移動が続くので、広島名物のあなごめし弁当も。ひとりで土産を買うときは覚えておくこと——最後は全部、自分で機内まで運びます。",
+          "leg": {
+            "fromKey": "d4-peace-museum",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 30,
+            "note": "路面電車で広島駅へ戻る"
+          },
+          "todos": [
+            "土産店の多くは 21:00 で閉まる。最後に思い出すと間に合わない"
+          ]
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "title": "倉敷美観地区と岡山後楽園のライトアップ",
+      "events": [
+        {
+          "key": "d5-checkout",
+          "title": "アパをチェックアウト、荷物を受け取る",
+          "start": "08:40",
+          "end": "09:10",
+          "category": "hotel",
+          "colour": "taupe",
+          "place": {
+            "name": "アパホテル 広島駅前大橋（広島県広島市）",
+            "latitude": 34.395364,
+            "longitude": 132.471991
+          },
+          "notes": "アパのチェックアウトは 11:00 なので急ぐ必要はありません。ひとりだと荷物を見ていてくれる人もいないので、そのまま駅へ引いていくのがいちばん楽。今日は一日じゅう移動です。"
+        },
+        {
+          "key": "d5-luggage",
+          "title": "倉敷駅で荷物を預ける",
+          "start": "10:30",
+          "end": "10:50",
+          "category": "station",
+          "colour": "none",
+          "place": {
+            "name": "倉敷駅（岡山県倉敷市）",
+            "latitude": 34.601086,
+            "longitude": 133.766219
+          },
+          "notes": "駅にはコインロッカーがありますが、大型はすぐ埋まります。今夜のホテルが駅から 5 分なので、ひとりならそのままフロントに預けたほうが確実です。",
+          "leg": {
+            "fromKey": "d5-checkout",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 75,
+            "note": "山陽新幹線で広島から岡山へ 35 分、山陽本線に乗り換えて倉敷まで 16 分。倉敷は普通停車駅なので、快速に乗って通過しないよう注意",
+            "runs": [
+              {
+                "name": "のぞみ",
+                "departure": "09:23",
+                "arrival": "09:58"
+              },
+              {
+                "name": "さくら",
+                "departure": "09:40",
+                "arrival": "10:19"
+              },
+              {
+                "name": "のぞみ",
+                "departure": "10:23",
+                "arrival": "10:58"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "todos": [
+            "ロッカーは ¥100 硬貨しか使えない。コンビニで先に崩しておく"
+          ]
+        },
+        {
+          "key": "d5-achi",
+          "title": "阿智神社",
+          "start": "11:20",
+          "end": "11:55",
+          "category": "temple",
+          "colour": "green",
+          "place": {
+            "name": "阿智神社（岡山県倉敷市）",
+            "latitude": 34.597529,
+            "longitude": 133.773443
+          },
+          "notes": "美観地区のとなりの小高い丘に建つ神社。石段はやや急ですが、登れば白壁の町並みを一望できます。境内の「阿知の藤」は樹齢 500 年と言われています。観光客は少なく、ひとりで登ると静かです。",
+          "leg": {
+            "fromKey": "d5-luggage",
+            "mode": "walking",
+            "durationMinutes": 15,
+            "note": "倉敷駅から倉敷中央通りを歩く。途中に商店街"
+          }
+        },
+        {
+          "key": "d5-bikan",
+          "title": "倉敷美観地区",
+          "start": "12:05",
+          "end": "12:50",
+          "category": "sight",
+          "colour": "red",
+          "place": {
+            "name": "倉敷美観地区（岡山県倉敷市）",
+            "latitude": 34.596525,
+            "longitude": 133.772586
+          },
+          "notes": "白壁の蔵、なまこ壁、柳が倉敷川を挟み、江戸時代の米蔵の街並みがそのまま残っています。川舟流しは 20 分 ¥500 で、ひとりでも乗れます。券は観光案内所で。",
+          "leg": {
+            "fromKey": "d5-achi",
+            "mode": "walking",
+            "durationMinutes": 6
+          }
+        },
+        {
+          "key": "d5-miyake",
+          "title": "昼食：三宅商店のカレー",
+          "start": "13:00",
+          "end": "13:50",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "三宅商店（岡山県倉敷市）",
+            "latitude": 34.596325,
+            "longitude": 133.772286
+          },
+          "notes": "古い町家を改装したカフェ。看板はカレーと季節のフルーツパフェです。昼は必ず並ぶので、ひとりなら先に名前を書いて美術館を回り、戻るとちょうど順番。",
+          "leg": {
+            "fromKey": "d5-bikan",
+            "mode": "walking",
+            "durationMinutes": 3
+          }
+        },
+        {
+          "key": "d5-ohara",
+          "title": "大原美術館",
+          "start": "14:00",
+          "end": "15:00",
+          "category": "artgallery",
+          "colour": "green",
+          "place": {
+            "name": "大原美術館（岡山県倉敷市）",
+            "latitude": 34.596032,
+            "longitude": 133.770439
+          },
+          "notes": "1930 年開館、日本初の西洋美術館です。本館にエル・グレコ『受胎告知』とモネ『睡蓮』。入館料 ¥2,000、月曜休館なので日程を組む前に確認を。ひとりなら誰にも急かされませんが、1 時間ではひと回りが精一杯です。",
+          "leg": {
+            "fromKey": "d5-miyake",
+            "mode": "walking",
+            "durationMinutes": 5
+          },
+          "links": [
+            {
+              "url": "https://www.ohara.or.jp/",
+              "title": "大原美術館 公式サイト"
+            }
+          ]
+        },
+        {
+          "key": "d5-parfait",
+          "title": "パーラー果物小町のフルーツパフェ",
+          "start": "15:10",
+          "end": "15:50",
+          "category": "dessert",
+          "colour": "amber",
+          "place": {
+            "name": "パーラー果物小町（岡山県倉敷市）",
+            "latitude": 34.594943,
+            "longitude": 133.771231
+          },
+          "notes": "岡山は果物王国。白桃とマスカットのパフェがこの一帯の定番です。安くはありませんが量はしっかりあり、ひとりで 1 つがちょうどいいおやつになります。",
+          "leg": {
+            "fromKey": "d5-ohara",
+            "mode": "walking",
+            "durationMinutes": 5
+          }
+        },
+        {
+          "key": "d5-outlet",
+          "title": "三井アウトレットパーク 倉敷",
+          "start": "16:15",
+          "end": "17:00",
+          "category": "shopping",
+          "colour": "none",
+          "place": {
+            "name": "三井アウトレットパーク 倉敷（岡山県倉敷市）",
+            "latitude": 34.60371,
+            "longitude": 133.762007
+          },
+          "notes": "美観地区のあとに入れていましたが、町並みを歩き終えたら 16 時。時間を使い切って取りやめました——ひとりで歩いては止まりを繰り返すと、思ったより進みません。倉敷駅の北口すぐなので、次は到着日に組むのがよさそう。",
+          "isCancelled": true,
+          "leg": {
+            "fromKey": "d5-parfait",
+            "mode": "walking",
+            "durationMinutes": 20
+          }
+        },
+        {
+          "key": "d5-korakuen",
+          "title": "岡山後楽園 秋の夜間ライトアップ",
+          "start": "17:40",
+          "end": "18:45",
+          "category": "park",
+          "colour": "red",
+          "place": {
+            "name": "岡山後楽園（岡山県岡山市）",
+            "latitude": 34.66633,
+            "longitude": 133.937395
+          },
+          "notes": "日本三名園のひとつ。秋の「幻想庭園」期間は 21:30 まで延長開園し、ライトアップされます。昼とはまったく別の姿。期間中は入園料が別立てなので、その年の日程を出発前に確認してください。ひとりの夜歩きでも人は多くなく、とても静かです。",
+          "leg": {
+            "fromKey": "d5-parfait",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 60,
+            "note": "山陽本線で倉敷から岡山へ 16 分、駅から路面電車で城下、そこから徒歩 10 分",
+            "runs": [
+              {
+                "name": "山陽本線 普通 岡山行",
+                "departure": "16:04",
+                "arrival": "16:20"
+              },
+              {
+                "name": "快速 サンライナー",
+                "departure": "16:23",
+                "arrival": "16:38"
+              },
+              {
+                "name": "山陽本線 普通 岡山行",
+                "departure": "16:44",
+                "arrival": "17:00"
+              }
+            ],
+            "selectedRunIndex": 1
+          },
+          "links": [
+            {
+              "url": "https://okayama-korakuen.jp/",
+              "title": "岡山後楽園 公式サイト"
+            }
+          ]
+        },
+        {
+          "key": "d5-okayama-castle",
+          "title": "岡山城の夜景",
+          "start": "18:55",
+          "end": "19:45",
+          "category": "castle",
+          "colour": "green",
+          "place": {
+            "name": "岡山城（岡山県岡山市）",
+            "latitude": 34.665176,
+            "longitude": 133.936045
+          },
+          "notes": "黒い外壁の天守で「烏城」と呼ばれ、旭川を挟んで後楽園と向かい合っています。ライトアップの時間は月見橋の側から見るのがいちばんきれい。橋の上は人が少なく、ひとりでスマホを構えても邪魔になりません。",
+          "leg": {
+            "fromKey": "d5-korakuen",
+            "mode": "walking",
+            "durationMinutes": 8,
+            "note": "後楽園から月見橋で旭川を渡ればすぐ"
+          }
+        },
+        {
+          "key": "d5-dinner",
+          "title": "夕食：一風堂、歩いて岡山駅へ",
+          "start": "20:15",
+          "end": "21:15",
+          "category": "dining",
+          "colour": "amber",
+          "place": {
+            "name": "一風堂 岡山店（岡山県岡山市）",
+            "latitude": 34.665336,
+            "longitude": 133.92547
+          },
+          "notes": "一日歩いたので、締めに温かい一杯を——ラーメン屋のカウンターはひとりにいちばん優しい席です。岡山城から市街を抜けて駅まで約 25 分、途中に表町商店街があります。",
+          "leg": {
+            "fromKey": "d5-okayama-castle",
+            "mode": "walking",
+            "durationMinutes": 25,
+            "note": "旭川沿いに市街へ戻り、表町商店街を抜ける"
+          },
+          "closingLeg": {
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 40,
+            "note": "山陽本線で岡山から倉敷へ 16 分。終電は遅いので急ぐ必要はなく、降りて徒歩 5 分でホテル",
+            "runs": [
+              {
+                "name": "山陽本線 倉敷方面",
+                "departure": "21:24",
+                "arrival": "21:40"
+              },
+              {
+                "name": "山陽本線 倉敷方面",
+                "departure": "21:47",
+                "arrival": "22:03"
+              },
+              {
+                "name": "山陽本線 倉敷方面",
+                "departure": "22:07",
+                "arrival": "22:23"
+              }
+            ],
+            "selectedRunIndex": 0
+          }
+        }
+      ]
+    },
+    {
+      "day": 6,
+      "title": "吉備津神社、午後に帰路",
+      "events": [
+        {
+          "key": "d6-checkout",
+          "title": "チェックアウト、荷物は岡山駅のロッカーへ",
+          "start": "07:40",
+          "end": "08:25",
+          "category": "train",
+          "colour": "teal",
+          "place": {
+            "name": "倉敷駅（岡山県倉敷市）",
+            "latitude": 34.601086,
+            "longitude": 133.766219
+          },
+          "notes": "午後の便に間に合わせる必要があり、ひとりだと荷物を見ていてくれる人もいないので、まず山陽本線で岡山へ出てロッカーに預けてから吉備津へ。桃太郎線は単線区間で 1 時間に 2 本、逃すと 30 分以上待ちます。"
+        },
+        {
+          "key": "d6-kibitsu",
+          "title": "吉備津神社",
+          "start": "09:05",
+          "end": "10:30",
+          "category": "temple",
+          "colour": "red",
+          "place": {
+            "name": "吉備津神社（岡山県岡山市）",
+            "latitude": 34.670682,
+            "longitude": 133.850611
+          },
+          "notes": "桃太郎伝説の始まりの地で、本殿は国宝。いちばん有名なのは 360 メートルの回廊で、山の傾斜に沿って延びていきます。朝の空いている時間ならまるごと独り占め——ひとり旅でこの区間はいちばん値打ちがあります。",
+          "leg": {
+            "fromKey": "d6-checkout",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 40,
+            "note": "岡山駅で JR 桃太郎線（吉備線）に乗り換えて吉備津まで 18 分、下車後に徒歩 10 分。1 時間に 2 本",
+            "runs": [
+              {
+                "name": "桃太郎線 普通 総社行",
+                "departure": "08:11",
+                "arrival": "08:27"
+              },
+              {
+                "name": "桃太郎線 普通 総社行",
+                "departure": "08:36",
+                "arrival": "08:54"
+              },
+              {
+                "name": "桃太郎線 普通 総社行",
+                "departure": "09:29",
+                "arrival": "09:47"
+              }
+            ],
+            "selectedRunIndex": 1
+          }
+        },
+        {
+          "key": "d6-aeon",
+          "title": "イオンモール岡山でお土産と昼食",
+          "start": "11:15",
+          "end": "12:35",
+          "category": "shopping",
+          "colour": "amber",
+          "place": {
+            "name": "イオンモール岡山（岡山県岡山市）",
+            "latitude": 34.66202,
+            "longitude": 133.917354
+          },
+          "notes": "岡山駅とデッキで直結しているので、雨でも外に出ずに済みます。お土産もドラッグストアもフードコートも一か所で片づき、残った小銭もここで使い切れます。ひとりなら買った分だけ自分で運ぶので、買いすぎに注意。",
+          "leg": {
+            "fromKey": "d6-kibitsu",
+            "mode": "transit",
+            "transitKind": "train",
+            "durationMinutes": 30,
+            "note": "桃太郎線で岡山駅へ 18 分、デッキを渡ればそのままモールへ",
+            "runs": [
+              {
+                "name": "桃太郎線 普通 岡山行",
+                "departure": "10:42",
+                "arrival": "11:00"
+              },
+              {
+                "name": "桃太郎線 普通 岡山行",
+                "departure": "11:12",
+                "arrival": "11:30"
+              },
+              {
+                "name": "桃太郎線 普通 岡山行",
+                "departure": "11:42",
+                "arrival": "12:00"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "todos": [
+            "肉製品は台湾へ持ち帰れない。肉まんや煮込みは土産にしないこと"
+          ]
+        },
+        {
+          "key": "d6-airport",
+          "title": "岡山空港 チェックイン・出国",
+          "start": "13:25",
+          "end": "15:25",
+          "category": "airport",
+          "colour": "none",
+          "place": {
+            "name": "岡山桃太郎空港（岡山県岡山市）",
+            "latitude": 34.756973,
+            "longitude": 133.853869
+          },
+          "notes": "空港は小さく、ひとりならチェックインも保安検査もすぐ終わります。免税店の品揃えは限られるので、買うものは市内で揃えておくこと。2 階には飛行機を見られる展望デッキがあり、待ち時間もひとりで退屈しません。",
+          "leg": {
+            "fromKey": "d6-aeon",
+            "mode": "transit",
+            "transitKind": "bus",
+            "durationMinutes": 30,
+            "note": "リムジンバスで岡山駅西口から岡山桃太郎空港へ。所要 30 分、¥780。出発 2 時間前の便が安心です",
+            "routeURL": "https://okayama-kido.co.jp/bus/kuukou.html",
+            "runs": [
+              {
+                "name": "リムジンバス（岡電）",
+                "departure": "12:50",
+                "arrival": "13:20"
+              },
+              {
+                "name": "リムジンバス（中鉄）",
+                "departure": "13:10",
+                "arrival": "13:40"
+              },
+              {
+                "name": "リムジンバス（岡電）",
+                "departure": "13:30",
+                "arrival": "14:00"
+              }
+            ],
+            "selectedRunIndex": 0
+          },
+          "todos": [
+            "保安検査でブーツは脱ぐ。脱ぎやすい靴に履き替えておく",
+            "免税書類とレシートは出国前にまとめておく"
+          ]
+        },
+        {
+          "key": "d6-flight-okj-tpe",
+          "title": "タイガーエア IT251 岡山 → 桃園",
+          "start": "15:25",
+          "end": "17:35",
+          "startTimeZoneID": "Asia/Tokyo",
+          "endTimeZoneID": "Asia/Taipei",
+          "category": "flight",
+          "colour": "teal",
+          "place": {
+            "name": "岡山桃太郎空港（岡山県岡山市）",
+            "latitude": 34.756973,
+            "longitude": 133.853869
+          },
+          "notes": "15:25 発 17:35 着。台北に戻ってもまだ明るく、翌日を休みにあてて出社するとちょうどいい流れです。ひとり旅の終わりはあっさりしていて、誰かと予定をすり合わせる必要もありません。"
+        }
+      ]
+    }
+  ]
+}

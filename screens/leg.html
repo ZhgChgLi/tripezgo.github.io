@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=402">
+<title>路程</title>
+<!--
+  路程 sheet（App：Modules/UI/…/TripLegSheet），蓋在變暗的行事曆上。
+  參數：?lang=zh-Hant-TW|en|ja &event=d2-ferry（哪一則行程「之前」那一段路；預設第 2 天早餐→渡輪）
+        &start=2026-10-10（第 1 天的日期）
+  版面數字照 TripLegMetrics.swift／TripLegSheetViewController.swift／LegRunPlanView.swift／LegRunChipsRow.swift。
+  sheet 外框照 screens/ref/zh/leg.png 量：iOS 26 的 medium detent 是一張四邊內縮 8 的浮動紙，**內容照 402 寬排好、
+  整張等比縮成 386 寬**（×0.9602——抓桿量到 34.3 寬、晶片 34.3 高、虛線週期 7.67，都是 36／36／8 乘上同一個比例）。
+-->
+<link rel="stylesheet" href="screen.css">
+<style>
+  /* 字型：同 event.html——BlinkMacSystemFont 是 SF，漢字走 CoreText 的 cascade（跟 UIKit 同一條路） */
+  .device { --font: BlinkMacSystemFont, "PingFang TC", sans-serif; text-autospace: normal; }
+  html[lang="ja"] .device { --font: BlinkMacSystemFont, "Hiragino Sans", sans-serif; }
+  html[lang="zh-Hant-TW"] .md { font-family: "PingFang TC"; }
+  html[lang="ja"] .md { font-family: "Hiragino Sans"; }
+  .halt { font-feature-settings: "halt"; }
+  .halt.po { margin-left: .1em; }  /* 漢字後面的「（」：擠成半格，但 CoreText 在前面留了一小段（「球場前 (廣島縣」） */
+  .ar { margin: 0 .06em; }
+
+  .bg { position: absolute; inset: 0; width: 402px; height: 874px; border: 0; }
+  .dim { position: absolute; inset: 0; background: rgba(0,0,0,.2); }
+
+  /* ── 系統：浮動 sheet。外框 8／415／386×451（量的），內容是 402 寬的座標，縮 0.9602 ── */
+  .sheet { position: absolute; left: 8px; top: 415px; width: 402px; height: 469.7px; transform: scale(.9602);
+    transform-origin: 0 0; background: var(--card); border-radius: 12.5px; overflow: hidden;
+    box-shadow: 0 0 30px rgba(0,0,0,.08); }
+  .grabber { position: absolute; left: 183px; top: 5px; width: 36px; height: 5px; border-radius: 2.5px; background: #c1c1c3; }
+  .navtitle { position: absolute; left: 0; right: 0; top: 16px; height: 44px; display: flex; align-items: center;
+    justify-content: center; font: 600 17px/22px var(--font); color: #000; }
+  .cjk { font-size: .952em; line-height: 1; vertical-align: .045em; }  /* ≥17pt 的漢字縮一點——理由見 event.html */
+  .glass { position: absolute; top: 16px; height: 44px; border-radius: 22px; background: #fdfdfd;
+    box-shadow: 0 4px 22px rgba(0,0,0,.07); }
+  .glass .slot { position: absolute; top: 0; width: 44px; height: 44px; display: grid; place-items: center; }
+  .glass svg { width: 24px; height: 24px; fill: none; stroke: #191919; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 捲動區：導覽列下 16、左右 20；底邊停在 home indicator 的安全區上緣（34） */
+  .scroll { position: absolute; left: 0; right: 0; top: 86px; bottom: 34px; overflow: hidden; }
+  .col { position: absolute; left: 20px; right: 20px; top: 0; }
+
+  /* 班次晶片：高 36、左右 14、上下 6、間距 8、圖示 14、圖示與字 6 */
+  .chips { display: flex; gap: 8px; margin-top: 10px; white-space: nowrap; }
+  .chip { flex: none; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid var(--border);
+    background: var(--sunken); display: flex; align-items: center; gap: 6px; font: 600 var(--t-sm)/15.5px var(--font); color: var(--ink); }
+  .chip.on { background: rgba(47,145,142,.12); border-color: var(--accent-ink); color: var(--accent-ink); }
+  .chip svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 兩端：點 12（距頂 4）、點與字 10；名稱 15 粗、地點 13、時刻 12 等寬 */
+  .pt { position: relative; padding-left: 22px; }
+  .pt .mk { position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); }
+  .pt.end .mk { background: var(--card); border: 2.5px solid var(--ink); }
+  .pt .nm { font: 600 var(--t-base)/18.7px var(--font);  /* 15pt 的 SF 是 17.9，混了漢字的 UILabel 量到 18.7 */ color: var(--ink); }
+  .pt .pl { margin-top: 1px; font: 400 var(--t-sm)/15.5px var(--font); color: var(--muted); }
+  .pt .tm { margin-top: 2px; font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted-on-sunken); }
+
+  /* 軸中間：虛線（左 5、寬 2、4／4）＋ 一欄（離虛線 17、上下 8、間距 6） */
+  .plan { position: relative; padding: 8px 0 8px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .plan .dash { position: absolute; left: 5px; top: 0; bottom: 0; width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--border) 0 4px, transparent 4px 8px); }
+  .step { display: flex; align-items: baseline; gap: 5px; font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted-on-sunken); }
+  .step svg { width: 13px; height: 13px; flex: none; align-self: center; fill: none; stroke: currentColor; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; }
+  /* 班次卡：上下 7、左右 12、圖示 18、間距 8、兩行間 1 */
+  .card { display: flex; align-items: center; gap: 8px; padding: 6px 11px;  /* 7／12 減掉 1 的邊（UIKit 的邊畫在框內） */ border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); }
+  .card svg { width: 18px; height: 18px; flex: none; fill: var(--ink); fill-rule: evenodd; }
+  .card .rn { display: block; font: 600 var(--t-sm)/15.5px var(--font); color: var(--ink); white-space: nowrap; }
+  .card .rt { display: block; margin-top: 1px; font: 400 var(--t-xs)/14.3px var(--font); color: var(--muted-on-sunken); white-space: nowrap; }
+
+  .note { margin-right: -1px; /* 第一行剛好塞滿（「過馬」貼著右緣），Chromium 的字寬加總比 CoreText 多零點幾，讓一點才折在同一個字 */
+    margin-top: 14px; font: 400 var(--t-sm)/15.5px var(--font); color: var(--ink); }
+  /* 在地圖開啟路線：白底細邊，高至少 48、圓角 8、圖示 17、間距 6 */
+  .mapbtn { margin-top: 18px; min-height: 48px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center; gap: 6px; font: 600 var(--t-sm)/15.5px var(--font); color: var(--ink); }
+  .mapbtn svg { width: 17px; height: 17px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="device" id="d"></div>
+<script type="module">
+import { params, lang, loadTrip, chrome, duration, toMin, ready } from './chrome.js';
+
+// App 的字串（Scripts/i18n/maps：UI.legTitle／openRouteInMaps，Trips.legEndsAt／legStartsAt／runWait／runEarly）
+const S = {
+  'zh-Hant-TW': { title: '路程', open: '在地圖開啟路線', ends: t => `結束 ${t}`, starts: t => `開始 ${t}`, wait: d => `候車 ${d}`, early: d => `早到 ${d}` },
+  en: { title: 'Leg', open: 'Open the route in Maps', ends: t => `Ends ${t}`, starts: t => `Starts ${t}`, wait: d => `${d} wait`, early: d => `${d} early` },
+  ja: { title: '移動', open: 'ルートをマップで開く', ends: t => `${t} 終了`, starts: t => `${t} 開始`, wait: d => `待ち時間 ${d}`, early: d => `${d} 早く到着` },
+}[lang] || null;
+const L = S || { title: '路程', open: '在地圖開啟路線', ends: t => `結束 ${t}`, starts: t => `開始 ${t}`, wait: d => `候車 ${d}`, early: d => `早到 ${d}` };
+
+// 「·」走全形（PingFang／Hiragino），「→」兩邊補 UIKit 的自動間距，全形括號擠掉半格——理由見 event.html
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  .replace(/·/g, '<span class="md">·</span>').replace(/[↔→]/g, c => `<span class="ar">${c}</span>`)
+  .replace(/(?<![A-Za-z0-9 ])[「『（【]|[」』）】]/g, c => `<span class="halt${c === '（' ? ' po' : ''}">${c}</span>`);
+
+// DesignIcon.swift 的轉寫（24 格）＋ EventTypeIcons 的 Maki「rail」（15 格，even-odd 填色）
+const I = {
+  pencil: '<path d="M17 3Q21 3 21 7L7.5 20.5 2 22l1.5-5.5z"/>',
+  trash: '<path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/>',
+  check: '<path d="M5 13l5 5 9-11"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.2V12l3 1.8"/>',
+  mapPin: '<path d="M12 21C16.5 16.5 19 13 19 10A7 7 0 0 0 5 10C5 13 7.5 16.5 12 21z"/><circle cx="12" cy="10" r="2.6"/>',
+};
+const ic = n => `<svg viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+const RAIL = 'M 3 1 C 2.4477 1 2 1.4477 2 2 L 2 10 C 2 10.5523 2.4477 11 3 11 L 12 11 C 12.5523 11 13 10.5523 13 10 L 13 2 C 13 1.4477 12.5523 1 12 1 L 3 1 z M 5.75 1.5 L 5.7597656 1.5 L 9.2597656 1.5 C 9.3978656 1.5 9.5097656 1.6119 9.5097656 1.75 C 9.5097656 1.8881 9.3978656 2 9.2597656 2 L 5.75 2 C 5.6119 2 5.5 1.8881 5.5 1.75 C 5.5 1.6119 5.6119 1.5 5.75 1.5 z M 3.5 3 L 7 3 L 7 7 L 3.5 7 C 3.2239 7 3 6.7761 3 6.5 L 3 3.5 C 3 3.2239 3.2239 3 3.5 3 z M 8 3 L 11.5 3 C 11.7761 3 12 3.2239 12 3.5 L 12 6.5 C 12 6.7761 11.7761 7 11.5 7 L 8 7 L 8 3 z M 5 8 C 5.5523 8 6 8.4477 6 9 C 6 9.5523 5.5523 10 5 10 C 4.4477 10 4 9.5523 4 9 C 4 8.4477 4.4477 8 5 8 z M 10 8 C 10.5523 8 11 8.4477 11 9 C 11 9.5523 10.5523 10 10 10 C 9.4477 10 9 9.5523 9 9 C 9 8.4477 9.4477 8 10 8 z M 10.445312 11.994141 C 10.380597 11.999652 10.314981 12.018581 10.253906 12.050781 C 10.030606 12.168381 9.9302313 12.433922 10.019531 12.669922 L 10.189453 13 L 4.8105469 13 L 4.9394531 12.730469 C 5.0371531 12.472169 4.9067375 12.183637 4.6484375 12.085938 C 4.4124375 11.996738 4.1468969 12.097113 4.0292969 12.320312 L 3.0292969 14.320312 C 3.0080969 14.377912 2.9986 14.4387 3 14.5 C 3 14.7761 3.2239 15 3.5 15 C 3.6802 14.999 3.8450875 14.899434 3.9296875 14.740234 L 3.9296875 14.689453 L 4 14.689453 L 4.3105469 14 L 10.689453 14 L 11 14.689453 L 11 14.740234 C 11.0846 14.899434 11.249488 14.999 11.429688 15 C 11.705787 15 11.929688 14.7761 11.929688 14.5 C 11.949587 14.4212 11.949587 14.338566 11.929688 14.259766 L 10.929688 12.259766 C 10.833163 12.076541 10.639459 11.977608 10.445312 11.994141 z';
+
+const d = document.getElementById('d');
+const trip = await loadTrip();
+const key = params.get('event') || 'd2-ferry';
+let to, dayNo;
+for (const day of trip.days) { const e = day.events.find(x => x.key === key); if (e) { to = e; dayNo = day.day; break; } }
+const from = trip.days.find(x => x.day === dayNo).events.find(e => e.key === to.leg.fromKey);
+const leg = to.leg;
+const run = leg.runs[leg.selectedRunIndex || 0];
+const wait = toMin(run.departure) - toMin(from.end);
+const ride = toMin(run.arrival) - toMin(run.departure);
+const slack = toMin(to.start) - toMin(run.arrival);
+
+// 背景：行事曆（同一天），整片壓暗 20%
+const q = new URLSearchParams({ lang, day: dayNo, ...(params.get('start') ? { start: params.get('start') } : {}) });
+d.insertAdjacentHTML('beforeend', `<iframe class="bg" id="bg" src="calendar.html?${q}"></iframe><div class="dim"></div>`);
+
+d.insertAdjacentHTML('beforeend', `
+<div class="sheet">
+  <div class="grabber"></div>
+  <div class="navtitle">${esc(L.title).replace(/([\u3000-\u30ff\u3400-\u9fff\uff00-\uffef]+)/g, '<span class="cjk">$1</span>')}</div>
+  <div class="glass" style="left:286px;width:100px">
+    <div class="slot" style="left:1px">${ic('pencil')}</div>
+    <div class="slot" style="left:55px">${ic('trash')}</div>
+  </div>
+  <div class="scroll"><div class="col">
+    <div class="chips">${leg.runs.map((r, i) => `<div class="chip${i === (leg.selectedRunIndex || 0) ? ' on' : ''}">${i === (leg.selectedRunIndex || 0) ? ic('check') : ''}${esc(r.name)}</div>`).join('')}</div>
+    <div style="height:10px"></div>
+    <div class="pt"><div class="mk"></div><div class="nm">${esc(from.title)}</div><div class="pl">${esc(from.place.name)}</div><div class="tm">${esc(L.ends(from.end))}</div></div>
+    <div class="plan"><div class="dash"></div>
+      <div class="step">${ic('clock')}<span>${esc(L.wait(duration(wait)))}</span></div>
+      <div class="card"><svg viewBox="0 0 15 15">${`<path d="${RAIL}"/>`}</svg><div><span class="rn">${esc(run.name)}</span>
+        <span class="rt">${esc(`${run.departure} → ${run.arrival} · ${duration(ride)}`)}</span></div></div>
+      <div class="step">${ic('clock')}<span>${esc(L.early(duration(slack)))}</span></div>
+    </div>
+    <div class="pt end"><div class="mk"></div><div class="nm">${esc(to.title)}</div><div class="pl">${esc(to.place.name)}</div><div class="tm">${esc(L.starts(to.start))}</div></div>
+    ${leg.note ? `<div class="note">${esc(leg.note)}</div>` : ''}
+    <div class="mapbtn">${ic('mapPin')}<span>${esc(L.open)}</span></div>
+  </div></div>
+</div>`);
+
+chrome(d);
+// 等背景那一頁也畫完才拍
+const bg = document.getElementById('bg');
+await new Promise(res => { const tick = () => bg.contentDocument && bg.contentDocument.body && bg.contentDocument.body.dataset.ready === '1' ? res() : setTimeout(tick, 50); tick(); });
+ready();
+</script>
+</body>
+</html>
