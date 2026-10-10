@@ -120,3 +120,7 @@ html[lang="ja"] .c-notes { letter-spacing: -.75px; }
 html[lang="ja"] .c-sub { letter-spacing: -.55px; }
 html[lang="ja"] .c-note { letter-spacing: -.32px; }
 .mdot { margin: 0 -1.75px; }
+/* 日文 16pt 那一行：基準圖的卡片矮 1pt、字面低 1pt（Hiragino 的行高跟 SF 的 lineHeight 不同） */
+html[lang="ja"] .n-man { line-height: 18.09px; position: relative; top: 1px; }
+/* 描述那一段（UITextView）的字面比同樣行高的 UILabel 低約 1pt——三語基準圖都一樣 */
+.c-notes { position: relative; top: .7px; }

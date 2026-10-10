@@ -34,7 +34,7 @@ const STRINGS = {
   },
   ja: {
     tabs: ['概要', '旅行', 'マップ', 'ツール', '設定'],
-    today: '今日', day: n => `${n}日目`, allDay: '終日',
+    today: '今日', day: n => `${n} 日目`, allDay: '終日',
     weekday: ['日', '月', '火', '水', '木', '金', '土'],
     monthDay: (m, d) => `${m}月${d}日`, shortDate: (m, d) => `${m}/${d}`,
     minutes: m => `${m} 分`, hours: h => `${h} 時間`, hm: (h, m) => `${h} 時間 ${m} 分`,

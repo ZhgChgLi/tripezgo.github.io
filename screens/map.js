@@ -67,7 +67,6 @@ const chips = [`<div class="chip all"><b>${S.all}</b></div>`].concat(Array.from(
   return `<div class="chip${n === dayNo ? ' on' : ''}"><b>${isToday ? '<i></i>' : ''}${isToday ? t.today : dayLabel(n)}</b>
     <span>${t.shortDate(dt.getMonth() + 1, dt.getDate())} ${t.weekday[dt.getDay()]}</span></div>`;
 })).join('');
-if (params.get('ts')) document.head.insertAdjacentHTML('beforeend', `<style>.title{letter-spacing:${params.get("ts")}px;word-spacing:${params.get("ws")||0}px}</style>`);
 d.insertAdjacentHTML('beforeend', `<div class="chips">${chips}</div>
   <div class="search">${S.search}</div>
   <div class="live"><i></i>${S.live}</div>
