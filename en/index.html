@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TripEZGo — Plan the whole trip, all in one place</title>
-<meta name="description" content="TripEZGo is a travel-planning app for iPhone and iPad. Events go on a calendar, travel goes on a timeline, and one overview shows your itinerary, files and to-dos. Map each day's route and shops in Japan, plan together with companions and share your location on the way. Works offline and syncs through your own iCloud.">
+<title>TripEZGo — Plan the trip, carry what it needs, all in one app</title>
+<meta name="description" content="TripEZGo is a trip planner for iPhone and iPad. Events on a calendar and a timeline, with tickets, files and to-dos attached; a map of each day's route and Japan's convenience stores and department stores; co-edit with companions and share your location on the road; your next stop on the Lock Screen. Your data stays on your device and in your own iCloud.">
 <meta name="theme-color" content="#fbf8f4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)">
 <meta name="apple-itunes-app" content="app-id=6801536372">
@@ -21,14 +21,14 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="zh_TW">
 <meta property="og:locale:alternate" content="ja_JP">
-<meta property="og:title" content="TripEZGo — Plan the whole trip, all in one place">
-<meta property="og:description" content="Events on a calendar, travel on a timeline, and one overview for your itinerary, files and to-dos. Map each day's route, plan together and share your location on the way.">
+<meta property="og:title" content="TripEZGo — Plan the trip, carry what it needs, all in one app">
+<meta property="og:description" content="TripEZGo is a trip planner for iPhone and iPad. Events on a calendar and a timeline, with tickets, files and to-dos attached; a map of each day's route and Japan's convenience stores and department stores; co-edit with companions and share your location on the road; your next stop on the Lock Screen. Your data stays on your device and in your own iCloud.">
 <meta property="og:url" content="https://tripezgo.com/en/">
 <meta property="og:image" content="https://tripezgo.com/assets/img/og-en.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/home.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -37,7 +37,7 @@
   "applicationCategory": "TravelApplication",
   "operatingSystem": "iOS, iPadOS",
   "downloadUrl": "https://apps.apple.com/app/id6801536372",
-  "description": "Travel-planning app for iPhone and iPad: events on a calendar, travel on a timeline, one overview for itinerary, files and to-dos, daily routes and shops in Japan on the map, group planning and location sharing. Works offline and syncs through your own iCloud.",
+  "description": "TripEZGo is a trip planner for iPhone and iPad. Events on a calendar and a timeline, with tickets, files and to-dos attached; a map of each day's route and Japan's convenience stores and department stores; co-edit with companions and share your location on the road; your next stop on the Lock Screen. Your data stays on your device and in your own iCloud.",
   "url": "https://tripezgo.com/en/",
   "inLanguage": ["en", "zh-Hant-TW", "zh-Hant-HK", "ja"],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }
@@ -45,7 +45,39 @@
 </script>
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.5 5.2h3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 5 5 9-11"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m21 16-5-5-9 9"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9.5h18M7.5 14.5h4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3.4 19.6a5.8 5.8 0 0 1 11.2 0"/><path d="M16.4 5.4a3.4 3.4 0 0 1 0 5.2"/><path d="M17.6 14.4a5.8 5.8 0 0 1 3 5.2"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="m20 11.5-8 8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.4 8.4a1.7 1.7 0 0 1-2.4-2.4l7.7-7.7"/></symbol>
+  <symbol id="i-todo" viewBox="0 0 24 24"><path d="m4 7 1.6 1.6L8.4 5.8M4 15.5l1.6 1.6 2.8-2.8M11.5 7.5H20M11.5 16H20"/></symbol>
+  <symbol id="i-train" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="13" rx="3"/><path d="M6 10h12M9 13.2h.01M15 13.2h.01M8.5 16 6.5 20.5M15.5 16l2 4.5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8.5h15l-3.5-3.5M20 15.5H5l3.5 3.5"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7.5a3 3 0 0 0 0-6h-7a3 3 0 0 1 0-6H16"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+  <symbol id="i-nav" viewBox="0 0 24 24"><path d="M12 3.5 19 20l-7-3.8L5 20l7-16.5z"/></symbol>
+  <symbol id="i-island" viewBox="0 0 24 24"><rect x="3" y="8.5" width="18" height="7" rx="3.5"/><path d="M15 12h2.5"/></symbol>
+  <symbol id="i-widget" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15L6 16z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 10.5v3M8 7.5v9M12 4.5v15M16 7.5v9M20 10.5v3"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11"/></symbol>
+  <symbol id="i-fx" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 10h7l-2-2M15.5 14h-7l2 2"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4.5h2.2L7.4 15h10.4l2-7.5H6.3"/><circle cx="9" cy="19.2" r="1.3"/><circle cx="16.8" cy="19.2" r="1.3"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM20 14v6h-3.5M14 20h.01"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4.5M15 3v4.5M6.5 7.5h11V11a5.5 5.5 0 0 1-11 0V7.5zM12 16.5V21"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 10a4.3 4.3 0 0 1-.4 8.5H7z"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 6.1A9.6 9.6 0 0 1 12 6c5 0 8.5 4.5 9.5 6a16 16 0 0 1-2.8 3.3M6.6 6.6C4.4 8 3 10.4 2.5 12c1 1.5 4.5 6 9.5 6a9.6 9.6 0 0 0 4.4-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8.5-8.5M16.5 6.5l2.5 2.5M14 9l2 2"/></symbol>
+  <symbol id="i-shift" viewBox="0 0 24 24"><path d="M7 4v16l-3-3M17 20V4l3 3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+</svg>
+
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <header class="site-header">
   <div class="wrap">
@@ -54,9 +86,8 @@
       <span class="m m-word" role="img" aria-hidden="true"></span>
     </a>
     <nav class="site-nav" aria-label="Main">
-      <a class="hide-sm" href="#why">Why</a>
-      <a class="hide-sm" href="#features">Features</a>
       <a class="hide-sm" href="#privacy">Privacy</a>
+      <a class="hide-sm" href="#features">Features</a>
       <a class="hide-sm" href="#plans">Pricing</a>
       <a class="lang" href="/" hreflang="zh-Hant" lang="zh-Hant">中文</a>
       <a class="lang" href="/ja/" hreflang="ja" lang="ja">日本語</a>
@@ -66,190 +97,257 @@
 
 <main id="main">
 
-  <!-- ─── Hero ─────────────────────────────────────────────────────── -->
-  <section class="hero">
+    <section class="hero">
     <div class="wrap">
       <div>
         <p class="eyebrow">Trip planning for iPhone and iPad</p>
-        <h1>Plan the whole trip, <em>all in one place</em></h1>
-        <p class="lede">From planning the days to finding your way on the ground, TripEZGo keeps a whole trip in one app. Events go on a calendar, travel goes on a timeline, and the map, tickets, to-dos, notes and shopping list stay with the trip. It works offline, too.</p>
+        <h1>Plan the trip, carry what it needs —<br><em>all in one app</em></h1>
+        <p class="lede">Plan the days, keep the tickets, check the connections — and take it all with you when you go.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://apps.apple.com/app/id6801536372">Download on the App Store</a>
           <a class="btn btn-ghost" href="#features">See how it works</a>
         </div>
-        <p class="hero-note">
-          <span>No sign-up</span>
-          <span>Works offline</span>
-          <span>Free to download</span>
-        </p>
+        <ul class="hero-tags">
+          <li><svg class="i"><use href="#i-check"/></svg>No sign-up</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Works offline</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Free to download</li>
+        </ul>
       </div>
-      <div class="phone-pair">
-        <img class="shot" src="/assets/img/shots/en/01.webp" width="660" height="1434"
-             alt="TripEZGo calendar: day 2 of a six-day Sanyo trip, events laid out by time with the JR departure and travel time between them" fetchpriority="high">
-        <img class="shot" src="/assets/img/shots/en/02.webp" width="660" height="1434"
-             alt="TripEZGo overview: each day's events listed by time, with walking time and the gap between them" loading="lazy">
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── Why ──────────────────────────────────────────────────────── -->
-  <section class="section" id="why">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Why it exists</p>
-        <h2>The hard part isn’t choosing where to go.<span class="nb"> It’s the order.</span></h2>
-        <p class="lede">Build it in a spreadsheet and you do the arithmetic yourself, look up every connection yourself, paste in every ticket yourself. Then three things happen.</p>
-      </div>
-      <div class="pains">
-        <article class="pain">
-          <span class="n">01</span>
-          <h3>It scatters</h3>
-          <p>The plan in a notes app, the flight in email, the hotel confirmation in a chat thread, the restaurant in a screenshot. On the ground, finding the ticket takes longer than getting to the place.</p>
-        </article>
-        <article class="pain">
-          <span class="n">02</span>
-          <h3>The timing is guesswork</h3>
-          <p>How long that walk takes, when the next train leaves — you look each one up by hand. Miss a single leg and the rest of the day goes with it.</p>
-        </article>
-        <article class="pain">
-          <span class="n">03</span>
-          <h3>Plans always change</h3>
-          <p>A closure, a stop that ran long, traffic. Changing it is such a chore that most people don’t — and from day two the plan in your hand isn’t true any more.</p>
-        </article>
+      <div class="trio">
+        <figure class="ph ph-side shot"><img src="/assets/img/shots/v2/en/map-place.webp" width="720" height="1565" alt="Map: day 2 on Miyajima, with events joined into a walking route and Itsukushima Shrine's card showing a walking-directions button" loading="lazy"></figure>
+        <figure class="ph ph-main shot"><img src="/assets/img/shots/v2/en/calendar.webp" width="720" height="1565" alt="Calendar: day 2 of the six-day San'yō trip, events laid out by time, with the JR San'yō Line departure between breakfast and the ferry" fetchpriority="high"></figure>
+        <figure class="ph ph-side shot"><img src="/assets/img/shots/v2/en/overview.webp" width="720" height="1565" alt="Overview: today's events listed by time, with walking time and gaps between them" loading="lazy"></figure>
       </div>
     </div>
   </section>
 
-  <!-- ─── Features ─────────────────────────────────────────────────── -->
-  <section class="section section-alt" id="features">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Features</p>
-        <h2>Everything a trip needs, <span class="nb">in one app</span></h2>
-        <p class="lede">No switching between a calendar, a map, a notes app and your camera roll.</p>
-      </div>
-
-      <article class="feature">
-        <div>
-          <h3>Events on a calendar, <em>travel on a timeline</em></h3>
-          <p>Every day is a timeline: long-press and drag to move an event or change its times. The gap between two events is a leg — walking, driving and cycling times are estimated from the map, and a transit leg can hold several departures, so you can switch if you miss one. If a leg takes longer than the gap you left, you're warned in advance. All-day things like a rental car get their own header, cancelled events stay in place, struck through, and you can shift the rest of the day earlier or later in one go. There are 56 built-in event types, and you can add your own.</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/en/01.webp" width="660" height="1434"
-                 alt="Calendar view: the day's events laid out by time, all-day events pinned at the top, and how you travel between each pair" loading="lazy">
-        </div>
-      </article>
-
-      <article class="feature is-flipped">
-        <div>
-          <h3>Overview: <em>itinerary, files and to-dos on one page</em></h3>
-          <p>Each trip splits into Itinerary, Files and To-Dos, so you can check everything is ready before you leave. Tickets, bookings, PDFs, photos and links attach to their event and open with one tap; documents for the whole trip sit at the top. To-dos can belong to the whole trip or to a single event.</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/en/02.webp" width="660" height="1434"
-                 alt="Overview itinerary tab: each day's events by time, with walking time and the gap between them" loading="lazy">
-        </div>
-      </article>
-
-      <article class="feature">
-        <div>
-          <h3>Daily routes on the map, <em>shops and walking directions</em></h3>
-          <p>Every event with a place is on the map. View one day or the whole trip, with each day's events joined in order, and walking, driving and cycling legs drawn along the actual route. Shops in Japan are on the map too — 7-Eleven, FamilyMart, Lawson, Don Quijote, Matsumoto Kiyoshi, Daikoku Drug, Bic Camera and Yodobashi, with opening status — with turn-by-turn walking navigation in the app, or a hand-off to Apple Maps or Google Maps. Long-press the map to drop your own pin, or share a place in from another app.</p>
-        </div>
-        <div class="feature-media">
-          <div class="phone-duo">
-            <img class="shot" src="/assets/img/shots/en/03.webp" width="660" height="1434"
-                 alt="Map view: the day's events joined in order, with convenience stores and shops along the way" loading="lazy">
-            <img class="shot" src="/assets/img/shots/en/04.webp" width="660" height="1434"
-                 alt="A 7-Eleven opened on the map: its address, open 24 hours, and a walking-directions button" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="feature is-flipped">
-        <div>
-          <h3>Notes and shopping list, <em>for life on the road</em></h3>
-          <p>Snap a photo to add a shopping item, record each shop's price under it, and see at a glance which is cheapest. Currency conversion works offline with the last rates it fetched. Notes belong to a trip and can be kept private from your companions, and built-in Japanese travel phrases read themselves aloud with one tap. Share links, photos and files from other apps straight into a note, the shopping list, the trip's files or a map pin.</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/en/05.webp" width="660" height="1434"
-                 alt="Shopping list: counts of to-buy, bought and skipped, with items in a photo grid by category" loading="lazy">
-        </div>
-      </article>
-
-      <article class="feature">
-        <div>
-          <h3>Plan together, <em>see each other on the map</em></h3>
-          <p>Send one invite link and your companions join the trip; everyone edits the same itinerary, notes and shopping list. During the trip, turn on Share My Location and your companions appear on the map, with how long ago each was updated. It's shared only with people on this trip, only while it's under way, and you can turn it off any time.</p>
-        </div>
-        <div class="feature-media">
-          <div class="phone-duo">
-            <img class="shot" src="/assets/img/shots/en/06.webp" width="660" height="1434"
-                 alt="Trip sharing settings: the share switch, the invite link and the member list" loading="lazy">
-            <img class="shot" src="/assets/img/shots/en/07.webp" width="660" height="1434"
-                 alt="Share My Location: the switch for companions, the location source and who is sharing" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="feature is-flipped">
-        <div>
-          <h3>Live Activities, widgets <em>and calendar integration</em> <span class="tag">Premium</span></h3>
-          <p>While the trip is under way, the Lock Screen and Dynamic Island show the current event, the time left, the next stop and how you're getting there. Widgets cover today's events, files, to-dos, shopping list, currency, notes and more, plus Lock Screen widgets; tick off to-dos and shopping items right on the widget (iOS 17 or later). Write the trip into Apple Calendar or Google Calendar and it stays up to date as you edit, and Siri Shortcuts can tell you your next event or today's plan.</p>
-          <p class="feature-note">Live Activities and calendar integration are part of Premium.</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/en/08.webp" width="660" height="1434"
-               alt="Live Activity on the Lock Screen: The Yamato Museum under way with 21 minutes left, next stop The Iron Whale at 12:05" loading="lazy">
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- ─── Privacy ──────────────────────────────────────────────────── -->
-  <section class="section privacy-band" id="privacy">
+    <section class="section section-alt privacy-band" id="privacy">
     <div class="wrap">
       <div>
-        <p class="eyebrow">Works offline, private by default</p>
-        <h2><span class="nb">No account,</span> <span class="nb">no server of ours</span></h2>
-        <p class="lede">View and edit your trips with no connection. Your data is stored on this device and synced between your own devices through your own iCloud account — never kept on a third-party server.</p>
-        <ul class="bullets">
-          <li><span><strong>No sign-up.</strong> Install it and plan day one — no account, no password.</span></li>
-          <li><span><strong>Your trip content stays yours.</strong> The app uses Firebase only for crash reports and basic usage statistics, which don't include your trips. Ads in the free version come from Google AdMob, and whether they may track you is your choice in the iOS prompt. Premium has no ads.</span></li>
-          <li><span><strong>Sync runs on your iCloud.</strong> Data goes into your Apple ID’s private database; only your devices can open it.</span></li>
-          <li><span><strong>Sharing runs on iCloud too.</strong> Sharing a trip uses Apple’s own iCloud sharing; the invite link is simply the key, and it never passes through a server of ours.</span></li>
-          <li><span><strong>Backup and export are free.</strong> Back up a whole library to one file, or export a trip as .ics.</span></li>
-        </ul>
-        <p style="margin:26px 0 0"><a href="/en/privacy.html">Read the full Privacy Policy →</a></p>
+        <p class="eyebrow">Privacy and security</p>
+        <h2>Your trips live <span class="nb">only on your phone</span> <span class="nb">and in your iCloud</span></h2>
+        <p class="lede">No account. We run no server and never see your trips. Backup, sync and sharing all go through iCloud.</p>
+        <a class="more-link" href="/en/privacy.html">Read the full privacy policy →</a>
       </div>
       <div class="feature-media">
-        <figure style="margin:0;max-width:520px">
-          <picture>
-            <source srcset="/assets/img/feat/privacy-en-dark.webp" media="(prefers-color-scheme: dark)">
-            <img src="/assets/img/feat/privacy-en.webp" width="668" height="472"
-                 alt="Diagram: a box labelled “this iPhone · all of it” holding the itinerary, tickets, bookings, notes, photos and to-dos, above an encrypted iCloud backup unlocked by your Apple ID" loading="lazy">
-          </picture>
-        </figure>
+        <div class="vault" role="img" aria-label="Diagram: this iPhone holds all your data — events, files, to-dos, notes, shopping list and photos; it is encrypted, backed up and synced to iCloud with your Apple Account, and co-editing runs on iCloud sharing">
+          <div class="vault-card">
+            <div class="vault-head"><svg class="i"><use href="#i-phone"/></svg><b>This iPhone</b><span>All your data</span></div>
+            <ul class="vault-chips">
+              <li>Events</li><li>Files</li><li>To-dos</li><li>Notes</li><li>Shopping list</li><li>Photos</li>
+            </ul>
+            <div class="vault-row"><svg class="i"><use href="#i-lock"/></svg><b>Encrypted iCloud backup and sync</b><span>Only your Apple Account can open it</span></div>
+            <div class="vault-row"><svg class="i"><use href="#i-users"/></svg><b>Co-editing with companions</b><span>Through iCloud sharing</span></div>
+          </div>
+          <p class="vault-note">No account, no server of ours. Opens just the same on a plane.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="plans">
+    <section class="section" id="features">
+    <div class="wrap">
+            <article class="feature">
+        <div>
+          <p class="eyebrow">01 · Plan events</p>
+          <h3>Everything you need, <em>attached to the event</em></h3>
+          <p>Tickets, bookings and to-dos stay with the event. When you get there, one tap opens them.</p>
+          <ul class="points">
+            <li><svg class="i"><use href="#i-clip"/></svg><span>Photos, files and e-ticket links</span></li>
+            <li><svg class="i"><use href="#i-todo"/></svg><span>To-dos to tick off before you leave</span></li>
+            <li><svg class="i"><use href="#i-train"/></svg><span>How you travel between events</span></li>
+            <li><svg class="i"><use href="#i-swap"/></svg><span>Miss this train? The backup is already lined up</span></li>
+          </ul>
+        </div>
+        <div class="feature-media">
+          <div class="duo">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/event-extra.webp" width="720" height="1565" alt="Event details: the JR Pass with its to-dos and files — a web link, a PDF e-ticket and a photo" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/leg.webp" width="720" height="1565" alt="Leg: three departures side by side; the selected one shows departure, arrival and waiting time" loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+            <article class="feature is-flipped">
+        <div>
+          <p class="eyebrow">02 · Calendar / Timeline</p>
+          <h3>Today's plan, <em>at a glance</em></h3>
+          <p>Events, free time and travel time, laid out on a single line of time.</p>
+          <ul class="points">
+            <li><svg class="i"><use href="#i-clock"/></svg><span>How long you stay, how much time is free</span></li>
+            <li><svg class="i"><use href="#i-bell"/></svg><span>A heads-up when the gap is too short</span></li>
+            <li><svg class="i"><use href="#i-swap"/></svg><span>Switch between calendar and timeline anytime</span></li>
+          </ul>
+        </div>
+        <div class="feature-media modes">
+          <div class="duo is-even">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/calendar.webp" width="720" height="1565" alt="Calendar: day 2 of the six-day San'yō trip, events laid out by time, with the JR San'yō Line departure between breakfast and the ferry" loading="lazy"></figure>
+            <span class="swap" role="img" aria-label="Switch between calendar and timeline"><svg class="i"><use href="#i-swap"/></svg></span>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/timeline.webp" width="720" height="1565" alt="Timeline: day 2 as a single line of events, with time spent at each stop and the legs between" loading="lazy"></figure>
+          </div>
+          <div class="mode-label" aria-hidden="true"><span>Calendar</span><span>Timeline</span></div>
+        </div>
+      </article>
+
+            <article class="feature">
+        <div>
+          <p class="eyebrow">03 · Map</p>
+          <h3>Where's next? <em>The map shows you</em></h3>
+          <p>Each day's events join into a route, with the shops along the way marked too.</p>
+          <ul class="points">
+            <li><svg class="i"><use href="#i-route"/></svg><span>Daily routes and legs</span></li>
+            <li><svg class="i"><use href="#i-pin"/></svg><span>Pin the places you want to go</span></li>
+            <li><svg class="i"><use href="#i-bag"/></svg><span>Japanese convenience stores, department stores and drugstores</span></li>
+            <li><svg class="i"><use href="#i-nav"/></svg><span>Walking directions</span></li>
+          </ul>
+        </div>
+        <div class="feature-media">
+          <div class="duo is-three">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/map.webp" width="720" height="1565" alt="Map: a day's walking route on Miyajima, with events and distances along the way" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/map-store.webp" width="720" height="1565" alt="Map: a nearby 7-Eleven opened, showing it is open 24 hours, with a walking button" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/map-nav.webp" width="720" height="1565" alt="Walking directions to the 7-Eleven along the route on the map: continue straight, about 9 minutes to go" loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+            <article class="feature is-flipped">
+        <div>
+          <p class="eyebrow">04 · Overview</p>
+          <h3>The whole trip, <em>on one page</em></h3>
+          <p>Events, files and to-dos — whatever you need is one tap away.</p>
+        </div>
+        <div class="feature-media">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/en/overview.webp" width="720" height="1565" alt="Overview: today's events listed by time, with walking time and gaps between them" loading="lazy"></figure>
+        </div>
+      </article>
+
+            <article class="feature">
+        <div>
+          <p class="eyebrow">05 · Companions</p>
+          <h3>Plan together, <em>travel together</em></h3>
+          <p>Companions edit events, notes and files together. Share your location on the road, so you can find each other if you split up.</p>
+        </div>
+        <div class="feature-media">
+          <div class="duo">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/members.webp" width="720" height="1565" alt="Trip sharing: the sharing switch, invite link and QR code, with companions listed below" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/share-location.webp" width="720" height="1565" alt="Location sharing: companions on the map, showing how long ago each was updated" loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+    <section class="section section-alt" id="glance">
+    <div class="wrap">
+      <div class="feature" style="padding:0">
+        <div>
+          <p class="eyebrow">Without opening the app</p>
+          <h2>No unlocking — <span class="nb">your next stop is on the Lock Screen</span></h2>
+          <p class="lede">Where you are, how long you have left, and how to get to the next stop.</p>
+          <div class="caps">
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-island"/></svg>Live Activity<span class="tag tag-premium">Premium</span></div>
+              <p>On the Lock Screen and Dynamic Island, the current event at a glance</p>
+            </div>
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-widget"/></svg>Widget</div>
+              <p>Today's events on your Home Screen and Lock Screen</p>
+            </div>
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-bell"/></svg>Notifications</div>
+              <p>A reminder when a to-do is due</p>
+            </div>
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-wave"/></svg>Siri</div>
+              <p>Ask, and hear what's next</p>
+            </div>
+          </div>
+        </div>
+        <div class="feature-media">
+          <div class="duo">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/lock.webp" width="720" height="1565" alt="Live Activity on the Lock Screen: Itsukushima Shrine under way, time left and the next stop" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/en/widget.webp" width="720" height="1565" alt="Home Screen widgets: today's events and a currency converter" loading="lazy"></figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <section class="section" id="tools">
     <div class="wrap">
       <div class="section-head">
+        <p class="eyebrow">Tools</p>
+        <h2>What you need on the road, <span class="nb">all in one place</span></h2>
+      </div>
+      <div class="tools">
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/en/note.webp" width="720" height="1565" alt="Notes: text and photos, @ links to events, and Japanese phrases that can be read aloud" loading="lazy"></figure>
+          <h3>Notes</h3>
+          <p>Text and photos, with Japanese phrases read aloud for you</p>
+        </article>
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/en/fx.webp" width="720" height="1565" alt="Currency: converting between two currencies, with recent conversions below" loading="lazy"></figure>
+          <h3>Currency</h3>
+          <p>Works without a connection</p>
+        </article>
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/en/shop.webp" width="720" height="1565" alt="Shopping list: counts of to-buy, bought and skipped items, with items in a photo grid by category" loading="lazy"></figure>
+          <h3>Shopping list</h3>
+          <p>Snap it to save it, and see which shop is cheapest</p>
+        </article>
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/en/scan.webp" width="720" height="1565" alt="QR code scanner: scanned links and text kept in a history your companions can see too" loading="lazy"></figure>
+          <h3>QR code scanner</h3>
+          <p>Scanned links and text are saved for your companions too</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+    <section class="section section-alt" id="ai">
+    <div class="wrap">
+      <div class="ai-band">
+        <div>
+          <h2>Let AI <span class="nb">plan it for you</span></h2>
+          <p>Built-in MCP connects your AI agent. Say "Plan day two in Kyoto for me" and the events appear.</p>
+        </div>
+        <div class="chat" role="img" aria-label="Example chat: the user asks AI to plan day two in Kyoto, and the AI adds events through TripEZGo">
+          <div class="chat-top"><svg class="i"><use href="#i-plug"/></svg>Example chat · Connected to TripEZGo</div>
+          <div class="bubble me">Plan day two in Kyoto: Fushimi Inari in the morning, Nishiki Market in the afternoon.</div>
+          <div class="tool-call"><svg class="i"><use href="#i-check"/></svg>TripEZGo · Added 2 events and 1 leg to day 2</div>
+          <div class="bubble ai">Done — open the app and it's there.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <section class="section" id="plans">
+    <div class="wrap">
+      <div class="section-head plans-head">
         <p class="eyebrow">Pricing</p>
         <h2>Start free, <span class="nb">upgrade when you need to</span></h2>
       </div>
-      <div class="pains plans">
-        <article class="pain plan">
-          <h3>Free</h3>
-          <p>Keep up to 3 trips (trips in the trash count) and invite up to 3 companions per trip, with ads. Everything else is included: widgets, group editing, location sharing and iCloud sync.</p>
-        </article>
-        <article class="pain plan">
-          <h3>Premium</h3>
-          <p>Unlimited trips, unlimited companions, Live Activities, calendar integration and no ads. Choose a weekly, monthly or yearly auto-renewing subscription, or a one-time purchase; cancel a subscription any time in your App Store account's subscription settings.</p>
-        </article>
-      </div>
+      <table class="compare">
+        <colgroup><col><col class="c-plan"><col class="c-prem"></colgroup>
+        <thead>
+          <tr><th scope="col" style="text-align:start">Features</th><th scope="col">Free</th><th scope="col" class="prem">Premium</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Trips</th><td>3<small>trash included</small></td><td class="prem">Unlimited</td></tr>
+          <tr><th scope="row">Companions per trip</th><td>3</td><td class="prem">Unlimited</td></tr>
+          <tr class="split"><th scope="row">Ads</th><td>Yes</td><td class="prem">No ads</td></tr>
+          <tr><th scope="row">Calendar / timeline, map, overview</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Files, to-dos, legs and backup departures</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Co-editing and location sharing</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Widget、Siri</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Tools (notes, currency, shopping list)</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">iCloud sync and backup</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Import and export</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">AI agent integration</th><td><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Live Activity</th><td><span class="no" aria-label="Not included">—</span></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Apple / Google Calendar integration</th><td><span class="no" aria-label="Not included">—</span></td><td class="prem"><svg class="i ok" role="img" aria-label="Included"><use href="#i-check"/></svg></td></tr>
+        </tbody>
+      </table>
+      <p class="plans-note">Premium is available as a weekly, monthly or yearly subscription, or a one-time purchase. Cancel anytime in your App Store subscription settings.</p>
       <div class="hero-actions plans-cta">
         <a class="btn btn-primary" href="https://apps.apple.com/app/id6801536372">Download on the App Store</a>
       </div>
@@ -266,7 +364,7 @@
           <span class="m m-mark" role="img" aria-hidden="true"></span>
           <span class="m m-word" role="img" aria-hidden="true"></span>
         </a>
-        <p style="margin:12px 0 0;max-width:34ch">Plan the whole trip, all in one place.</p>
+        <p style="margin:12px 0 0;max-width:32ch">Plan the trip, carry what it needs — all in one app.</p>
       </div>
       <nav class="footer-links" aria-label="Footer">
         <a href="/en/privacy.html">Privacy Policy</a>
@@ -278,7 +376,7 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 TripEZGo</span>
-      <span>Made for iPhone &amp; iPad · English, 繁體中文, 日本語</span>
+      <span>Made for iPhone &amp; iPad · Available in 6 languages</span>
     </div>
   </div>
 </footer>

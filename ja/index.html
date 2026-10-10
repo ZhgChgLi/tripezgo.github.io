@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TripEZGo — 旅の予定を、1本のタイムラインに</title>
-<meta name="description" content="TripEZGo は iPhone・iPad の旅行プランナーです。予定はカレンダーに、移動はタイムラインに。概要モードで予定・添付・ToDo をひと目で確認し、地図で1日のルートと日本のコンビニ・ドラッグストアをチェック。同行者と共同編集・現在地の共有も。オフラインで使えて、あなた自身の iCloud で同期します。">
+<title>TripEZGo — 旅の計画も、旅先で要るものも、これひとつで</title>
+<meta name="description" content="TripEZGo は iPhone・iPad の旅行プランナー。予定はカレンダーとタイムラインに、チケット・添付・やることは予定に。マップで1日のルートと日本のコンビニ・百貨店をチェックし、旅の仲間と共同編集、旅先では現在地を共有。次の行き先はロック画面に。データはあなたの端末と iCloud だけに。">
 <meta name="theme-color" content="#fbf8f4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17120f" media="(prefers-color-scheme: dark)">
 <meta name="apple-itunes-app" content="app-id=6801536372">
@@ -21,14 +21,14 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="zh_TW">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:title" content="TripEZGo — 旅の予定を、1本のタイムラインに">
-<meta property="og:description" content="予定はカレンダーに、移動はタイムラインに。概要モードで添付や ToDo もひと目で確認。地図で1日のルートと店舗をチェックし、同行者と共同編集・現在地の共有も。">
+<meta property="og:title" content="TripEZGo — 旅の計画も、旅先で要るものも、これひとつで">
+<meta property="og:description" content="TripEZGo は iPhone・iPad の旅行プランナー。予定はカレンダーとタイムラインに、チケット・添付・やることは予定に。マップで1日のルートと日本のコンビニ・百貨店をチェックし、旅の仲間と共同編集、旅先では現在地を共有。次の行き先はロック画面に。データはあなたの端末と iCloud だけに。">
 <meta property="og:url" content="https://tripezgo.com/ja/">
 <meta property="og:image" content="https://tripezgo.com/assets/img/og-ja.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/home.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -37,7 +37,7 @@
   "applicationCategory": "TravelApplication",
   "operatingSystem": "iOS, iPadOS",
   "downloadUrl": "https://apps.apple.com/app/id6801536372",
-  "description": "旅行プランナー：予定はカレンダーに、移動はタイムラインに。概要モードで予定・添付・ToDo をひと目で、地図で1日のルートと店舗を確認、同行者と共同編集・現在地の共有。オフラインで使えて、あなた自身の iCloud で同期。",
+  "description": "TripEZGo は iPhone・iPad の旅行プランナー。予定はカレンダーとタイムラインに、チケット・添付・やることは予定に。マップで1日のルートと日本のコンビニ・百貨店をチェックし、旅の仲間と共同編集、旅先では現在地を共有。次の行き先はロック画面に。データはあなたの端末と iCloud だけに。",
   "url": "https://tripezgo.com/ja/",
   "inLanguage": ["ja", "zh-Hant-TW", "zh-Hant-HK", "en"],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }
@@ -45,7 +45,39 @@
 </script>
 </head>
 <body>
-<a class="skip-link" href="#main">本文へスキップ</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.5 5.2h3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 5 5 9-11"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m21 16-5-5-9 9"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9.5h18M7.5 14.5h4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3.4 19.6a5.8 5.8 0 0 1 11.2 0"/><path d="M16.4 5.4a3.4 3.4 0 0 1 0 5.2"/><path d="M17.6 14.4a5.8 5.8 0 0 1 3 5.2"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="m20 11.5-8 8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.4 8.4a1.7 1.7 0 0 1-2.4-2.4l7.7-7.7"/></symbol>
+  <symbol id="i-todo" viewBox="0 0 24 24"><path d="m4 7 1.6 1.6L8.4 5.8M4 15.5l1.6 1.6 2.8-2.8M11.5 7.5H20M11.5 16H20"/></symbol>
+  <symbol id="i-train" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="13" rx="3"/><path d="M6 10h12M9 13.2h.01M15 13.2h.01M8.5 16 6.5 20.5M15.5 16l2 4.5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8.5h15l-3.5-3.5M20 15.5H5l3.5 3.5"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7.5a3 3 0 0 0 0-6h-7a3 3 0 0 1 0-6H16"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+  <symbol id="i-nav" viewBox="0 0 24 24"><path d="M12 3.5 19 20l-7-3.8L5 20l7-16.5z"/></symbol>
+  <symbol id="i-island" viewBox="0 0 24 24"><rect x="3" y="8.5" width="18" height="7" rx="3.5"/><path d="M15 12h2.5"/></symbol>
+  <symbol id="i-widget" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15L6 16z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 10.5v3M8 7.5v9M12 4.5v15M16 7.5v9M20 10.5v3"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11"/></symbol>
+  <symbol id="i-fx" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 10h7l-2-2M15.5 14h-7l2 2"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4.5h2.2L7.4 15h10.4l2-7.5H6.3"/><circle cx="9" cy="19.2" r="1.3"/><circle cx="16.8" cy="19.2" r="1.3"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM20 14v6h-3.5M14 20h.01"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4.5M15 3v4.5M6.5 7.5h11V11a5.5 5.5 0 0 1-11 0V7.5zM12 16.5V21"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 10a4.3 4.3 0 0 1-.4 8.5H7z"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 6.1A9.6 9.6 0 0 1 12 6c5 0 8.5 4.5 9.5 6a16 16 0 0 1-2.8 3.3M6.6 6.6C4.4 8 3 10.4 2.5 12c1 1.5 4.5 6 9.5 6a9.6 9.6 0 0 0 4.4-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8.5-8.5M16.5 6.5l2.5 2.5M14 9l2 2"/></symbol>
+  <symbol id="i-shift" viewBox="0 0 24 24"><path d="M7 4v16l-3-3M17 20V4l3 3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+</svg>
+
+<a class="skip-link" href="#main">メインコンテンツへ移動</a>
 
 <header class="site-header">
   <div class="wrap">
@@ -54,9 +86,8 @@
       <span class="m m-word" role="img" aria-hidden="true"></span>
     </a>
     <nav class="site-nav" aria-label="メイン">
-      <a class="hide-sm" href="#why">なぜ</a>
-      <a class="hide-sm" href="#features">機能</a>
       <a class="hide-sm" href="#privacy">プライバシー</a>
+      <a class="hide-sm" href="#features">機能</a>
       <a class="hide-sm" href="#plans">料金</a>
       <a class="lang" href="/" hreflang="zh-Hant" lang="zh-Hant">中文</a>
       <a class="lang" href="/en/" hreflang="en" lang="en">EN</a>
@@ -66,192 +97,259 @@
 
 <main id="main">
 
-  <!-- ─── ヒーロー ─────────────────────────────────────────────────── -->
-  <section class="hero">
+    <section class="hero">
     <div class="wrap">
       <div>
         <p class="eyebrow">iPhone・iPad の旅行プランナー</p>
-        <h1>旅の予定を、<em>1本のタイムラインに</em></h1>
-        <p class="lede">旅程づくりから、当日の道案内まで。旅行ひとつ分をまるごとひとつのアプリに。予定はカレンダーに、移動はタイムラインに。地図もチケットも ToDo も、メモも買い物リストも、その旅行と一緒に持ち歩けます。オフラインでも使えます。</p>
+        <h1>旅の計画も、旅先で要るものも、<br><em>これひとつで</em></h1>
+        <p class="lede">予定を組んで、チケットをまとめて、移動を調べる。出発したあとも、そのまま持ち歩けます。</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://apps.apple.com/app/id6801536372">App Store からダウンロード</a>
-          <a class="btn btn-ghost" href="#features">どう動くか見る</a>
+          <a class="btn btn-primary" href="https://apps.apple.com/app/id6801536372">App Store でダウンロード</a>
+          <a class="btn btn-ghost" href="#features">使い方を見る</a>
         </div>
-        <p class="hero-note">
-          <span>アカウント登録は不要</span>
-          <span>オフラインで使える</span>
-          <span>無料でダウンロード</span>
-        </p>
+        <ul class="hero-tags">
+          <li><svg class="i"><use href="#i-check"/></svg>登録不要</li>
+          <li><svg class="i"><use href="#i-check"/></svg>オフラインで使える</li>
+          <li><svg class="i"><use href="#i-check"/></svg>無料でダウンロード</li>
+        </ul>
       </div>
-      <div class="phone-pair">
-        <img class="shot" src="/assets/img/shots/ja/01.webp" width="660" height="1434"
-             alt="TripEZGo のカレンダー画面：山陽6日間の旅程の2日目、時刻順に並んだ予定と、そのあいだの JR の便と所要時間" fetchpriority="high">
-        <img class="shot" src="/assets/img/shots/ja/02.webp" width="660" height="1434"
-             alt="TripEZGo の概要画面：日ごとの予定が時刻順に並び、予定のあいだに徒歩時間と空き時間が表示されている" loading="lazy">
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── なぜ ─────────────────────────────────────────────────────── -->
-  <section class="section" id="why">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">なぜ必要か</p>
-        <h2>難しいのは「どこへ行くか」ではなく、<span class="nb">1日で回れる順番に並べること</span></h2>
-        <p class="lede">表計算で組めば、時間は自分で計算し、乗り継ぎは自分で調べ、チケットは自分で貼りつけることになります。組み終わっても、待っているのは次の3つです。</p>
-      </div>
-      <div class="pains">
-        <article class="pain">
-          <span class="n">01</span>
-          <h3>組んだそばからバラバラ</h3>
-          <p>行程はメモアプリ、航空券はメール、宿の予約確認はチャット履歴、気になる店はスクリーンショット。現地では、チケットを探すほうがその場所にたどり着くより時間がかかります。</p>
-        </article>
-        <article class="pain">
-          <span class="n">02</span>
-          <h3>時間が読めない</h3>
-          <p>2つの予定のあいだを何分で歩けるか、次の電車は何時か。1つずつ自分で調べることになります。1区間見落とせば、その日の残りごと崩れます。</p>
-        </article>
-        <article class="pain">
-          <span class="n">03</span>
-          <h3>予定は必ず変わる</h3>
-          <p>臨時休館、長居しすぎた前の予定、渋滞。直すのが面倒だから直さない——手元の予定は2日目にはもう本当ではなくなっています。</p>
-        </article>
+      <div class="trio">
+        <figure class="ph ph-side shot"><img src="/assets/img/shots/v2/ja/map-place.webp" width="720" height="1565" alt="マップ：2日目の宮島。予定が徒歩ルートでつながり、厳島神社のカードに徒歩ナビのボタン" loading="lazy"></figure>
+        <figure class="ph ph-main shot"><img src="/assets/img/shots/v2/ja/calendar.webp" width="720" height="1565" alt="カレンダー：山陽 6 日間の2日目。予定が時間順に並び、朝食とフェリーのあいだに JR 山陽本線の便" fetchpriority="high"></figure>
+        <figure class="ph ph-side shot"><img src="/assets/img/shots/v2/ja/overview.webp" width="720" height="1565" alt="概要：今日の予定が時間順に並び、予定のあいだに徒歩時間と間隔" loading="lazy"></figure>
       </div>
     </div>
   </section>
 
-  <!-- ─── 機能 ─────────────────────────────────────────────────────── -->
-  <section class="section section-alt" id="features">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">機能</p>
-        <h2>旅程づくりに必要なものは、<span class="nb">ぜんぶ同じアプリの中に</span></h2>
-        <p class="lede">カレンダー、マップ、メモ帳、写真アプリを行ったり来たりする必要はありません。</p>
-      </div>
-
-      <article class="feature">
-        <div>
-          <h3>予定はカレンダーで、<em>移動はタイムラインで</em></h3>
-          <p>1日が1本のタイムライン。長押しでドラッグすれば、予定を動かしたり開始・終了時刻を変えたりできます。予定と予定のあいだが「移動」で、徒歩・車・自転車の所要時間はマップが見積もります。公共交通機関は便をいくつも登録でき、乗り遅れたら次の便にすぐ切り替え。移動時間が予定のすき間より長いときは、前もって知らせます。レンタカーや宿泊のような終日の予定は専用の枠に、取り消した予定は消えずに取り消し線つきで残り、あとの予定はまとめて前倒し・後ろ倒しできます。56種類の予定タイプを内蔵し、自分で追加することもできます。</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/ja/01.webp" width="660" height="1434"
-                 alt="カレンダー表示：1日の予定が時刻順に並び、終日の予定は上部に固定、予定のあいだには移動手段と所要時間" loading="lazy">
-        </div>
-      </article>
-
-      <article class="feature is-flipped">
-        <div>
-          <h3>概要モード：<em>予定・添付・ToDo をひと目で</em></h3>
-          <p>旅行ごとに「旅行」「添付」「やることリスト」の3つにまとまり、出発前に抜けがないかすぐ確認できます。乗車券、予約確認、PDF、写真、URL はその予定の下に添付してタップですぐ開け、旅行全体の大事な書類はいちばん上に。ToDo は旅行全体にも、ひとつの予定にも付けられます。</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/ja/02.webp" width="660" height="1434"
-                 alt="概要の旅行タブ：日ごとの予定が時刻順に並び、予定のあいだに徒歩時間と空き時間" loading="lazy">
-        </div>
-      </article>
-
-      <article class="feature">
-        <div>
-          <h3>地図で1日のルート、<em>お店と徒歩ナビも</em></h3>
-          <p>場所を設定した予定はすべて地図の上に。1日ずつでも全日程でも表示でき、その日の予定は順番どおり線でつながり、徒歩・車・自転車の移動は実際の経路で描かれます。セブン-イレブン、ファミリーマート、ローソン、ドン・キホーテ、マツモトキヨシ、ダイコクドラッグ、ビックカメラ、ヨドバシカメラの店舗と営業中かどうかも地図に表示。アプリ内で徒歩ナビができ、Apple マップや Google マップにも渡せます。地図を長押しして自分のピンを追加したり、ほかのアプリから場所を共有して取り込んだりもできます。</p>
-        </div>
-        <div class="feature-media">
-          <div class="phone-duo">
-            <img class="shot" src="/assets/img/shots/ja/03.webp" width="660" height="1434"
-                 alt="地図表示：その日の予定が順番どおり線でつながり、道沿いにコンビニやお店" loading="lazy">
-            <img class="shot" src="/assets/img/shots/ja/04.webp" width="660" height="1434"
-                 alt="地図上のセブン-イレブンを開いたところ：住所、24時間営業、その横に徒歩ナビのボタン" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="feature is-flipped">
-        <div>
-          <h3>メモと買い物リスト、<em>旅先で使うものはここに</em></h3>
-          <p>買い物リストは写真を撮るだけで追加。お店ごとの値段を並べて記録でき、どこが一番安いかひと目で分かります。通貨換算はオフラインでも、最後に取得したレートで計算できます。メモは旅行ごとに保存し、非公開にすれば同行者には見えません。日本語の旅行フレーズはタップで読み上げ。ほかのアプリから URL・写真・ファイルを共有して、メモ、買い物リスト、添付、地図のピンにそのまま保存できます。</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/ja/05.webp" width="660" height="1434"
-                 alt="買い物リスト：買う予定・購入済み・見送りの件数と、カテゴリ別に並んだ商品の写真" loading="lazy">
-        </div>
-      </article>
-
-      <article class="feature">
-        <div>
-          <h3>みんなで共同編集、<em>同行者と現在地を共有</em></h3>
-          <p>招待リンクを送るだけで同行者が参加し、旅程・メモ・買い物リストをみんなで編集できます。旅行中に「現在地を共有」をオンにすると、同行者の位置が地図に表示され、何分前の位置かも分かります。共有先はこの旅行のメンバーだけ、共有されるのは旅行の期間中だけで、いつでもオフにできます。</p>
-        </div>
-        <div class="feature-media">
-          <div class="phone-duo">
-            <img class="shot" src="/assets/img/shots/ja/06.webp" width="660" height="1434"
-                 alt="旅程の共同編集の設定：共有のスイッチ、招待リンク、メンバー一覧" loading="lazy">
-            <img class="shot" src="/assets/img/shots/ja/07.webp" width="660" height="1434"
-                 alt="現在地を共有：同行者への共有スイッチ、位置情報の取得元、共有中のメンバー" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="feature is-flipped">
-        <div>
-          <h3>ライブアクティビティ、<span class="nb">ウィジェット、</span><em>カレンダー連携</em> <span class="tag">Premium</span></h3>
-          <p>旅行中はロック画面とダイナミックアイランドに、今の予定・残り時間・次の行き先・移動手段を表示。ウィジェットは今日の予定、添付、ToDo、買い物リスト、通貨換算、メモなどがあり、ロック画面用も。ToDo と買い物リストはウィジェットからそのままチェックできます（iOS 17 以降）。旅程を Apple カレンダーや Google カレンダーに書き込めば、予定を変えるたびに自動で更新。Siri ショートカットで次の予定や今日の予定も聞けます。</p>
-          <p class="feature-note">ライブアクティビティとカレンダー連携は Premium の機能です。</p>
-        </div>
-        <div class="feature-media">
-          <img class="shot" src="/assets/img/shots/ja/08.webp" width="660" height="1434"
-               alt="ロック画面のライブアクティビティ：大和ミュージアムを見学中、残り21分、次は12:05の てつのくじら館" loading="lazy">
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- ─── プライバシー ─────────────────────────────────────────────── -->
-  <section class="section privacy-band" id="privacy">
+    <section class="section section-alt privacy-band" id="privacy">
     <div class="wrap">
       <div>
-        <p class="eyebrow">オフラインで使えて、プライバシー優先</p>
-        <h2><span class="nb">アカウントもなし、</span><span class="nb">私たちのサーバーもなし</span></h2>
-        <p class="lede">通信がなくても旅程の閲覧と編集ができます。データはこの端末に保存され、あなた自身の iCloud アカウントを通じて、あなたの端末どうしでのみ同期・バックアップされます。第三者のサーバーに個人の旅行データを保存することはありません。</p>
-        <ul class="bullets">
-          <li><span><strong>登録は不要。</strong>インストールすれば、その場で1日目から組めます。アカウントもパスワードもありません。</span></li>
-          <li><span><strong>旅程の中身は第三者に渡しません。</strong>Firebase で集めるのはクラッシュレポートと基本的な利用統計だけで、旅程の内容は含まれません。無料版の広告は Google AdMob が配信し、トラッキングを許可するかどうかは iOS の確認画面であなたが決めます。Premium には広告がありません。</span></li>
-          <li><span><strong>同期はあなたの iCloud で。</strong>データは Apple ID のプライベートデータベースに入り、開けるのはあなたの端末だけです。</span></li>
-          <li><span><strong>共有も iCloud 経由。</strong>旅程の共有には Apple の iCloud 共有を使います。招待リンクはその鍵にすぎず、私たちのサーバーは通りません。</span></li>
-          <li><span><strong>バックアップも書き出しも無料。</strong>保管庫まるごと1つのファイルにバックアップでき、旅程は .ics でも書き出せます。</span></li>
-        </ul>
-        <p style="margin:26px 0 0"><a href="/ja/privacy.html">プライバシーポリシー全文を読む →</a></p>
+        <p class="eyebrow">プライバシーと安全</p>
+        <h2>あなたの旅行は、<span class="nb">あなたの iPhone と</span><span class="nb">あなたの iCloud だけに</span></h2>
+        <p class="lede">アカウントは不要。私たちはサーバーを持たず、あなたの予定を見ることもありません。バックアップ・同期・共有はすべて iCloud で。</p>
+        <a class="more-link" href="/ja/privacy.html">プライバシーポリシー全文を読む →</a>
       </div>
       <div class="feature-media">
-        <figure style="margin:0;max-width:520px">
-          <picture>
-            <source srcset="/assets/img/feat/privacy-ja-dark.webp" media="(prefers-color-scheme: dark)">
-            <img src="/assets/img/feat/privacy-ja.webp" width="668" height="472"
-                 alt="図：「この iPhone・ぜんぶここに」と書かれた箱に旅程・チケット・予約・メモ・写真・やることが入り、その下に Apple ID で解錠する暗号化された iCloud バックアップ" loading="lazy">
-          </picture>
-        </figure>
+        <div class="vault" role="img" aria-label="図：この iPhone にすべてのデータ（予定・添付・やること・メモ・買い物リスト・写真）。Apple アカウントで暗号化して iCloud にバックアップ・同期し、共同編集も iCloud 共有で">
+          <div class="vault-card">
+            <div class="vault-head"><svg class="i"><use href="#i-phone"/></svg><b>この iPhone</b><span>すべてのデータ</span></div>
+            <ul class="vault-chips">
+              <li>予定</li><li>添付</li><li>やること</li><li>メモ</li><li>買い物リスト</li><li>写真</li>
+            </ul>
+            <div class="vault-row"><svg class="i"><use href="#i-lock"/></svg><b>iCloud で暗号化バックアップ・同期</b><span>開けるのはあなたの Apple アカウントだけ</span></div>
+            <div class="vault-row"><svg class="i"><use href="#i-users"/></svg><b>旅の仲間と共同編集</b><span>iCloud 共有で</span></div>
+          </div>
+          <p class="vault-note">アカウントも、私たちのサーバーもなし。機内でもそのまま開けます。</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="plans">
+    <section class="section" id="features">
+    <div class="wrap">
+            <article class="feature">
+        <div>
+          <p class="eyebrow">01 · 予定を組む</p>
+          <h3>持っていくものは、<em>予定にまとめて</em></h3>
+          <p>チケットも予約もやることも、予定と一緒に。現地ではタップするだけで開けます。</p>
+          <ul class="points">
+            <li><svg class="i"><use href="#i-clip"/></svg><span>写真・ファイル・電子チケットのリンク</span></li>
+            <li><svg class="i"><use href="#i-todo"/></svg><span>出発前にチェックするやること</span></li>
+            <li><svg class="i"><use href="#i-train"/></svg><span>予定と予定のあいだの移動手段</span></li>
+            <li><svg class="i"><use href="#i-swap"/></svg><span>乗り遅れても、次の便はもう用意済み</span></li>
+          </ul>
+        </div>
+        <div class="feature-media">
+          <div class="duo">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/event-extra.webp" width="720" height="1565" alt="予定の詳細：JR パスのやることリストと添付。Web リンク、PDF の電子チケット、写真" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/leg.webp" width="720" height="1565" alt="移動：3つの便が並び、選んだ便の発車・到着・待ち時間を表示" loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+            <article class="feature is-flipped">
+        <div>
+          <p class="eyebrow">02 · カレンダー／タイムライン</p>
+          <h3>今日の回り方が、<em>ひと目でわかる</em></h3>
+          <p>予定も空き時間も移動時間も、1本の時間軸に。</p>
+          <ul class="points">
+            <li><svg class="i"><use href="#i-clock"/></svg><span>滞在時間と空き時間</span></li>
+            <li><svg class="i"><use href="#i-bell"/></svg><span>間に合わないときは先にお知らせ</span></li>
+            <li><svg class="i"><use href="#i-swap"/></svg><span>カレンダーとタイムラインをいつでも切り替え</span></li>
+          </ul>
+        </div>
+        <div class="feature-media modes">
+          <div class="duo is-even">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/calendar.webp" width="720" height="1565" alt="カレンダー：山陽 6 日間の2日目。予定が時間順に並び、朝食とフェリーのあいだに JR 山陽本線の便" loading="lazy"></figure>
+            <span class="swap" role="img" aria-label="カレンダーとタイムラインを切り替え"><svg class="i"><use href="#i-swap"/></svg></span>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/timeline.webp" width="720" height="1565" alt="タイムライン：2日目の予定が1本の線に並び、滞在時間と移動を表示" loading="lazy"></figure>
+          </div>
+          <div class="mode-label" aria-hidden="true"><span>カレンダー</span><span>タイムライン</span></div>
+        </div>
+      </article>
+
+            <article class="feature">
+        <div>
+          <p class="eyebrow">03 · マップ</p>
+          <h3>次はどこへ。<em>マップが教えてくれる</em></h3>
+          <p>1日の予定がルートでつながり、道沿いのお店も表示されます。</p>
+          <ul class="points">
+            <li><svg class="i"><use href="#i-route"/></svg><span>1日のルートと移動</span></li>
+            <li><svg class="i"><use href="#i-pin"/></svg><span>行きたい場所にマーカー</span></li>
+            <li><svg class="i"><use href="#i-bag"/></svg><span>日本のコンビニ・百貨店・ドラッグストア</span></li>
+            <li><svg class="i"><use href="#i-nav"/></svg><span>徒歩ナビ</span></li>
+          </ul>
+        </div>
+        <div class="feature-media">
+          <div class="duo is-three">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/map.webp" width="720" height="1565" alt="マップ：宮島の1日の徒歩ルート。道沿いに予定と距離" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/map-store.webp" width="720" height="1565" alt="マップ：近くのセブン-イレブンを開くと、24 時間営業と徒歩ナビのボタン" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/map-nav.webp" width="720" height="1565" alt="徒歩ナビ中：マップのルートに沿ってセブン-イレブンへ。カードに「直進 360 m・残り 710 m・9 分」" loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+            <article class="feature is-flipped">
+        <div>
+          <p class="eyebrow">04 · 概要</p>
+          <h3>旅行まるごと、<em>1ページで</em></h3>
+          <p>予定・添付・やること。探しものはタップひとつで。</p>
+        </div>
+        <div class="feature-media">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/ja/overview.webp" width="720" height="1565" alt="概要：今日の予定が時間順に並び、予定のあいだに徒歩時間と間隔" loading="lazy"></figure>
+        </div>
+      </article>
+
+            <article class="feature">
+        <div>
+          <p class="eyebrow">05 · 旅の仲間</p>
+          <h3>一緒に組んで、<em>一緒に出発</em></h3>
+          <p>旅の仲間と予定・メモ・添付を共同編集。旅先では現在地を共有して、はぐれてもお互いを見つけられます。</p>
+        </div>
+        <div class="feature-media">
+          <div class="duo">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/members.webp" width="720" height="1565" alt="旅程の共同編集：共有スイッチ、招待リンクと QR コード、その下に旅の仲間" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/share-location.webp" width="720" height="1565" alt="現在地の共有：旅の仲間の位置がマップに表示され、何分前の更新かもわかる" loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+    <section class="section section-alt" id="glance">
+    <div class="wrap">
+      <div class="feature" style="padding:0">
+        <div>
+          <p class="eyebrow">アプリを開かずに</p>
+          <h2>ロックを解除しなくても、<span class="nb">次の行き先はロック画面に</span></h2>
+          <p class="lede">今どこにいて、あとどれだけいられて、次へどう行くか。</p>
+          <div class="caps">
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-island"/></svg>ライブアクティビティ<span class="tag tag-premium">Premium</span></div>
+              <p>ロック画面とダイナミックアイランドで、進行中の予定をいつでも</p>
+            </div>
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-widget"/></svg>Widget</div>
+              <p>ホーム画面とロック画面に今日の予定</p>
+            </div>
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-bell"/></svg>通知</div>
+              <p>やることの時間になったらお知らせ</p>
+            </div>
+            <div class="cap">
+              <div class="cap-head"><svg class="i"><use href="#i-wave"/></svg>Siri</div>
+              <p>聞くだけで次の予定がわかる</p>
+            </div>
+          </div>
+        </div>
+        <div class="feature-media">
+          <div class="duo">
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/lock.webp" width="720" height="1565" alt="ロック画面のライブアクティビティ：厳島神社が進行中、残り時間と次の行き先" loading="lazy"></figure>
+            <figure class="ph shot"><img src="/assets/img/shots/v2/ja/widget.webp" width="720" height="1565" alt="ホーム画面のウィジェット：今日の予定と為替換算" loading="lazy"></figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <section class="section" id="tools">
     <div class="wrap">
       <div class="section-head">
+        <p class="eyebrow">ツール</p>
+        <h2>旅先で使うものは、<span class="nb">ぜんぶここに</span></h2>
+      </div>
+      <div class="tools">
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/ja/note.webp" width="720" height="1565" alt="メモ：写真と文字のメモ。@ で予定にリンクし、フレーズは読み上げも" loading="lazy"></figure>
+          <h3>メモ</h3>
+          <p>写真も文字も。フレーズは読み上げも</p>
+        </article>
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/ja/fx.webp" width="720" height="1565" alt="為替換算：2つの通貨を換算し、下に最近の換算履歴" loading="lazy"></figure>
+          <h3>為替換算</h3>
+          <p>通信がなくても計算できる</p>
+        </article>
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/ja/shop.webp" width="720" height="1565" alt="買い物リスト：購入予定・購入済み・やめたの件数と、カテゴリ別の写真グリッド" loading="lazy"></figure>
+          <h3>買い物リスト</h3>
+          <p>写真で記録、どの店が安いかひと目で</p>
+        </article>
+        <article class="tool">
+          <figure class="ph shot"><img src="/assets/img/shots/v2/ja/scan.webp" width="720" height="1565" alt="QR コードスキャン：読み取った URL やテキストが履歴に残り、旅の仲間も見られる" loading="lazy"></figure>
+          <h3>QR コードスキャン</h3>
+          <p>読み取った URL やテキストを保存、旅の仲間とも共有</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+    <section class="section section-alt" id="ai">
+    <div class="wrap">
+      <div class="ai-band">
+        <div>
+          <h2>AI に <span class="nb">予定を組んでもらう</span></h2>
+          <p>MCP を内蔵。AI エージェントにつないで「京都の2日目を組んで」と頼めば、予定が入ります。</p>
+        </div>
+        <div class="chat" role="img" aria-label="会話の例：AI に京都の2日目を頼むと、AI が TripEZGo を通じて予定を追加">
+          <div class="chat-top"><svg class="i"><use href="#i-plug"/></svg>会話の例 · TripEZGo に接続済み</div>
+          <div class="bubble me">京都の2日目を組んで。朝は伏見稲荷、午後は錦市場に行きたい。</div>
+          <div class="tool-call"><svg class="i"><use href="#i-check"/></svg>TripEZGo · 2日目に予定 2 件と移動 1 件を追加</div>
+          <div class="bubble ai">できました。アプリを開けば入っています。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <section class="section" id="plans">
+    <div class="wrap">
+      <div class="section-head plans-head">
         <p class="eyebrow">料金</p>
         <h2>無料ではじめて、<span class="nb">必要なときにアップグレード</span></h2>
       </div>
-      <div class="pains plans">
-        <article class="pain plan">
-          <h3>無料版</h3>
-          <p>旅行は3件まで保存（ゴミ箱の中の旅行も含みます）、1つの旅行に招待できる同行者は3人まで、広告が表示されます。そのほかの機能はすべて使えます（ウィジェット、共同編集、現在地の共有、iCloud 同期を含む）。</p>
-        </article>
-        <article class="pain plan">
-          <h3>Premium</h3>
-          <p>旅行数の上限なし、同行者の人数制限なし、ライブアクティビティ、カレンダー連携、広告なし。週・月・年の自動更新サブスクリプション、または買い切りから選べます。サブスクリプションは App Store アカウントのサブスクリプション設定からいつでも解約できます。</p>
-        </article>
-      </div>
+      <table class="compare">
+        <colgroup><col><col class="c-plan"><col class="c-prem"></colgroup>
+        <thead>
+          <tr><th scope="col" style="text-align:start">機能</th><th scope="col">無料版</th><th scope="col" class="prem">Premium</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">旅行の数</th><td>3 件<small>ゴミ箱の分も含む</small></td><td class="prem">無制限</td></tr>
+          <tr><th scope="row">旅行ごとの旅の仲間</th><td>3 人</td><td class="prem">無制限</td></tr>
+          <tr class="split"><th scope="row">広告</th><td>あり</td><td class="prem">広告なし</td></tr>
+          <tr><th scope="row">カレンダー／タイムライン・マップ・概要</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">添付・やること・移動と代わりの便</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">共同編集・現在地の共有</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Widget、Siri</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">ツール（メモ・為替・買い物リスト）</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">iCloud 同期とバックアップ</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">読み込み・書き出し</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">AI エージェント連携</th><td><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">ライブアクティビティ</th><td><span class="no" aria-label="対象外">—</span></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Apple／Google カレンダー連携</th><td><span class="no" aria-label="対象外">—</span></td><td class="prem"><svg class="i ok" role="img" aria-label="対象"><use href="#i-check"/></svg></td></tr>
+        </tbody>
+      </table>
+      <p class="plans-note">Premium は週・月・年の自動更新サブスクリプション、または買い切り。App Store のサブスクリプション設定からいつでも解約できます。</p>
       <div class="hero-actions plans-cta">
-        <a class="btn btn-primary" href="https://apps.apple.com/app/id6801536372">App Store からダウンロード</a>
+        <a class="btn btn-primary" href="https://apps.apple.com/app/id6801536372">App Store でダウンロード</a>
       </div>
     </div>
   </section>
@@ -266,19 +364,19 @@
           <span class="m m-mark" role="img" aria-hidden="true"></span>
           <span class="m m-word" role="img" aria-hidden="true"></span>
         </a>
-        <p style="margin:12px 0 0;max-width:32ch">旅の予定を、1本のタイムラインに。</p>
+        <p style="margin:12px 0 0;max-width:32ch">旅の計画も、旅先で要るものも、これひとつで。</p>
       </div>
       <nav class="footer-links" aria-label="フッター">
         <a href="/ja/privacy.html">プライバシーポリシー</a>
         <a href="/ja/terms.html">利用規約</a>
         <a href="mailto:zhgchgli@gmail.com">お問い合わせ</a>
-        <a href="/" hreflang="zh-Hant" lang="zh-Hant">繁體中文</a>
         <a href="/en/" hreflang="en" lang="en">English</a>
+        <a href="/" hreflang="zh-Hant" lang="zh-Hant">繁體中文</a>
       </nav>
     </div>
     <div class="footer-bottom">
       <span>© 2026 TripEZGo</span>
-      <span>Made for iPhone &amp; iPad · 日本語、English、繁體中文</span>
+      <span>Made for iPhone &amp; iPad · 6 言語に対応</span>
     </div>
   </div>
 </footer>
